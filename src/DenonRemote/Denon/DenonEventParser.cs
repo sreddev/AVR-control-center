@@ -92,6 +92,39 @@ public sealed class DenonEventParser
             return;
         }
 
+        // Analog tuner. TFANNAME must be checked before the TFAN frequency.
+        if (s.StartsWith("TFANNAME", StringComparison.Ordinal))
+        {
+            _state.TunerStationName = s[8..].Trim();
+            return;
+        }
+        if (s.StartsWith("TFAN", StringComparison.Ordinal))
+        {
+            var tuned = DenonProtocol.ParseTunerFrequency(s[4..]);
+            if (tuned is not null)
+            {
+                // A new frequency invalidates the previous station's RDS name.
+                if (tuned.Value.Frequency != _state.TunerFrequency) _state.TunerStationName = "";
+                _state.TunerBand = tuned.Value.Band;
+                _state.TunerFrequency = tuned.Value.Frequency;
+            }
+            return;
+        }
+        if (s.StartsWith("TMAN", StringComparison.Ordinal))
+        {
+            foreach (var token in s[4..].Split(' ', StringSplitOptions.RemoveEmptyEntries))
+            {
+                switch (token)
+                {
+                    case "FM": _state.TunerBand = TunerBand.FM; break;
+                    case "AM": _state.TunerBand = TunerBand.AM; break;
+                    case "AUTO": _state.TunerAutoMode = true; break;
+                    case "MANUAL": _state.TunerAutoMode = false; break;
+                }
+            }
+            return;
+        }
+
         if (s.StartsWith("PSBAS ", StringComparison.Ordinal))
         {
             if (int.TryParse(s.AsSpan(6).Trim(), out var v)) _state.Bass = v - 50;

@@ -146,7 +146,62 @@ public static class DenonProtocol
         ["VIRTUAL"] = "Virtual"
     };
 
+    // ── Analog tuner ────────────────────────────────────────────────────────
+
+    /// <summary>Tunable FM range in MHz (covers the Americas and Europe).</summary>
+    public const double FmMin = 87.5, FmMax = 108.0;
+
+    /// <summary>Tunable AM range in kHz (covers 9 kHz and 10 kHz step regions).</summary>
+    public const double AmMin = 520, AmMax = 1710;
+
+    /// <summary>
+    /// Encode a frequency for the <c>TFAN</c> command: the value times 100 in
+    /// six digits. FM is in MHz (87.50 → 008750), AM in kHz (1050 → 105000).
+    /// </summary>
+    public static string FormatTunerFrequency(double frequency) =>
+        ((int)System.Math.Round(frequency * 100, System.MidpointRounding.AwayFromZero)).ToString("000000");
+
+    /// <summary>
+    /// Decode the six-digit payload of a <c>TFAN</c> event. Per the protocol
+    /// spec, values below 050000 are FM (MHz) and the rest are AM (kHz).
+    /// </summary>
+    public static (TunerBand Band, double Frequency)? ParseTunerFrequency(string payload)
+    {
+        var digits = (payload ?? string.Empty).Trim();
+        if (digits.Length != 6 || !int.TryParse(digits, out var raw)) return null;
+        return (raw < 50000 ? TunerBand.FM : TunerBand.AM, raw / 100.0);
+    }
+
+    /// <summary>
+    /// Parse a frequency typed by the user. The band is inferred from the
+    /// number: "95.5" (or "95,5") is FM, "1010" is AM.
+    /// </summary>
+    public static bool TryParseUserFrequency(string? text, out TunerBand band, out double frequency)
+    {
+        band = TunerBand.FM;
+        frequency = 0;
+        var t = (text ?? string.Empty).Trim().Replace(',', '.');
+        if (!double.TryParse(t, System.Globalization.NumberStyles.Float,
+                             System.Globalization.CultureInfo.InvariantCulture, out var v))
+            return false;
+
+        if (v >= FmMin && v <= FmMax) { band = TunerBand.FM; frequency = System.Math.Round(v, 2); return true; }
+        if (v >= AmMin && v <= AmMax) { band = TunerBand.AM; frequency = System.Math.Round(v); return true; }
+        return false;
+    }
+
+    /// <summary>Bare number as the front panel shows it: "95.50" or "1010".</summary>
+    public static string FormatTunerNumber(TunerBand band, double frequency) =>
+        frequency.ToString(band == TunerBand.FM ? "0.00" : "0", System.Globalization.CultureInfo.InvariantCulture);
+
+    /// <summary>Front-panel style label: "95.50 MHz" or "1010 kHz".</summary>
+    public static string FormatTunerLabel(TunerBand band, double frequency) =>
+        FormatTunerNumber(band, frequency) + (band == TunerBand.FM ? " MHz" : " kHz");
+
     private static double Clamp(double v, double min, double max) =>
         v < min ? min : v > max ? max : v;
 }
+
+/// <summary>Analog tuner band (payload of <c>TMAN</c>).</summary>
+public enum TunerBand { FM, AM }
 

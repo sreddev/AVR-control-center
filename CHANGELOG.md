@@ -1,5 +1,16 @@
 # Changelog
 
+## Sin publicar
+
+### Nuevas funciones
+
+**Radio AM / FM (Tuner)**
+- Nueva pagina "Radio" con la frecuencia sintonizada, banda (FM/AM), modo AUTO/MANUAL y nombre RDS
+- Sintonia manual escribiendo la frecuencia (FM en MHz, AM en kHz; la banda se detecta sola)
+- Busqueda de emisoras (seek) y ajuste paso a paso usando el paso regional del receptor
+- Emisoras guardadas: agregar, editar, eliminar, click para escuchar, anterior/siguiente
+- La emisora actual se resalta en la lista; cambia la entrada a TUNER automaticamente al sintonizar
+
 ## v1.5.0 — HEOS Edition (2026-08-23)
 
 ### Nuevas funciones

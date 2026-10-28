@@ -67,6 +67,11 @@
                         <ui:SymbolIcon Symbol="AppsList24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem x:Name="NavTuner" TargetPageType="{x:Type pages:TunerPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Live24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem x:Name="NavSound" TargetPageType="{x:Type pages:SoundPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="MusicNote124" />

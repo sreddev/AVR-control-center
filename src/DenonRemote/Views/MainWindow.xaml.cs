@@ -27,6 +27,7 @@ public partial class MainWindow : FluentWindow
         // Localize navigation labels
         NavHome.Content = L.Dashboard;
         NavSources.Content = L.Sources;
+        NavTuner.Content = L.Tuner;
         NavSound.Content = L.Sound;
         NavHeos.Content = "HEOS";
         NavDevices.Content = L.Devices;

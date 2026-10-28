@@ -31,6 +31,9 @@ public sealed class AppSettings
     /// <summary>Saved per-channel level presets ("Volumen 1", "Cine", etc.).</summary>
     public List<ChannelProfile> ChannelProfiles { get; set; } = new();
 
+    /// <summary>User's saved AM/FM stations, in display order.</summary>
+    public List<RadioStation> RadioStations { get; set; } = new();
+
     /// <summary>Record a successful connection so the sidebar can show it.</summary>
     public void RememberDevice(string host, string friendlyName, string model)
     {
@@ -138,5 +141,36 @@ public sealed class ChannelProfile : System.ComponentModel.INotifyPropertyChange
     public bool ToneControlEnabled { get; set; }
 
     public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+}
+
+/// <summary>
+/// A saved analog radio station. Kept in the app rather than in the receiver's
+/// preset memory so it can carry a free-form name and be edited from here.
+/// Observable so edits and the "now playing" highlight update the list live.
+/// </summary>
+public sealed partial class RadioStation : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+{
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private string _name = "";
+
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FrequencyLabel))]
+    private Denon.TunerBand _band = Denon.TunerBand.FM;
+
+    /// <summary>MHz on FM, kHz on AM.</summary>
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FrequencyLabel))]
+    private double _frequency;
+
+    /// <summary>True while the receiver is tuned to this station. Not persisted.</summary>
+    [property: JsonIgnore]
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool _isActive;
+
+    [JsonIgnore]
+    public string FrequencyLabel => Denon.DenonProtocol.FormatTunerLabel(Band, Frequency);
+
+    public bool Matches(Denon.TunerBand band, double frequency) =>
+        Band == band && Math.Abs(Frequency - frequency) < 0.001;
 }
 

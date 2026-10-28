@@ -114,6 +114,49 @@ public static class L
         ? "Ajusta la salida del subwoofer en pasos de 0.5 dB."
         : "Adjusts the subwoofer output in 0.5 dB steps.";
 
+    // -- Tuner page --
+    public static string Tuner => IsSpanish ? "Radio" : "Radio";
+    public static string TunerTitle => IsSpanish ? "Radio AM / FM" : "AM / FM Radio";
+    public static string TunerDesc => IsSpanish
+        ? "Sintoniza emisoras y administra tus favoritas."
+        : "Tune stations and manage your saved favorites.";
+    public static string TunerNowTuned => IsSpanish ? "SINTONIZADO" : "NOW TUNED";
+    public static string TunerNotActive => IsSpanish
+        ? "La entrada actual no es la radio. Sintonizar cambiara a Tuner."
+        : "The current input isn't the tuner. Tuning will switch to Tuner.";
+    public static string TunerSwitchToTuner => IsSpanish ? "Cambiar a radio" : "Switch to radio";
+    public static string TunerSeekDown => IsSpanish ? "Buscar emisora anterior" : "Seek previous station";
+    public static string TunerSeekUp => IsSpanish ? "Buscar emisora siguiente" : "Seek next station";
+    public static string TunerStepDown => IsSpanish ? "Bajar un paso" : "Step down";
+    public static string TunerStepUp => IsSpanish ? "Subir un paso" : "Step up";
+    public static string TunerManual => IsSpanish ? "SINTONIA MANUAL" : "MANUAL TUNING";
+    public static string TunerManualHint => IsSpanish
+        ? "FM en MHz (ej. 95.5) o AM en kHz (ej. 1010)."
+        : "FM in MHz (e.g. 95.5) or AM in kHz (e.g. 1010).";
+    public static string TunerTune => IsSpanish ? "Sintonizar" : "Tune";
+    public static string TunerSaved => IsSpanish ? "Emisoras guardadas" : "Saved stations";
+    public static string TunerSavedDesc => IsSpanish
+        ? "Click en una emisora para escucharla."
+        : "Click a station to listen to it.";
+    public static string TunerPrevStation => IsSpanish ? "Emisora guardada anterior" : "Previous saved station";
+    public static string TunerNextStation => IsSpanish ? "Emisora guardada siguiente" : "Next saved station";
+    public static string TunerNoStations => IsSpanish
+        ? "Aun no hay emisoras guardadas. Agrega una abajo."
+        : "No saved stations yet. Add one below.";
+    public static string TunerAddStation => IsSpanish ? "AGREGAR EMISORA" : "ADD STATION";
+    public static string TunerEditStation => IsSpanish ? "EDITAR EMISORA" : "EDIT STATION";
+    public static string TunerName => IsSpanish ? "Nombre" : "Name";
+    public static string TunerFrequency => IsSpanish ? "Frecuencia" : "Frequency";
+    public static string TunerUseCurrent => IsSpanish ? "Usar actual" : "Use current";
+    public static string TunerSave => IsSpanish ? "Guardar" : "Save";
+    public static string TunerCancel => IsSpanish ? "Cancelar" : "Cancel";
+    public static string TunerEdit => IsSpanish ? "Editar" : "Edit";
+    public static string TunerDelete => IsSpanish ? "Eliminar" : "Delete";
+    public static string TunerInvalidFrequency => IsSpanish
+        ? $"Frecuencia invalida. FM {DenonRemote.Denon.DenonProtocol.FmMin}-{DenonRemote.Denon.DenonProtocol.FmMax} MHz, AM {DenonRemote.Denon.DenonProtocol.AmMin}-{DenonRemote.Denon.DenonProtocol.AmMax} kHz."
+        : $"Invalid frequency. FM {DenonRemote.Denon.DenonProtocol.FmMin}-{DenonRemote.Denon.DenonProtocol.FmMax} MHz, AM {DenonRemote.Denon.DenonProtocol.AmMin}-{DenonRemote.Denon.DenonProtocol.AmMax} kHz.";
+    public static string TunerNameRequired => IsSpanish ? "Escribe un nombre para la emisora." : "Enter a name for the station.";
+
     // -- Zones page --
     public static string ZonesTitle => IsSpanish ? "Zonas" : "Zones";
     public static string ZonesDesc => IsSpanish

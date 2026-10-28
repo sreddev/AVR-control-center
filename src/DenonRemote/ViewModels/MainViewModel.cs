@@ -31,6 +31,7 @@ public partial class MainViewModel : ObservableObject
     public ObservableCollection<SourceTile> SourceTiles { get; } = new();
     public ObservableCollection<KnownDevice> RecentDevices { get; } = new();
     public ObservableCollection<ChannelProfile> Profiles { get; } = new();
+    public ObservableCollection<RadioStation> Stations { get; } = new();
 
     /// <summary>Channels that the receiver reports as physically connected.</summary>
     public ObservableCollection<Denon.ChannelState> ActiveChannels { get; } = new();
@@ -57,6 +58,23 @@ public partial class MainViewModel : ObservableObject
 
         SyncRecentDevices();
         SyncProfiles();
+        SyncStations();
+
+        // Tuner: keep the "now playing" highlight in step with the receiver,
+        // and re-read the tuner whenever the input switches to it.
+        State.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(ReceiverState.TunerBand)
+                               or nameof(ReceiverState.TunerFrequency)
+                               or nameof(ReceiverState.TunerStationName))
+                UpdateActiveStation();
+        };
+        State.Main.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName != nameof(Denon.ZoneState.Source)) return;
+            OnPropertyChanged(nameof(IsTunerSource));
+            if (IsTunerSource) _ = _receiver.RefreshTunerAsync();
+        };
         // Connected fires from a background thread (ReceiverService.ConnectAsync),
         // so we hop to the UI dispatcher before mutating the observable collection.
         _receiver.Connected += (_, _) => System.Windows.Application.Current?.Dispatcher.Invoke(() =>
@@ -284,6 +302,169 @@ public partial class MainViewModel : ObservableObject
 
     /// <summary>Writes profile changes (e.g. an inline rename) back to disk.</summary>
     public void PersistProfiles() => _settings.Save();
+
+    // ── Tuner ───────────────────────────────────────────────────────────────
+
+    /// <summary>Text typed in the manual tuning box ("95.5" or "1010").</summary>
+    [ObservableProperty] private string _manualFrequency = "";
+
+    /// <summary>Validation / feedback line shown on the Radio page.</summary>
+    [ObservableProperty] private string _tunerMessage = "";
+
+    [ObservableProperty] private string _stationEditorName = "";
+    [ObservableProperty] private string _stationEditorFrequency = "";
+
+    /// <summary>Station being edited, or null when the editor adds a new one.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsEditingStation))]
+    [NotifyPropertyChangedFor(nameof(StationEditorTitle))]
+    private RadioStation? _editingStation;
+
+    public bool IsEditingStation => EditingStation is not null;
+    public string StationEditorTitle => IsEditingStation ? L.TunerEditStation : L.TunerAddStation;
+
+    public bool IsTunerSource =>
+        string.Equals(State.Main.Source, "TUNER", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Saved name for the tuned frequency, falling back to the RDS name.</summary>
+    public string CurrentStationName =>
+        Stations.FirstOrDefault(s => s.IsActive)?.Name ?? State.TunerStationName;
+
+    private void SyncStations()
+    {
+        Stations.Clear();
+        foreach (var s in _settings.RadioStations)
+            Stations.Add(s);
+        UpdateActiveStation();
+    }
+
+    private void UpdateActiveStation()
+    {
+        foreach (var s in Stations)
+            s.IsActive = State.TunerFrequency > 0 && s.Matches(State.TunerBand, State.TunerFrequency);
+        OnPropertyChanged(nameof(CurrentStationName));
+    }
+
+    [RelayCommand]
+    private async Task TuneToManualFrequencyAsync()
+    {
+        if (!DenonProtocol.TryParseUserFrequency(ManualFrequency, out var band, out var freq))
+        {
+            TunerMessage = L.TunerInvalidFrequency;
+            return;
+        }
+        TunerMessage = "";
+        await _receiver.TuneAsync(band, freq);
+    }
+
+    [RelayCommand]
+    private async Task SetTunerBandAsync(string? band)
+    {
+        if (!Enum.TryParse<TunerBand>(band, out var b)) return;
+        await _receiver.SetTunerBandAsync(b);
+    }
+
+    [RelayCommand] private Task TuneStepUpAsync() => _receiver.TuneStepAsync(up: true);
+    [RelayCommand] private Task TuneStepDownAsync() => _receiver.TuneStepAsync(up: false);
+    [RelayCommand] private Task TuneSeekUpAsync() => _receiver.TuneSeekAsync(up: true);
+    [RelayCommand] private Task TuneSeekDownAsync() => _receiver.TuneSeekAsync(up: false);
+
+    [RelayCommand]
+    private async Task SwitchToTunerAsync() => await _receiver.SelectSourceAsync("TUNER");
+
+    [RelayCommand]
+    private async Task PlayStationAsync(RadioStation? station)
+    {
+        if (station is null) return;
+        TunerMessage = "";
+        await _receiver.TuneAsync(station.Band, station.Frequency);
+    }
+
+    [RelayCommand] private Task NextStationAsync() => StepSavedStationAsync(+1);
+    [RelayCommand] private Task PreviousStationAsync() => StepSavedStationAsync(-1);
+
+    /// <summary>
+    /// Cycles through the saved list, wrapping at both ends. When the current
+    /// frequency isn't a saved one, "next" starts from the first entry and
+    /// "previous" from the last.
+    /// </summary>
+    private Task StepSavedStationAsync(int delta)
+    {
+        if (Stations.Count == 0) return Task.CompletedTask;
+        var current = Stations.ToList().FindIndex(s => s.IsActive);
+        var next = current < 0
+            ? (delta > 0 ? 0 : Stations.Count - 1)
+            : (current + delta + Stations.Count) % Stations.Count;
+        return PlayStationAsync(Stations[next]);
+    }
+
+    /// <summary>Prefills the editor with whatever the receiver is tuned to.</summary>
+    [RelayCommand]
+    private void UseCurrentFrequency()
+    {
+        if (State.TunerFrequency <= 0) return;
+        StationEditorFrequency = DenonProtocol.FormatTunerNumber(State.TunerBand, State.TunerFrequency);
+        if (string.IsNullOrWhiteSpace(StationEditorName) && !string.IsNullOrWhiteSpace(State.TunerStationName))
+            StationEditorName = State.TunerStationName;
+    }
+
+    [RelayCommand]
+    private void EditStation(RadioStation? station)
+    {
+        if (station is null) return;
+        EditingStation = station;
+        StationEditorName = station.Name;
+        StationEditorFrequency = DenonProtocol.FormatTunerNumber(station.Band, station.Frequency);
+        TunerMessage = "";
+    }
+
+    [RelayCommand]
+    private void CancelStationEdit()
+    {
+        EditingStation = null;
+        StationEditorName = "";
+        StationEditorFrequency = "";
+        TunerMessage = "";
+    }
+
+    /// <summary>Adds a new station, or applies the editor to the one being edited.</summary>
+    [RelayCommand]
+    private void SaveStation()
+    {
+        var name = (StationEditorName ?? "").Trim();
+        if (name.Length == 0)
+        {
+            TunerMessage = L.TunerNameRequired;
+            return;
+        }
+        if (!DenonProtocol.TryParseUserFrequency(StationEditorFrequency, out var band, out var freq))
+        {
+            TunerMessage = L.TunerInvalidFrequency;
+            return;
+        }
+
+        var station = EditingStation ?? new RadioStation();
+        station.Name = name;
+        station.Band = band;
+        station.Frequency = freq;
+        if (EditingStation is null) _settings.RadioStations.Add(station);
+        _settings.Save();
+
+        SyncStations();
+        CancelStationEdit();
+        TunerMessage = L.IsSpanish ? $"Emisora guardada: {name}" : $"Station saved: {name}";
+    }
+
+    [RelayCommand]
+    private void DeleteStation(RadioStation? station)
+    {
+        if (station is null) return;
+        if (ReferenceEquals(station, EditingStation)) CancelStationEdit();
+        _settings.RadioStations.Remove(station);
+        _settings.Save();
+        SyncStations();
+        TunerMessage = L.IsSpanish ? $"Emisora eliminada: {station.Name}" : $"Station deleted: {station.Name}";
+    }
 
     // ── HEOS ────────────────────────────────────────────────────────────────
 

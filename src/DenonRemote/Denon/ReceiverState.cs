@@ -53,6 +53,26 @@ public partial class ReceiverState : ObservableObject
     [ObservableProperty] private string _playingArtUrl = "";
     [ObservableProperty] private bool _isPlaying;
 
+    // ── Analog tuner ────────────────────────────────────────────────────────
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TunerFrequencyLabel))]
+    private TunerBand _tunerBand = TunerBand.FM;
+
+    /// <summary>MHz on FM, kHz on AM. 0 until the receiver reports it.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TunerFrequencyLabel))]
+    private double _tunerFrequency;
+
+    /// <summary>AUTO = seek + stereo reception; MANUAL = step tuning (mono on FM).</summary>
+    [ObservableProperty] private bool _tunerAutoMode = true;
+
+    /// <summary>RDS station name, on models that report <c>TFANNAME</c>.</summary>
+    [ObservableProperty] private string _tunerStationName = "";
+
+    public string TunerFrequencyLabel => TunerFrequency > 0
+        ? DenonProtocol.FormatTunerLabel(TunerBand, TunerFrequency)
+        : "-";
+
     public ReceiverState()
     {
         Channels = new ObservableCollection<ChannelState>(

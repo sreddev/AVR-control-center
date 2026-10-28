@@ -35,6 +35,7 @@ Interfaz moderna Fluent/Mica, integracion HEOS con navegacion de Tidal y TuneIn,
 - 💾 **Perfiles de sonido** — Guarda y recupera balances con un click (Normalizar, Guardar, Cargar)
 - 📡 **Matriz de canales** — Visualizacion en tiempo real de senal de entrada y altavoces activos
 - 🎛️ **Fuentes** — Cambio rapido con nombres reales del receptor (SHIEL, ROG GAME, nintendo...)
+- 📻 **Radio AM / FM** — Sintonia manual, seek, paso a paso y emisoras guardadas (agregar, editar, eliminar, anterior/siguiente)
 - 🎭 **Modos surround** — Stereo, Direct, Pure Direct, Multi Ch, Neural:X, Dolby y mas
 - 🎵 **Tono** — Bass, Treble, Subwoofer con control fino
 - 🏠 **Zonas** — Control independiente de Main y Zone 2 (Zone 2 nunca se enciende sola)

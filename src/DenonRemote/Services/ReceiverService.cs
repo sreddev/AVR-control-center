@@ -75,7 +75,8 @@ public sealed class ReceiverService : IAsyncDisposable
                 "Z2?", "NSFRN ?",
                 "CV?",
                 "SSFUN ?", "SSSOD ?",
-                "SSSPC ?"                 // speaker configuration (which channels exist)
+                "SSSPC ?",                // speaker configuration (which channels exist)
+                "TFAN?", "TMAN?", "TFANNAME?"
             ).ConfigureAwait(false);
         }
         else
@@ -242,6 +243,61 @@ public sealed class ReceiverService : IAsyncDisposable
     public Task Zone2MuteAsync(bool on) => SendOrHttp("Z2" + (on ? "MUON" : "MUOFF"));
     public Task Zone2VolumeAsync(double v) => SendOrHttp("Z2" + DenonProtocol.FormatVolume(v));
     public Task Zone2SourceAsync(string src) => SendOrHttp("Z2" + src);
+
+    // ── Analog tuner ────────────────────────────────────────────────────────
+    // TF / TP / TM commands are ignored unless the main input is TUNER, so
+    // every tuner action first switches the input when needed.
+
+    /// <summary>Tunes directly to a frequency (MHz on FM, kHz on AM).</summary>
+    public async Task TuneAsync(TunerBand band, double frequency)
+    {
+        await EnsureTunerSourceAsync().ConfigureAwait(false);
+        // Band is always sent: the cached value can be stale after a front-panel change.
+        await SendOrHttp(band == TunerBand.AM ? "TMANAM" : "TMANFM").ConfigureAwait(false);
+        await SendOrHttp("TFAN" + DenonProtocol.FormatTunerFrequency(frequency)).ConfigureAwait(false);
+    }
+
+    public async Task SetTunerBandAsync(TunerBand band)
+    {
+        await EnsureTunerSourceAsync().ConfigureAwait(false);
+        await SendOrHttp(band == TunerBand.AM ? "TMANAM" : "TMANFM").ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Moves one frequency step using the receiver's regional step size.
+    /// Stepping requires MANUAL mode; AUTO is restored afterwards because on
+    /// Denon units MANUAL also forces FM to mono.
+    /// </summary>
+    public async Task TuneStepAsync(bool up)
+    {
+        await EnsureTunerSourceAsync().ConfigureAwait(false);
+        var restoreAuto = State.TunerAutoMode;
+        if (restoreAuto) await SendOrHttp("TMANMANUAL").ConfigureAwait(false);
+        await SendOrHttp(up ? "TFANUP" : "TFANDOWN").ConfigureAwait(false);
+        if (restoreAuto) await SendOrHttp("TMANAUTO").ConfigureAwait(false);
+    }
+
+    /// <summary>Seeks to the next receivable station (AUTO mode search).</summary>
+    public async Task TuneSeekAsync(bool up)
+    {
+        await EnsureTunerSourceAsync().ConfigureAwait(false);
+        if (!State.TunerAutoMode) await SendOrHttp("TMANAUTO").ConfigureAwait(false);
+        await SendOrHttp(up ? "TFANUP" : "TFANDOWN").ConfigureAwait(false);
+    }
+
+    /// <summary>Re-reads frequency, band and RDS name from the receiver.</summary>
+    public Task RefreshTunerAsync() =>
+        _telnet is not null && _telnet.IsConnected
+            ? _telnet.SendManyAsync("TFAN?", "TMAN?", "TFANNAME?")
+            : Task.CompletedTask;
+
+    private async Task EnsureTunerSourceAsync()
+    {
+        if (string.Equals(State.Main.Source, "TUNER", StringComparison.OrdinalIgnoreCase)) return;
+        await SendOrHttp("SITUNER").ConfigureAwait(false);
+        // The AVR drops tuner commands that arrive while the input is still switching.
+        await Task.Delay(800).ConfigureAwait(false);
+    }
 
     private async Task SendOrHttp(string cmd)
     {
