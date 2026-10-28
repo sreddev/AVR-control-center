@@ -53,7 +53,7 @@ Get the latest version from [**Releases**](https://github.com/sreddev/AVR-deskto
 
 Both are self-contained, so no .NET installation is needed. Windows SmartScreen may warn about an unknown publisher the first time, because the app isn't code-signed: choose **More info → Run anyway**.
 
-Settings, saved stations and profiles are stored in `%LocalAppData%\DenonRemote\settings.json` and survive updates.
+Settings, saved stations and profiles are stored in `%LocalAppData%\AvrRemote\settings.json` and survive updates (settings from the older `DenonRemote` folder are copied over on first start).
 
 ---
 
@@ -106,7 +106,7 @@ The full walkthrough of every page is in the **[User Guide](docs/USER-GUIDE.md)*
 
 ```bash
 git clone https://github.com/sreddev/AVR-desktop-control.git
-cd AVR-desktop-control/src/DenonRemote
+cd AVR-desktop-control/src/AvrRemote
 dotnet run
 ```
 

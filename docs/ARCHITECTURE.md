@@ -26,14 +26,14 @@ How AVR Desktop Control talks to a Denon / Marantz receiver, and how the code is
 ## Project layout
 
 ```
-src/DenonRemote/
+src/AvrRemote/
 ├── App.xaml(.cs)            Startup, DI container, single instance, accent colours, crash log
 ├── Assets/app.ico           App icon (12 sizes, 16–256 px)
-├── Denon/                   Receiver protocol
-│   ├── DenonTelnetClient    Socket, send queue (40 ms spacing), line reader
-│   ├── DenonHttpClient      goform fallback (port 8080, then 80)
-│   ├── DenonEventParser     Turns receiver lines into state changes
-│   ├── DenonProtocol        Token encoding: volume, tuner frequency, signal layout…
+├── Avr/                   Receiver protocol
+│   ├── AvrTelnetClient    Socket, send queue (40 ms spacing), line reader
+│   ├── AvrHttpClient      goform fallback (port 8080, then 80)
+│   ├── AvrEventParser     Turns receiver lines into state changes
+│   ├── AvrProtocol        Token encoding: volume, tuner frequency, signal layout…
 │   ├── ReceiverState        Observable model of the whole receiver
 │   ├── ZoneState            Per-zone power / volume / mute / input
 │   ├── ChannelState         Per-channel signal, speaker and trim state
@@ -43,7 +43,7 @@ src/DenonRemote/
 ├── Heos/                    HEOS CLI client, models, service, UPnP seek
 ├── Services/
 │   ├── ReceiverService      Facade the UI talks to: connect, commands, change tracking
-│   ├── AppSettings          settings.json (%LocalAppData%\DenonRemote)
+│   ├── AppSettings          settings.json (%LocalAppData%\AvrRemote)
 │   ├── AutoUpdateService    GitHub Releases check
 │   └── Localization         All UI strings
 ├── ViewModels/
@@ -62,7 +62,7 @@ src/DenonRemote/
 ## Data flow
 
 ```
- Receiver ──telnet line──► DenonTelnetClient ──► DenonEventParser ──► ReceiverState ──binding──► XAML
+ Receiver ──telnet line──► AvrTelnetClient ──► AvrEventParser ──► ReceiverState ──binding──► XAML
     ▲                                                                       │
     └──── SendOrHttp ◄── ReceiverService ◄── user edit (PropertyChanged / command)
 ```
@@ -116,7 +116,7 @@ Commands marked `// verified` in `AvrSettingsCatalog.cs` were read back from a M
 
 ## Settings file
 
-`%LocalAppData%\DenonRemote\settings.json` holds:
+`%LocalAppData%\AvrRemote\settings.json` holds:
 - preferences
 - recent receivers (last 5)
 - sound profiles

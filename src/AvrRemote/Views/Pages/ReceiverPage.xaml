@@ -1,0 +1,65 @@
+<pages:PageBase
+    x:Class="AvrRemote.Views.Pages.ReceiverPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:AvrRemote.Views.Pages"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20,16,20,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,14">
+                <TextBlock FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="Receiver" />
+                <TextBlock Style="{StaticResource Subtitle}" Text="Video, display, power and locks of the connected receiver." />
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                    <!-- Identity -->
+                    <Border Margin="0,0,0,12" Padding="20,16" Style="{StaticResource Card}">
+                        <StackPanel>
+                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Device" />
+                            <Grid Margin="0,10,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Margin="0,3" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Name" />
+                                <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,3" FontSize="13" FontWeight="SemiBold" Text="{Binding State.FriendlyName}" />
+                                <TextBlock Grid.Row="1" Margin="0,3" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Model" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,3" FontSize="13" FontWeight="SemiBold">
+                                    <Run Text="{Binding State.Brand, Mode=OneWay}" /> <Run Text="{Binding State.ModelName, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Grid.Row="2" Margin="0,3" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="IP address" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,3" FontSize="13" FontWeight="SemiBold" Text="{Binding State.IpAddress}" />
+                                <TextBlock Grid.Row="3" Margin="0,3" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Max volume" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,3" FontSize="13" FontWeight="SemiBold" Text="{Binding State.Main.VolumeMax}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <ContentControl Content="{Binding Video}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                    <ContentControl Content="{Binding DisplayPower}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                    <ContentControl Content="{Binding Locks}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</pages:PageBase>

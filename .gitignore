@@ -24,10 +24,7 @@ desktop.ini
 *.log
 
 # Local settings (user-specific, not source-controlled)
-# AppSettings are stored in %LOCALAPPDATA%\DenonRemote
-
-# Updates (ZIP is too large for git — use GitHub Releases)
-updates/denon/*.zip
+# AppSettings are stored in %LOCALAPPDATA%\AvrRemote
 
 # Reference material, too large for git
 *.apk

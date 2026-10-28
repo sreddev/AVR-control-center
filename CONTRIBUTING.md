@@ -18,7 +18,7 @@ Open an [issue](https://github.com/sreddev/AVR-desktop-control/issues) with:
 - your receiver model and firmware, if known
 - your Windows version and the app version (Settings → About)
 - the steps to reproduce the problem
-- a screenshot and `%TEMP%\DenonRemote-crash.log`, if the app crashed
+- a screenshot and `%TEMP%\AvrRemote-crash.log`, if the app crashed
 
 Reports that a feature does or doesn't appear on a given model are very useful, because the app shows options based on what the receiver answers.
 
@@ -28,11 +28,11 @@ Requirements: Windows 10/11 and the [.NET 8 SDK](https://dotnet.microsoft.com/do
 
 ```bash
 git clone https://github.com/sreddev/AVR-desktop-control.git
-cd AVR-desktop-control/src/DenonRemote
+cd AVR-desktop-control/src/AvrRemote
 dotnet run
 ```
 
-The solution file is `DenonDesktopControl.sln`; the project lives in `src/DenonRemote`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
+The solution file is `AVRDesktopControl.sln`; the project lives in `src/AvrRemote`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
 
 > Receivers accept only one telnet client. Close other remote apps (or Home Assistant's Denon integration) while debugging.
 
@@ -45,7 +45,7 @@ The solution file is `DenonDesktopControl.sln`; the project lives in `src/DenonR
 
 ## Adding a receiver setting
 
-Most receiver parameters need **one line** in `src/DenonRemote/Denon/AvrSettingsCatalog.cs`, and no UI code:
+Most receiver parameters need **one line** in `src/AvrRemote/Avr/AvrSettingsCatalog.cs`, and no UI code:
 
 ```csharp
 yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
@@ -73,11 +73,11 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
 
 ## Building a release
 
-1. Set the version in `src/DenonRemote/DenonRemote.csproj` (`<Version>`) and in `installer/setup.iss` (`AppVersion`, `OutputBaseFilename`).
+1. Set the version in `src/AvrRemote/AvrRemote.csproj` (`<Version>`) and in `installer/setup.iss` (`AppVersion`, `OutputBaseFilename`).
 2. Add a section to `CHANGELOG.md`.
 3. Publish a self-contained single-file build:
    ```powershell
-   dotnet publish src/DenonRemote/DenonRemote.csproj -c Release -r win-x64 --self-contained true `
+   dotnet publish src/AvrRemote/AvrRemote.csproj -c Release -r win-x64 --self-contained true `
      -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
      -p:EnableCompressionInSingleFile=true -p:DebugType=none -o publish
    ```

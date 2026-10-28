@@ -17,6 +17,12 @@
 ### Fixes
 - The "New version" banner in Settings still showed when no update existed. Its binding now falls back to hidden
 
+### Code
+- Renamed from Denon to AVR throughout the code: solution `AVRDesktopControl.sln`, project `src/AvrRemote/AvrRemote.csproj`, namespace `AvrRemote`, protocol folder `Avr/` with `AvrTelnetClient`, `AvrHttpClient`, `AvrEventParser` and `AvrProtocol`
+- Settings now live in `%LocalAppData%\AvrRemote`. On first start the app copies `settings.json` from the old `DenonRemote` folder, so stations, profiles and devices carry over
+- The crash log is now `%TEMP%\AvrRemote-crash.log`
+- Removed the stale 1.0.0 installer binary from `output/`
+
 ## v2.0 — AVR Desktop Control (2026-10-28)
 
 The first release under the new name. It brings the official Denon / Marantz AVR Remote app's feature set to the desktop and reorganizes the app around it.

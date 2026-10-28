@@ -1,0 +1,26 @@
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
+// Licensed under MIT License
+// https://github.com/sreddev/AVR-desktop-control
+
+using System.Windows;
+using AvrRemote.ViewModels;
+
+namespace AvrRemote.Views.Pages;
+
+public partial class SourcesPage : PageBase
+{
+    public SourcesPage() => InitializeComponent();
+
+    private void OnSourceClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el && el.Tag is string token && DataContext is MainViewModel vm)
+            _ = vm.SelectSourceCommand.ExecuteAsync(token);
+    }
+
+    private void OnSurroundClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el && el.Tag is string mode && DataContext is MainViewModel vm)
+            _ = vm.SetSurroundCommand.ExecuteAsync(mode);
+    }
+}

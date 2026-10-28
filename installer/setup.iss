@@ -14,7 +14,7 @@ SolidCompression=yes
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 WizardStyle=modern
-SetupIconFile=..\src\DenonRemote\Assets\app.ico
+SetupIconFile=..\src\AvrRemote\Assets\app.ico
 LicenseFile=..\LICENSE
 PrivilegesRequired=lowest
 
