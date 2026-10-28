@@ -4,19 +4,24 @@
     xmlns:conv="clr-namespace:DenonRemote.Converters">
 
     <!-- ══════════ Brand palette ══════════
-         Warm carmine that pops on the dark canvas. -->
-    <Color x:Key="AccentColor">#E63946</Color>
-    <Color x:Key="AccentColorLight1">#F1596A</Color>
-    <Color x:Key="AccentColorLight2">#F58390</Color>
-    <Color x:Key="AccentColorDark1">#C4222E</Color>
-    <Color x:Key="AccentColorDark2">#9E1B24</Color>
+         Army green. Two roles, because no single olive is readable both ways:
+         AccentColor fills buttons/chips under white text (5.9:1), while
+         AccentTextColor is for text, outlines and thin lines drawn on the
+         dark cards (7.1:1 on Surface1). -->
+    <Color x:Key="AccentColor">#556B2F</Color>
+    <Color x:Key="AccentColorLight1">#6B7F2A</Color>
+    <Color x:Key="AccentColorLight2">#7A8B3A</Color>
+    <Color x:Key="AccentColorDark1">#4B5320</Color>
+    <Color x:Key="AccentColorDark2">#3E4A1C</Color>
+    <Color x:Key="AccentTextColor">#9DAE5A</Color>
 
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentColorLight1}" />
     <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentColorDark1}" />
+    <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentTextColor}" />
 
     <!-- Channel matrix colors -->
-    <Color x:Key="ActiveSpeakerColor">#E63946</Color>
+    <Color x:Key="ActiveSpeakerColor">#556B2F</Color>
     <Color x:Key="IdleSpeakerColor">#2F3238</Color>
     <SolidColorBrush x:Key="ActiveSpeakerBrush" Color="{StaticResource ActiveSpeakerColor}" />
     <SolidColorBrush x:Key="IdleSpeakerBrush" Color="{StaticResource IdleSpeakerColor}" />
@@ -68,7 +73,7 @@
     <conv:ViewHeightConverter x:Key="ViewHeight" />
     <conv:MuteIconConverter x:Key="MuteIcon" />
     <conv:MuteBrushConverter x:Key="MuteBrush"
-                             MutedBrush="{StaticResource AccentBrush}"
+                             MutedBrush="{StaticResource AccentTextBrush}"
                              NormalBrush="{StaticResource TextPrimaryBrush}" />
     <conv:PlayPauseIconConverter x:Key="PlayPauseIcon" />
     <conv:HeosStatusConverter x:Key="HeosStatus" />

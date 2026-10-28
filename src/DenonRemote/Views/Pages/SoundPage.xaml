@@ -32,7 +32,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                 <Setter TargetName="Root" Property="Background" Value="{StaticResource Surface1Brush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -188,7 +188,7 @@
                                                 VerticalAlignment="Center"
                                                 Background="{Binding IsSpeakerActive, Converter={StaticResource ChannelBg}}"
                                                 CornerRadius="5"
-                                                ToolTip="Rojo = reproduciendo en el modo actual">
+                                                ToolTip="Verde = reproduciendo en el modo actual">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"

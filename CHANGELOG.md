@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.6.1 — Army Green (2026-10-28)
+
+### Changes
+
+**New colour scheme**
+- The red accent is replaced by army green throughout the app: buttons, toggles, sliders, channel chips, station badges, highlights and status dots
+- Two shades keep everything readable on the dark theme: dark olive `#556B2F` for fills under white text, light olive `#9DAE5A` for accent-coloured text and outlines
+- Primary buttons (Power, Tune, Save, Play…) now pin WPF-UI's accent shades explicitly; its automatic dark-theme tint would have dropped white button text to 3.5:1, now 8.2:1
+- Mute indicator follows the accent colour
+
+**Docs**
+- New screenshots for Home, Radio and HEOS; the Radio page is now shown in the README
+
 ## v1.6.0 — Radio Edition (2026-10-28)
 
 ### New features

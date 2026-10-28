@@ -33,7 +33,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -123,7 +123,7 @@
                             HorizontalAlignment="Center"
                             FontSize="17"
                             FontWeight="SemiBold"
-                            Foreground="{StaticResource AccentBrush}"
+                            Foreground="{StaticResource AccentTextBrush}"
                             Text="{Binding CurrentStationName}"
                             TextTrimming="CharacterEllipsis" />
                         <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
@@ -359,8 +359,8 @@
                                         </Border>
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                                <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-                                                <Setter TargetName="Freq" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
+                                                <Setter TargetName="Freq" Property="Foreground" Value="{StaticResource AccentTextBrush}" />
                                                 <Setter TargetName="NumBadge" Property="Background" Value="{StaticResource ActiveSpeakerBrush}" />
                                                 <Setter TargetName="Num" Property="Foreground" Value="{StaticResource ChannelActiveTextBrush}" />
                                             </DataTrigger>

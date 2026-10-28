@@ -50,7 +50,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -64,7 +64,7 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                    <Setter Property="Foreground" Value="{StaticResource AccentTextBrush}" />
                     <Setter Property="TextDecorations" Value="Underline" />
                 </Trigger>
             </Style.Triggers>
@@ -93,7 +93,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Grip" Property="Background" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Grip" Property="Background" Value="{StaticResource AccentTextBrush}" />
                                 <Setter TargetName="Grip" Property="Height" Value="70" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -382,7 +382,7 @@
                         <Button Grid.Column="2" Click="OnSearchClick" Content="Buscar" Style="{StaticResource MiniBtn}" />
                     </Grid>
 
-                    <ProgressBar Grid.Row="2" Height="2" VerticalAlignment="Bottom" Foreground="{StaticResource AccentBrush}" IsIndeterminate="True" Visibility="{Binding Heos.IsBusy, Converter={StaticResource BoolToVis}}" />
+                    <ProgressBar Grid.Row="2" Height="2" VerticalAlignment="Bottom" Foreground="{StaticResource AccentTextBrush}" IsIndeterminate="True" Visibility="{Binding Heos.IsBusy, Converter={StaticResource BoolToVis}}" />
 
                     <Grid Grid.Row="3">
                         <!-- Service picker: grid of square cards -->
@@ -454,7 +454,7 @@
                                                     </Border>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                                         </Trigger>
                                                         <Trigger Property="IsEnabled" Value="False">
                                                             <Setter TargetName="Root" Property="Opacity" Value="0.45" />
@@ -550,7 +550,7 @@
                                                     </Border>
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>

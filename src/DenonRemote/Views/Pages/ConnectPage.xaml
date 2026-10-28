@@ -90,7 +90,7 @@
                                                 </Trigger>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter TargetName="Root" Property="Background" Value="{StaticResource Surface2Brush}" />
-                                                    <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                    <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                                     <Setter TargetName="Root" Property="BorderThickness" Value="2" />
                                                 </Trigger>
                                             </ControlTemplate.Triggers>
@@ -211,7 +211,7 @@
                             <ui:SymbolIcon
                                 VerticalAlignment="Center"
                                 FontSize="16"
-                                Foreground="{StaticResource AccentBrush}"
+                                Foreground="{StaticResource AccentTextBrush}"
                                 Symbol="Info24" />
                             <TextBlock
                                 x:Name="HelpTitle"

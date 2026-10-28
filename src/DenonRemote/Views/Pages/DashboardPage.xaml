@@ -253,7 +253,7 @@
                 <Border
                     Padding="12"
                     Background="{StaticResource Surface1Brush}"
-                    BorderBrush="{StaticResource AccentBrush}"
+                    BorderBrush="{StaticResource AccentTextBrush}"
                     BorderThickness="1.5"
                     CornerRadius="12"
                     MaxHeight="400">
@@ -291,7 +291,7 @@
                 <Border
                     Padding="12"
                     Background="{StaticResource Surface1Brush}"
-                    BorderBrush="{StaticResource AccentBrush}"
+                    BorderBrush="{StaticResource AccentTextBrush}"
                     BorderThickness="1.5"
                     CornerRadius="12"
                     MaxHeight="450">
@@ -313,7 +313,7 @@
                 <Border
                     Padding="18"
                     Background="{StaticResource Surface1Brush}"
-                    BorderBrush="{StaticResource AccentBrush}"
+                    BorderBrush="{StaticResource AccentTextBrush}"
                     BorderThickness="1.5"
                     CornerRadius="12">
                     <Border.Effect>
@@ -345,7 +345,7 @@
                                 VerticalAlignment="Center"
                                 FontSize="22"
                                 FontWeight="Bold"
-                                Foreground="{StaticResource AccentBrush}" />
+                                Foreground="{StaticResource AccentTextBrush}" />
                         </Grid>
                         <Slider
                             x:Name="TrimSlider"

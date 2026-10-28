@@ -144,7 +144,7 @@
             VerticalAlignment="Bottom"
             Cursor="Hand"
             FontSize="11"
-            Foreground="{StaticResource AccentBrush}"
+            Foreground="{StaticResource AccentTextBrush}"
             MouseLeftButtonUp="OnOpenFull"
             Text="Abrir ventana completa â€º"
             TextDecorations="Underline" />

@@ -53,8 +53,8 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 - 🌐 **Bilingual** — Spanish / English, chosen automatically from your Windows language
 - 🔄 **Automatic updates** — Checks for new versions at startup from [haussmed.cl](https://haussmed.cl/denon/)
 - ⚡ **Smart reconnection** — HTTP fallback while the AVR is in standby
-- 🔇 **Mute indicator** — Red icon and text while the receiver is muted
-- 🖥️ **Dark mode** — High-contrast Fluent/Mica interface
+- 🔇 **Mute indicator** — Icon and text switch to the accent colour while the receiver is muted
+- 🖥️ **Dark mode** — High-contrast Fluent/Mica interface with an army-green accent (white button text at 5.9:1 or better)
 
 ---
 
@@ -74,7 +74,7 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 ### Direct download
 
 1. Go to [**Releases**](https://github.com/sreddev/denon-desktop-control_tuner/releases)
-2. Download `DenonDesktopControl-1.6.0.zip` (portable)
+2. Download `DenonDesktopControl-1.6.1.zip` (portable)
 3. Unzip and run `DenonDesktopControl.exe` — no .NET installation needed (self-contained)
 
 ### Build from source
@@ -130,6 +130,9 @@ Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). You
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" width="400" alt="Dashboard">
+  <img src="docs/screenshot-radio.png" width="400" alt="AM / FM Radio">
+</p>
+<p align="center">
   <img src="docs/screenshot-heos.png" width="400" alt="HEOS">
 </p>
 

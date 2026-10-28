@@ -35,11 +35,16 @@ public partial class App : Application
         }
 
         // WPF-UI defaults to the Windows accent color. Override it with the
-        // Denon brand red so every "Appearance=Primary" button, toggle track
-        // and slider thumb picks it up automatically.
+        // app's army green (AccentColor in Theme.xaml) so every
+        // "Appearance=Primary" button, toggle track and slider thumb picks it
+        // up automatically. All four shades are set explicitly: the
+        // single-colour overload lightens the fill for dark themes, which
+        // drops white button text to 3.5:1. These keep it at 5.9:1 or better.
         Wpf.Ui.Appearance.ApplicationAccentColorManager.Apply(
-            System.Windows.Media.Color.FromRgb(0xE6, 0x39, 0x46),
-            Wpf.Ui.Appearance.ApplicationTheme.Dark);
+            System.Windows.Media.Color.FromRgb(0x55, 0x6B, 0x2F),   // system
+            System.Windows.Media.Color.FromRgb(0x4B, 0x53, 0x20),   // primary
+            System.Windows.Media.Color.FromRgb(0x55, 0x6B, 0x2F),   // secondary (default fill)
+            System.Windows.Media.Color.FromRgb(0x4F, 0x62, 0x28));  // tertiary
 
         // Global exception handler â€” writes to %TEMP%\DenonRemote-crash.log
         DispatcherUnhandledException += (_, ev) =>

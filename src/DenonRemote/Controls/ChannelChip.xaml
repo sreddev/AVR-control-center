@@ -28,7 +28,7 @@
                             Text="{Binding Channel.Label, RelativeSource={RelativeSource TemplatedParent}}" />
                     </Border>
                     <ControlTemplate.Triggers>
-                        <!-- Input signal mode: red when the incoming signal contains this channel -->
+                        <!-- Input signal mode: accent green when the incoming signal contains this channel -->
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Mode, RelativeSource={RelativeSource Self}}" Value="InputSignal" />
@@ -37,7 +37,7 @@
                             <Setter TargetName="Root" Property="Background" Value="{StaticResource ActiveSpeakerBrush}" />
                             <Setter TargetName="Label" Property="Foreground" Value="{StaticResource ChannelActiveTextBrush}" />
                         </MultiDataTrigger>
-                        <!-- Active speaker mode: red when the physical speaker is playing -->
+                        <!-- Active speaker mode: accent green when the physical speaker is playing -->
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Mode, RelativeSource={RelativeSource Self}}" Value="ActiveSpeaker" />

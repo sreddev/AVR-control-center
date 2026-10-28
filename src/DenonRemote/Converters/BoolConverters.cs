@@ -48,7 +48,7 @@ public sealed class MuteIconConverter : IValueConverter
     public object ConvertBack(object value, Type _, object? __, CultureInfo ___) => throw new NotSupportedException();
 }
 
-/// <summary>Red when muted, normal foreground otherwise.</summary>
+/// <summary>Accent colour when muted, normal foreground otherwise.</summary>
 public sealed class MuteBrushConverter : IValueConverter
 {
     public Brush? MutedBrush { get; set; }

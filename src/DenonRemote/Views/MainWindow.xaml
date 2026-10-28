@@ -241,7 +241,7 @@
                             HorizontalAlignment="Right"
                             FontSize="9"
                             FontWeight="Bold"
-                            Foreground="{StaticResource AccentBrush}"
+                            Foreground="{StaticResource AccentTextBrush}"
                             Text="MUTE"
                             Visibility="{Binding State.Main.IsMuted, Converter={StaticResource BoolToVis}}" />
                     </StackPanel>

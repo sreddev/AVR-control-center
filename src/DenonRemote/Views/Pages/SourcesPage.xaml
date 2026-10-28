@@ -32,7 +32,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                 <Setter TargetName="Root" Property="Background" Value="{StaticResource Surface1Brush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
@@ -94,7 +94,7 @@
                                     </Border>
                                     <ControlTemplate.Triggers>
                                         <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                             <Setter TargetName="Root" Property="Background" Value="{StaticResource Surface2Brush}" />
                                         </Trigger>
                                     </ControlTemplate.Triggers>
@@ -116,7 +116,7 @@
                         Margin="0,0,0,16"
                         FontSize="20"
                         FontWeight="Bold"
-                        Foreground="{StaticResource AccentBrush}"
+                        Foreground="{StaticResource AccentTextBrush}"
                         Text="{Binding State.SurroundMode}" />
 
                     <WrapPanel Orientation="Horizontal">
