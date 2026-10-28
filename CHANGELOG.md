@@ -1,56 +1,120 @@
 # Changelog
 
-## v2.0.1 (2026-10-28)
-
-- The GitHub repository is renamed to [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control); links, the About card and the update check use the new name
-
 ## v2.0 — AVR Desktop Control (2026-10-28)
 
-### Changes
+The first release under the new name. It brings the official Denon / Marantz AVR Remote app's feature set to the desktop and reorganizes the app around it.
 
-**Rebrand**
-- The app is now **AVR Desktop Control** (`AVRDesktopControl.exe`), maintained by Sergio ([@sreddev](https://github.com/sreddev)). Settings are still read from `%LocalAppData%\DenonRemote`, so saved stations and profiles carry over
-- New green app icon
-- The GitHub repository is now [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control)
-- "Radio" is renamed **Tuner**. Below the station name, the tuner now shows the RDS name the station broadcasts, live, with an RDS badge
+### Highlights
+- **AVR Desktop Control**: new name, green icon, new repository [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control)
+- **Three new pages**: Processing, Zones and Receiver
+- **Quick Select / Smart Select**, **sleep timers**, a live **signal panel** and the **RDS station name** on the Tuner
+- **Adapts to each model**: every new option stays hidden until the connected receiver reports it
+- Fixed: tone, subwoofer and Zone 2 volume sliders on the Sound page never reached the receiver
 
-**Settings**
-- "Start minimized" is now on by default for new installs (existing `settings.json` values are kept)
-- Auto-update now checks the GitHub Releases API of [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control/releases) instead of haussmed.cl; the Download button opens the release's ZIP asset
-- Fixed the About card always showing "v1.0.0": the version is now read from the assembly, i.e. `<Version>` in `DenonRemote.csproj`, which must match the GitHub release tag (`v2.0.0`)
-- About card: "Created by" Sergio, Telegram [@sreddev](https://t.me/sreddev), PayPal donate button ([paypal.me/sreddev](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO)), link to the GitHub repo
+### Rebrand
+- The app is now **AVR Desktop Control** (`AVRDesktopControl.exe`), maintained by Sergio ([@sreddev](https://github.com/sreddev))
+- New green app icon: title bar, taskbar, tray, installer and exe, all six icon sizes
+- Window titles, tray tooltip, installer, README, CONTRIBUTING and every source file header carry the new name and author
+- About card: "Created by" Sergio, [Telegram @sreddev](https://t.me/sreddev), a working [PayPal donate](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO) button and a link to the repository
+- Settings still live in `%LocalAppData%\DenonRemote`, so saved stations, profiles and devices carry over from earlier versions
 
-**Features from the official Denon / Marantz AVR Remote app**
+### Navigation
+The sidebar is grouped into three sections:
+- **Listening:** Home, Sources, Tuner, HEOS
+- **Audio:** Sound, Processing, Zones
+- **System:** Receiver, Devices
 
-Every new control stays hidden until the receiver answers its status query, so each page only shows what the connected model supports.
+"Radio" is renamed **Tuner** everywhere.
 
-- **Processing** page (new)
-  - Audyssey: MultEQ, Dynamic EQ, Reference Level Offset, Dynamic Volume, LFC and containment amount, Dirac Live slot
-  - Dialog & dynamics: Dialog Enhancer, Dialog Level, Cinema EQ, Dynamic Compression, Loudness Management
-  - Surround parameters: Center Spread, Panorama, Dimension, Center Width, Center Image, Delay Time, Effect Level, Room Size, LFE level, Neural:X. They are re-read after every sound-mode change, since the receiver stores them per mode
-  - Speakers & extras: Speaker A/B, Graphic EQ, Compressed Audio Restorer, Bluetooth transmitter and its output mode
-- **Zones** page (new): Main, Zone 2 and Zone 3 cards with power, mute, volume, input and sleep timer, plus All Zone Stereo. Zone 3 is supported for the first time, and extra zones appear only when the receiver reports them
-- **Receiver** page (new)
-  - Device info
-  - Video & A/V sync: HDMI audio output, HDMI monitor, output resolution, video mode, picture mode, aspect ratio, Auto Lip Sync, audio delay
-  - Display & power: dimmer, ECO mode, auto standby
-  - Locks & limits: volume limit, front panel lock, IR remote lock
-- **Home**
-  - Quick Select (Denon) / Smart Select (Marantz) bar. Slot names are read from the receiver; click a slot to recall it, right-click to store the current input, volume and sound settings in it
-  - Sleep timer
-  - The FORMAT card becomes a SIGNAL card: signal type, channel layout (2.0 / 5.1 / 7.1.4), sample rate, decoder, video in → out and number of active speakers. Click it to refresh
-- **Sources**: a new "Customize" mode renames inputs or hides them from every source picker. Names are stored in the app; the receiver keeps its own
-- **Tuner**: saved stations can be marked "skip" so previous / next passes over them
-- **Sound**: subwoofer output on/off switch. The Zones card moved to the new Zones page
-- **Tray widget and tray menu**: Quick / Smart Select slots and the sleep timer
-- Navigation is grouped as listening (Home, Sources, Tuner, HEOS), audio (Sound, Processing, Zones) and system (Receiver, Devices)
+### Processing (new page)
+- **Audyssey & room correction**: MultEQ, Dynamic EQ, Reference Level Offset, Dynamic Volume, LFC and containment amount, Dirac Live slot
+- **Dialog & dynamics**: Dialog Enhancer, Dialog Level (on/off and trim), Cinema EQ, Dynamic Compression, Loudness Management
+- **Surround parameters**: Center Spread, Panorama, Dimension, Center Width, Center Image, Delay Time, Effect Level, Room Size, LFE level, Neural:X. They are re-read after every sound-mode change, because the receiver stores them per mode
+- **Speakers & extras**: Speaker A/B, Graphic EQ, Compressed Audio Restorer, Bluetooth transmitter and its output mode
+- The current sound mode is shown in the page header
 
-**Fixes**
-- Bass, Treble, Subwoofer level, Tone Control and the Zone 2 volume on the Sound page now actually reach the receiver; before, the sliders only changed the on-screen value
-- The Home header shows the real brand (it always said "DENON")
-- The "New version" banner in Settings no longer shows when there is no update
+### Zones (new page)
+- Main, Zone 2 and **Zone 3** cards, each with power, mute, volume, input and sleep timer
+- All Zone Stereo
+- Extra zones appear only when the receiver reports them. Zone 2 still never turns on by itself, and the main power button still switches it off
+
+### Receiver (new page)
+- **Device**: name, brand and model, IP address, maximum volume
+- **Video & A/V sync**: HDMI audio output, HDMI monitor output, output resolution, video mode, picture mode, aspect ratio, Auto Lip Sync, audio delay
+- **Display & power**: front panel dimmer, ECO mode, auto standby
+- **Locks & limits**: volume limit, front panel lock (with or without volume), IR remote lock
+
+### Home
+- **Quick Select** (Denon) / **Smart Select** (Marantz) bar. Slot names are read from the receiver. Click a slot to recall it; right-click to store the current input, volume and sound settings in it
+- **Sleep timer** for the main zone
+- The FORMAT card becomes a **SIGNAL** card: signal type, channel layout (2.0 / 5.1 / 7.1.4), sample rate, decoder, video in → out and active speaker count. Click it to refresh
+- On the tuner, the Source card also shows the frequency and the live RDS name
+- The header shows the real brand and model instead of a fixed "DENON"
+- The page scrolls, so the speaker map is never cut off
+
+### Tuner
+- Under the frequency, the page shows the **live RDS station name (PS)** with an RDS badge, next to the name you saved for the station. Many stations rotate several texts there, and the line follows them
+- Saved stations can be marked **skip**, so previous / next pass over them
+
+### Sources
+- New **Customize** mode: rename inputs or hide them from every source picker (Home, Zones, Sources). Names live in the app; the receiver keeps its own
 - Inputs without a custom receiver name show a friendly caption ("Tuner", "HEOS Music") instead of the raw token
+
+### Sound
+- Subwoofer output on/off switch, on models that report it
+- The Zones card moved to the new Zones page
+
+### Tray widget and tray menu
+- Quick / Smart Select slots in the widget and as a tray submenu
+- Sleep timer in the widget
+
+### Settings
+- **Start minimized** is on by default for new installs
+- **Auto-update** checks the GitHub Releases of this repository. The Download button opens the release's ZIP
+- The About card shows the real version. It used to always say "v1.0.0"
+- The "New version" banner only appears when an update exists
+
+### Fixes
+- Bass, Treble, Subwoofer level, Tone Control and Zone 2 volume on the Sound page now reach the receiver. Before, the sliders only changed the on-screen value
 - Zone replies such as channel levels are no longer mistaken for a zone's input
+- Receiver echoes are no longer sent back to the receiver as new commands
+- LFE level no longer reads "-0 dB"
+
+### Refactoring and architecture
+- **Data-driven receiver settings**. `Denon/AvrSetting.cs` models any telnet parameter as a Toggle, Choice, Level or Action. `Denon/AvrSettingsCatalog.cs` defines about 45 of them in one place: prefix, query, options, range, encoding, UI group and description. Adding a parameter is one catalog line, and the UI picks it up automatically
+- **Support detection**. Receivers stay silent for parameters they lack, so a setting is shown only after its query is answered. Support resets when you connect to another receiver
+- **Safe writes**
+  - Replies are routed to settings by the longest matching prefix
+  - Settings that share a prefix accept only their own values (`PSDIL ON` vs `PSDIL 50`, `BTTX ON` vs `BTTX SP`)
+  - A slider ignores receiver echoes while you drag it
+  - Values are never written before the receiver has reported them, and ranges widen to fit what the receiver reports. Together these stop WPF slider coercion from sending a command nobody asked for
+- **Remote vs user changes**. The event parser flags the state while it applies receiver lines (`ReceiverState.IsApplyingRemote`). Listeners use the flag to send only real user edits
+- **ReceiverService**
+  - Sends every catalog query on connect
+  - Debounces slider commands per control
+  - Re-reads signal info after an input change, plus the per-mode parameters after a sound-mode change
+  - One zone API (power, mute, volume, input) for Main / Zone 2 / Zone 3
+  - Picks `MSQUICK` or `MSSMART` from the receiver's reply, falling back to the brand
+- **Event parser**
+  - Catalog lines are handled first
+  - One zone handler covers Zone 2 and Zone 3, with strict input validation
+  - New parsing for Quick Select slots and names (`SSQSNZMA`), signal type (`SSINFAISSIG`), video resolution (`SSINFSIGRES`), decoder (`SYSMI`) and channel layout
+  - The old ECO parser moved into the catalog
+- **UI building blocks**
+  - Reusable row templates (`Views/SettingTemplates.xaml`) chosen by `Controls/SettingTemplateSelector.cs`, plus a section card template
+  - View models `SettingSection` and `ZonePanel`
+  - Templates are merged at application level, because pages are created before they join the window
+- **New state**: Zone 3, Quick Select slots, signal information, input aliases and hidden flags, station skip
+- **AutoUpdateService** rewritten for the GitHub Releases API (tag `vX.Y.Z`, ZIP asset, User-Agent header)
+- **Version source**: the version comes only from `<Version>` in `DenonRemote.csproj`, and GitHub release tags must match it
+
+### Build and repository
+- Self-contained, compressed single-file build (`dotnet publish -r win-x64 -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true`)
+- Inno Setup installer, now in English, installs per user without admin rights
+- The APK and installer output are git-ignored
+- Removed: the old update manifest (`updates/denon/update.json`), the v1.5.0 release notes, a stale 1.0.0 installer binary and the old Radio screenshot
+- New screenshots: Home, Tuner, Processing, HEOS
+- Commands marked "verified" in the catalog were read back from a Marantz NR1508
 
 ## v1.6.1 — Army Green (2026-10-28)
 

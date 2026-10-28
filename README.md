@@ -81,7 +81,7 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 ### Direct download
 
 1. Go to [**Releases**](https://github.com/sreddev/AVR-desktop-control/releases)
-2. Download `AVRDesktopControl-2.0.1.zip` (portable)
+2. Download `AVRDesktopControl-2.0.0.zip` (portable)
 3. Unzip and run `AVRDesktopControl.exe` — no .NET installation needed (self-contained)
 
 ### Build from source
