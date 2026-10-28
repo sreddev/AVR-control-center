@@ -7,8 +7,8 @@
 **Full remote control for Denon and Marantz receivers on Windows.**  
 Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, AM/FM tuner with RDS and saved stations, floating system-tray widget, automatic network discovery, real-time monitoring, UPnP seek and complete control of volume, sources, channels, zones and sound profiles.
 
-[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control_tuner?style=flat-square)](https://github.com/sreddev/AVR-desktop-control_tuner/releases)
-[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control_tuner?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control?style=flat-square)](https://github.com/sreddev/AVR-desktop-control/releases)
+[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control?style=flat-square)](LICENSE)
 
 ---
 
@@ -58,7 +58,7 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 
 - 📌 **Floating widget** — Single-click the tray icon for a mini control, double-click for the full window
 - 🌐 **English interface** — All UI text, tooltips and messages in English
-- 🔄 **Automatic updates** — Checks [GitHub Releases](https://github.com/sreddev/AVR-desktop-control_tuner/releases) for new versions at startup
+- 🔄 **Automatic updates** — Checks [GitHub Releases](https://github.com/sreddev/AVR-desktop-control/releases) for new versions at startup
 - ⚡ **Smart reconnection** — HTTP fallback while the AVR is in standby
 - 🔇 **Mute indicator** — Icon and text switch to the accent colour while the receiver is muted
 - 🖥️ **Dark mode** — High-contrast Fluent/Mica interface with a bright army-green accent (white button text stays above WCAG AA 4.5:1)
@@ -80,15 +80,15 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 
 ### Direct download
 
-1. Go to [**Releases**](https://github.com/sreddev/AVR-desktop-control_tuner/releases)
-2. Download `AVRDesktopControl-2.0.0.zip` (portable)
+1. Go to [**Releases**](https://github.com/sreddev/AVR-desktop-control/releases)
+2. Download `AVRDesktopControl-2.0.1.zip` (portable)
 3. Unzip and run `AVRDesktopControl.exe` — no .NET installation needed (self-contained)
 
 ### Build from source
 
 ```bash
-git clone https://github.com/sreddev/AVR-desktop-control_tuner.git
-cd AVR-desktop-control_tuner/src/DenonRemote
+git clone https://github.com/sreddev/AVR-desktop-control.git
+cd AVR-desktop-control/src/DenonRemote
 dotnet run
 ```
 
@@ -155,7 +155,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development instructions and the proj
 
 ## Credits
 
-Made with ♥ by **Sergio** — [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner)
+Made with ♥ by **Sergio** — [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control)
 
 | | |
 |---|---|

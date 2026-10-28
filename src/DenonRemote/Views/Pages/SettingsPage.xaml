@@ -208,7 +208,7 @@
                         Text="MIT License - Open source"
                         TextWrapping="Wrap" />
                     <TextBlock FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" TextWrapping="Wrap">
-                        <Hyperlink Click="OnRepoClick" Foreground="{StaticResource TextTertiaryBrush}">github.com/sreddev/AVR-desktop-control_tuner</Hyperlink>
+                        <Hyperlink Click="OnRepoClick" Foreground="{StaticResource TextTertiaryBrush}">github.com/sreddev/AVR-desktop-control</Hyperlink>
                     </TextBlock>
                 </StackPanel>
             </Border>

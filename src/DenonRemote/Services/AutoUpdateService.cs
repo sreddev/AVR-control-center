@@ -1,7 +1,7 @@
 ﻿// AVR Desktop Control
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control_tuner
+// https://github.com/sreddev/AVR-desktop-control
 
 using System;
 using System.Diagnostics;
@@ -23,7 +23,7 @@ namespace DenonRemote.Services;
 /// </summary>
 public sealed class AutoUpdateService
 {
-    public const string RepoSlug = "sreddev/AVR-desktop-control_tuner";
+    public const string RepoSlug = "sreddev/AVR-desktop-control";
     public const string RepoUrl = "https://github.com/" + RepoSlug;
     public const string ReleasesUrl = RepoUrl + "/releases";
 

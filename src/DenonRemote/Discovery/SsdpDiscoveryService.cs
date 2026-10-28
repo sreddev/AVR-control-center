@@ -1,7 +1,7 @@
 ﻿// AVR Desktop Control
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control_tuner
+// https://github.com/sreddev/AVR-desktop-control
 
 using System;
 using System.Collections.Concurrent;

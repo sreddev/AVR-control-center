@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.0.1 (2026-10-28)
+
+- The GitHub repository is renamed to [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control); links, the About card and the update check use the new name
+
 ## v2.0 — AVR Desktop Control (2026-10-28)
 
 ### Changes
@@ -7,12 +11,12 @@
 **Rebrand**
 - The app is now **AVR Desktop Control** (`AVRDesktopControl.exe`), maintained by Sergio ([@sreddev](https://github.com/sreddev)). Settings are still read from `%LocalAppData%\DenonRemote`, so saved stations and profiles carry over
 - New green app icon
-- The GitHub repository is now [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner)
+- The GitHub repository is now [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control)
 - "Radio" is renamed **Tuner**. Below the station name, the tuner now shows the RDS name the station broadcasts, live, with an RDS badge
 
 **Settings**
 - "Start minimized" is now on by default for new installs (existing `settings.json` values are kept)
-- Auto-update now checks the GitHub Releases API of [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner/releases) instead of haussmed.cl; the Download button opens the release's ZIP asset
+- Auto-update now checks the GitHub Releases API of [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control/releases) instead of haussmed.cl; the Download button opens the release's ZIP asset
 - Fixed the About card always showing "v1.0.0": the version is now read from the assembly, i.e. `<Version>` in `DenonRemote.csproj`, which must match the GitHub release tag (`v2.0.0`)
 - About card: "Created by" Sergio, Telegram [@sreddev](https://t.me/sreddev), PayPal donate button ([paypal.me/sreddev](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO)), link to the GitHub repo
 

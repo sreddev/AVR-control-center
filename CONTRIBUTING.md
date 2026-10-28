@@ -12,7 +12,7 @@ Thanks for your interest! This is a personal project, but contributions are welc
 
 ## Reporting bugs
 
-Open an [Issue](https://github.com/sreddev/AVR-desktop-control_tuner/issues) with:
+Open an [Issue](https://github.com/sreddev/AVR-desktop-control/issues) with:
 - Your receiver model
 - Windows version
 - Steps to reproduce the problem
@@ -22,8 +22,8 @@ Open an [Issue](https://github.com/sreddev/AVR-desktop-control_tuner/issues) wit
 
 ```bash
 # Clone
-git clone https://github.com/sreddev/AVR-desktop-control_tuner.git
-cd AVR-desktop-control_tuner/src/DenonRemote
+git clone https://github.com/sreddev/AVR-desktop-control.git
+cd AVR-desktop-control/src/DenonRemote
 
 # Build and run
 dotnet run

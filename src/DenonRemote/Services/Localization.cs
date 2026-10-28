@@ -1,7 +1,7 @@
 ﻿// AVR Desktop Control
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control_tuner
+// https://github.com/sreddev/AVR-desktop-control
 
 namespace DenonRemote.Services;
 
@@ -28,7 +28,7 @@ public static class L
     public static string SettingsStartMinimized => "Start minimized";
     public static string SettingsStartMinimizedDesc => "Launches the app to the tray so it doesn't steal focus.";
     public static string SettingsAutoUpdate => "Auto-update";
-    public static string SettingsAutoUpdateDesc => "Checks GitHub (sreddev/AVR-desktop-control_tuner) for new releases at startup.";
+    public static string SettingsAutoUpdateDesc => "Checks GitHub (sreddev/AVR-desktop-control) for new releases at startup.";
     public static string SettingsVolumeUnit => "Volume unit";
     public static string SettingsVolumeUnitDesc => "How the master volume is displayed.";
 
