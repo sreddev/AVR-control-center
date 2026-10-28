@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.1 (2026-10-28)
+
+### App icon
+- Redrawn brighter and bolder so it stands out on the taskbar: a light olive gradient tile with a thicker white ring and dot
+- Rounded-square shape. A circle only covers about 79 % of its slot, so the icon looks larger in the same space
+- Rendered natively at 12 sizes (16, 20, 24, 30, 32, 36, 40, 48, 64, 96, 128, 256 px). The 24, 30 and 36 px sizes the taskbar uses at 100–150 % scaling were missing, so Windows used to shrink a 32 px image and blur it
+
+### Documentation
+- **README** is restructured as a landing page: feature table, download and install (including the SmartScreen note), quick start, compatibility, screenshot gallery, documentation index
+- New **[User Guide](docs/USER-GUIDE.md)**: every page and control, the tray widget and menu, troubleshooting and FAQ, with screenshots
+- New **[Architecture](docs/ARCHITECTURE.md)**: connections and ports, project layout, data flow, the data-driven settings model and protocol notes
+- **CONTRIBUTING** rewritten: development setup, pull requests, adding a receiver setting in one line, code style, and the full release process
+- Fresh screenshots of all ten pages with the new icon, replacing the four old ones
+
+### Fixes
+- The "New version" banner in Settings still showed when no update existed. Its binding now falls back to hidden
+
 ## v2.0 — AVR Desktop Control (2026-10-28)
 
 The first release under the new name. It brings the official Denon / Marantz AVR Remote app's feature set to the desktop and reorganizes the app around it.

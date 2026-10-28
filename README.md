@@ -1,67 +1,69 @@
 # AVR Desktop Control
 
+**Full remote control for Denon and Marantz AV receivers on Windows.**
+
+Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tuner with RDS, HEOS streaming and receiver settings, in one Fluent desktop app with a tray widget. It adapts to your model: options appear only when the receiver reports them.
+
+[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control?style=flat-square)](https://github.com/sreddev/AVR-desktop-control/releases/latest)
+[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control?style=flat-square)](LICENSE)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat-square)
+
 <p align="center">
-  <img src="docs/screenshot-dashboard.png" width="800" alt="Dashboard">
+  <img src="docs/screenshot-home.png" width="800" alt="Home">
 </p>
 
-**Full remote control for Denon and Marantz receivers on Windows.**  
-Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, AM/FM tuner with RDS and saved stations, floating system-tray widget, automatic network discovery, real-time monitoring, UPnP seek and complete control of volume, sources, channels, zones and sound profiles.
+## Contents
 
-[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control?style=flat-square)](https://github.com/sreddev/AVR-desktop-control/releases)
-[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control?style=flat-square)](LICENSE)
+- [Features](#features)
+- [Download and install](#download-and-install)
+- [Quick start](#quick-start)
+- [Compatibility](#compatibility)
+- [Screenshots](#screenshots)
+- [Documentation](#documentation)
+- [Build from source](#build-from-source)
+- [Credits](#credits) · [License](#license)
 
 ---
 
 ## Features
 
-### 📻 AM / FM Tuner
+| | |
+|---|---|
+| 🏠 **Home** | Volume, input, sound mode and live signal (format, 2.0 / 5.1 / 7.1.4 layout, sample rate, video). Quick / Smart Select slots, sleep timer, channel map with one-click speaker trim |
+| 🎛️ **Sources** | Switch inputs and sound modes; rename or hide inputs in the app |
+| 📻 **Tuner** | AM/FM with live **RDS** station name, manual tuning, seek / step, saved stations (import from the receiver, skip, previous / next) |
+| 🎵 **HEOS** | Browse TuneIn, Tidal, local music, playlists and favorites; search, queue, working seek |
+| 🔊 **Sound** | Per-speaker trim, bass / treble, subwoofer level and on/off, saved sound profiles |
+| 🎧 **Processing** | Audyssey (MultEQ, Dynamic EQ, Reference Level, Dynamic Volume, LFC), Dirac Live, Dialog Enhancer, Cinema EQ, dynamic compression, per-mode surround parameters, Speaker A/B, Graphic EQ, Restorer, Bluetooth transmitter |
+| 🏘️ **Zones** | Main, Zone 2 and Zone 3: power, volume, mute, input, sleep timer; All Zone Stereo |
+| 📺 **Receiver** | HDMI audio / monitor / resolution, picture and video mode, Auto Lip Sync, audio delay, dimmer, ECO, auto standby, volume limit, panel and remote lock |
+| 📌 **Tray** | Click for a floating mini remote, double-click for the full window, right-click for a quick menu |
+| 🔄 **Updates** | Checks GitHub Releases at startup |
 
-- 📡 **Now tuned** — Large frequency readout, band (FM / AM), AUTO / MANUAL mode and the RDS station name on models that report it
-- ⌨️ **Manual tuning** — Type a frequency and press Enter: `95.5` (or `95,5`) tunes FM in MHz, `1010` tunes AM in kHz; the band is detected automatically
-- ⏩ **Seek and step** — Seek to the next receivable station, or step one frequency at a time using the receiver's regional step size
-- 💾 **Saved stations** — Add, edit and delete stations; click one to listen; previous / next buttons cycle through the list
-- 🔢 **Numbered list** — Each station shows its position (01, 02, 03…); the station currently tuned is highlighted
-- 📥 **Import receiver presets** — The presets stored in the receiver (names + frequencies) are imported automatically the first time, and can be re-imported at any time with the download button; the receiver itself is never modified
-- 🔀 **Automatic input switch** — Tuning switches the main zone to the **TUNER** input when another source is selected
+---
 
-### HEOS — Network music
+## Download and install
 
-- 🎵 **Service browsing** — TuneIn (local radio), Tidal, Local Music, Playlists, Favorites
-- 🔍 **Search** — By Artist, Album, Track and Playlist within each service
-- ▶️ **Direct playback** — Click a result to play it instantly
-- 📋 **Play queue** — Cover art, click to jump, clear button
-- ⏩ **Working seek** — Drag the time bar to skip forward or back (via [UPnP AVTransport](https://en.wikipedia.org/wiki/Universal_Plug_and_Play))
-- 🎨 **Blurred background** — The current album cover as a Spotify-style blurred backdrop
-- 👤 **HEOS sign-in** — Sign in to enable Tidal, TuneIn, Deezer and favorites
-- 🖼️ **Square tiles** — Services shown with large logos and intuitive navigation
+Get the latest version from [**Releases**](https://github.com/sreddev/AVR-desktop-control/releases/latest):
 
-### Receiver control
+| File | |
+|---|---|
+| `AVRDesktopControl-<version>-Setup.exe` | **Installer** (recommended). Start-menu entry, optional desktop shortcut and start with Windows. No admin rights needed |
+| `AVRDesktopControl-<version>.zip` | **Portable**: extract anywhere and run `AVRDesktopControl.exe` |
 
-- 🔍 **Auto-discovery** — Finds your AVR via [SSDP/UPnP](https://en.wikipedia.org/wiki/Simple_Service_Discovery_Protocol) + subnet scan
-- 🎚️ **Master volume** — Debounced slider, +/- buttons, configurable unit (absolute, dB, %)
-- 🔊 **Per-channel level** — Individual trim for FL, FR, C, SL, SR, SW (±12 dB)
-- 💾 **Sound profiles** — Save and recall speaker balances with one click (Normalize, Save, Load)
-- 📡 **Channel matrix** — Real-time view of the input signal and active speakers
-- 🎛️ **Sources** — Quick switching using the receiver's own input names (SHIELD, ROG GAME, nintendo...)
-- 🎭 **Surround modes** — Stereo, Direct, Pure Direct, Multi Ch, Neural:X, Dolby and more
-- 🎵 **Tone** — Bass, Treble and Subwoofer with fine control
-- 🏠 **Zones** — Main, Zone 2 and Zone 3 with power, volume, input, mute and sleep timer; All Zone Stereo (Zone 2 never turns on by itself)
-- 🎧 **Audyssey & processing** — MultEQ, Dynamic EQ, Reference Level, Dynamic Volume, LFC, Dirac Live, Dialog Enhancer, Cinema EQ, dynamic compression and per-mode surround parameters
-- ⚡ **Quick / Smart Select** — Recall and store the receiver's memory slots from the dashboard, the widget or the tray menu
-- 😴 **Sleep timer** — For each zone
-- 📶 **Signal panel** — Signal type, channel layout (e.g. 7.1.4), sample rate, decoder, video resolution in → out
-- 📺 **Receiver settings** — HDMI audio/monitor/resolution, picture mode, Auto Lip Sync, audio delay, dimmer, ECO, auto standby, volume limit, panel and remote lock
-- ✏️ **Customize inputs** — Rename or hide inputs in the app
-- 🧩 **Model-aware** — Every option appears only when the receiver reports it, so the app adapts to each Denon / Marantz model
+Both are self-contained, so no .NET installation is needed. Windows SmartScreen may warn about an unknown publisher the first time, because the app isn't code-signed: choose **More info → Run anyway**.
 
-### Interface
+Settings, saved stations and profiles are stored in `%LocalAppData%\DenonRemote\settings.json` and survive updates.
 
-- 📌 **Floating widget** — Single-click the tray icon for a mini control, double-click for the full window
-- 🌐 **English interface** — All UI text, tooltips and messages in English
-- 🔄 **Automatic updates** — Checks [GitHub Releases](https://github.com/sreddev/AVR-desktop-control/releases) for new versions at startup
-- ⚡ **Smart reconnection** — HTTP fallback while the AVR is in standby
-- 🔇 **Mute indicator** — Icon and text switch to the accent colour while the receiver is muted
-- 🖥️ **Dark mode** — High-contrast Fluent/Mica interface with a bright army-green accent (white button text stays above WCAG AA 4.5:1)
+---
+
+## Quick start
+
+1. Make sure the PC and the receiver are on the same network, and that **Network Standby** (Network Control) is on in the receiver's setup menu.
+2. Start the app. It reconnects to the last receiver automatically. The first time, open **Devices** and pick your receiver, or type its IP address.
+3. Use **Home** for everyday control, or click the tray icon for the mini remote.
+
+The full walkthrough of every page is in the **[User Guide](docs/USER-GUIDE.md)**.
 
 ---
 
@@ -69,22 +71,38 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 
 | | |
 |---|---|
-| **Receivers** | Any Denon or Marantz with a network port (AVR-X, AVR-S, Cinema, NR, SR series) |
-| **Protocols** | Telnet (23) · HTTP goform (8080/80) · [HEOS CLI](https://assets.denon.com/documentmaster/uk/heos_cli_protocolspecification.pdf) (1255) · [UPnP AVTransport](https://en.wikipedia.org/wiki/Universal_Plug_and_Play) (60006) |
-| **Windows** | 10 / 11 (x64) |
-| **Tested with** | Denon AVR-S970H · Marantz NR1508 |
+| **Receivers** | Denon and Marantz network receivers (AVR-X, AVR-S, Cinema, NR, SR series). Features the model lacks are hidden automatically |
+| **Tested with** | Marantz NR1508 · Denon AVR-S970H |
+| **Windows** | 10 / 11, x64 |
+| **Network** | Telnet 23 · HTTP 8080 / 80 · HEOS CLI 1255 · UPnP 60006, on the local network only |
 
 ---
 
-## Installation
+## Screenshots
 
-### Direct download
+| | |
+|---|---|
+| <img src="docs/screenshot-tuner.png" alt="Tuner with RDS"> | <img src="docs/screenshot-processing.png" alt="Processing"> |
+| **Tuner**: live RDS name and saved stations | **Processing**: Audyssey, dialog, surround |
+| <img src="docs/screenshot-zones.png" alt="Zones"> | <img src="docs/screenshot-receiver.png" alt="Receiver"> |
+| **Zones**: one card per zone | **Receiver**: video, display, power, locks |
+| <img src="docs/screenshot-heos.png" alt="HEOS"> | <img src="docs/screenshot-sound.png" alt="Sound"> |
+| **HEOS** streaming | **Sound**: trims, tone, subwoofer, profiles |
 
-1. Go to [**Releases**](https://github.com/sreddev/AVR-desktop-control/releases)
-2. Download `AVRDesktopControl-2.0.0.zip` (portable)
-3. Unzip and run `AVRDesktopControl.exe` — no .NET installation needed (self-contained)
+---
 
-### Build from source
+## Documentation
+
+| Document | For |
+|---|---|
+| [User Guide](docs/USER-GUIDE.md) | Every page and control, tray widget, troubleshooting, FAQ |
+| [Architecture](docs/ARCHITECTURE.md) | How the app talks to the receiver, project layout, protocol notes |
+| [Contributing](CONTRIBUTING.md) | Development setup, adding a receiver setting, release process |
+| [Changelog](CHANGELOG.md) | What changed in each version |
+
+---
+
+## Build from source
 
 ```bash
 git clone https://github.com/sreddev/AVR-desktop-control.git
@@ -92,70 +110,13 @@ cd AVR-desktop-control/src/DenonRemote
 dotnet run
 ```
 
-Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). You can also open `DenonDesktopControl.sln` in Visual Studio.
-
----
-
-## Usage
-
-1. On launch, the app tries to connect to the last known receiver
-2. The first time, go to **Devices** and press **Rescan**, or add the IP manually
-3. **Click** the tray icon = quick widget
-4. **Double-click** = full window
-5. In **HEOS**: pick a service, browse or search, click to play
-6. In **Tuner**: click a saved station to listen, type a frequency to tune manually, or use seek / step; manage stations with the editor below the list
-
----
-
-## Tech stack
-
-| Component | Technology |
-|---|---|
-| Framework | [.NET 8](https://dotnet.microsoft.com/) + WPF |
-| UI | [WPF-UI](https://github.com/lepoco/wpfui) 3.0.5 (Fluent/Mica) |
-| MVVM | [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) 8.4 |
-| Tray | [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) |
-| AVR control | Raw telnet socket (real-time push events) |
-| AVR fallback | HTTP goform API (power on from standby) |
-| HEOS | Denon proprietary TCP CLI protocol |
-| Seek | UPnP SOAP (AVTransport:1) |
-| Installer | [Inno Setup](https://jrsoftware.org/isinfo.php) |
-
----
-
-## Technical notes
-
-- **Seek**: the HEOS CLI doesn't support seek (`Command not recognized`). The official app uses UPnP AVTransport SOAP on port 60006, which is what this app implements.
-- **Tidal "My Music"**: personal folders return the root in a loop through the CLI (an S-series firmware bug). Searching by playlist name works as an alternative.
-- **Blurred background**: WPF has no CSS-style `backdrop-filter`, so a `BlurEffect` is applied to an `ImageBrush` on a `Rectangle`, with semi-transparent cards on top.
-- **Extended settings**: defined once in `Denon/AvrSettingsCatalog.cs` (prefix, query, kind, options). The receiver stays silent for parameters it lacks, which is how the UI decides what to show. Entries marked "verified" were read back from a Marantz NR1508.
-- **Zone 2**: `PWON` powers on every zone, so the app uses `ZMON` + `Z2OFF` to power on Main only.
-- **Tuner**: frequencies are sent with `TFAN` as six digits (value × 100: `TFAN009550` = 95.50 MHz, `TFAN101000` = 1010 kHz). Tuner commands are ignored unless the input is TUNER, so the app switches input first. Stepping needs MANUAL mode, which on Denon/Marantz also forces FM to mono, so AUTO is restored after each step. Receiver presets are read with `OPTPN ?`; the protocol has no command to rename or erase a preset, which is why saved stations are kept in the app (`%LocalAppData%\DenonRemote\settings.json`).
-
----
-
-## Screenshots
-
-<p align="center">
-  <img src="docs/screenshot-dashboard.png" width="400" alt="Dashboard">
-  <img src="docs/screenshot-tuner.png" width="400" alt="AM / FM Tuner with RDS">
-</p>
-<p align="center">
-  <img src="docs/screenshot-processing.png" width="400" alt="Processing">
-  <img src="docs/screenshot-heos.png" width="400" alt="HEOS">
-</p>
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development instructions and the project structure.
+Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). See [CONTRIBUTING.md](CONTRIBUTING.md) for release builds and the installer.
 
 ---
 
 ## Credits
 
-Made with ♥ by **Sergio** — [sreddev/AVR-desktop-control](https://github.com/sreddev/AVR-desktop-control)
+Made with ♥ by **Sergio**
 
 | | |
 |---|---|
@@ -163,8 +124,8 @@ Made with ♥ by **Sergio** — [sreddev/AVR-desktop-control](https://github.com
 | Telegram | [@sreddev](https://t.me/sreddev) |
 | Donate | [![PayPal](https://img.shields.io/badge/PayPal-Buy_me_a_coffee-blue?logo=paypal)](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO) |
 
----
+Denon, Marantz, HEOS and Audyssey are trademarks of their respective owners. This project is not affiliated with them.
 
 ## License
 
-[MIT](LICENSE) — Use it, modify it, distribute it freely.
+[MIT](LICENSE)
