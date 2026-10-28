@@ -1,6 +1,6 @@
 # Changelog
 
-## Sin publicar
+## v1.6.0 — Radio Edition (2026-10-28)
 
 ### Nuevas funciones
 
