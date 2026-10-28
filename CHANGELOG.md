@@ -2,78 +2,80 @@
 
 ## v1.6.0 — Radio Edition (2026-10-28)
 
-### Nuevas funciones
+### New features
 
-**Radio AM / FM (Tuner)**
-- Nueva pagina "Radio" con la frecuencia sintonizada, banda (FM/AM), modo AUTO/MANUAL y nombre RDS
-- Sintonia manual escribiendo la frecuencia (FM en MHz, AM en kHz; la banda se detecta sola)
-- Busqueda de emisoras (seek) y ajuste paso a paso usando el paso regional del receptor
-- Emisoras guardadas: agregar, editar, eliminar, click para escuchar, anterior/siguiente
-- La emisora actual se resalta en la lista; cambia la entrada a TUNER automaticamente al sintonizar
+**AM / FM Radio (Tuner)**
+- New "Radio" page showing the tuned frequency, band (FM/AM), AUTO/MANUAL mode and RDS station name
+- Manual tuning by typing a frequency (FM in MHz, AM in kHz; the band is detected automatically)
+- Station seek and step tuning using the receiver's regional step size
+- Saved stations: add, edit, delete, click to listen, previous/next
+- Saved stations are numbered (01, 02, 03…) and the station currently tuned is highlighted
+- The receiver's own presets (names + frequencies, via `OPTPN ?`) are imported automatically the first time, and can be re-imported with the download button; duplicates are skipped and the receiver is never modified
+- Tuning switches the main zone input to TUNER automatically
 
 ## v1.5.0 — HEOS Edition (2026-08-23)
 
-### Nuevas funciones
+### New features
 
-**HEOS completo**
-- Navegacion de servicios: Tidal, TuneIn, Local Music, Playlists, History, Favorites
-- Busqueda dentro de servicios por Artista, Album, Track y Playlist
-- Reproduccion directa desde los resultados de busqueda
-- Cola de reproduccion con carátulas — click para saltar, boton limpiar
-- Controles de transporte: play/pausa, siguiente, anterior
-- **Seek (adelantar/retroceder)** — descubierto que funciona via UPnP AVTransport (no via CLI)
-- Barra de progreso interactiva con tiempo actual y duracion
-- Login de cuenta HEOS (necesario para Tidal, TuneIn, Deezer)
-- Servicios como tarjetas cuadradas con logos
-- Fondo blur de la caratula del album (efecto glass)
-- Click en artista o album busca automaticamente en el servicio
-- Panel de cola colapsable con splitters movibles
-- Deteccion de loop infinito en carpetas "My Music" de Tidal (limitacion del firmware)
+**Full HEOS support**
+- Service browsing: Tidal, TuneIn, Local Music, Playlists, History, Favorites
+- Search within services by Artist, Album, Track and Playlist
+- Direct playback from search results
+- Play queue with cover art — click to jump, clear button
+- Transport controls: play/pause, next, previous
+- **Seek (forward/back)** — found to work via UPnP AVTransport (not via the CLI)
+- Interactive progress bar with current time and duration
+- HEOS account sign-in (required for Tidal, TuneIn, Deezer)
+- Services shown as square tiles with logos
+- Blurred album-cover background (glass effect)
+- Clicking an artist or album searches for it in the service automatically
+- Collapsible queue panel with movable splitters
+- Infinite-loop detection in Tidal "My Music" folders (firmware limitation)
 
-**Sonido**
-- Control de nivel por canal (FL, FR, C, SL, SR) con slider individual
-- Perfiles de volumen: guardar, cargar, renombrar, eliminar
-- Boton Normalizar (todos los canales a 0 dB)
-- Zonas integradas en la pagina de Sonido (ya no hay tab separado)
-- Selector de unidad de volumen: absoluto, decibelios o porcentaje
+**Sound**
+- Per-channel level control (FL, FR, C, SL, SR) with individual sliders
+- Volume profiles: save, load, rename, delete
+- Normalize button (all channels to 0 dB)
+- Zones built into the Sound page (no separate tab anymore)
+- Volume unit selector: absolute, decibels or percent
 
 **General**
-- Indicador visual de mute (icono cambia + texto rojo "MUTE")
-- Localizacion español/ingles automatica segun el idioma de Windows
-- Cards clicables en el Dashboard: Source abre selector, Surround abre modos
-- Texto completo en las metricas (sin truncar)
-- Splitters movibles en HEOS para adaptar el layout
-- Widget flotante desde el tray
-- Instancia unica (mutex) — no se pueden abrir dos copias
-- Auto-update desde haussmed.cl/denon/
+- Visual mute indicator (icon changes + red "MUTE" text)
+- Automatic Spanish/English localization based on the Windows language
+- Clickable Dashboard cards: Source opens the source picker, Surround opens the modes
+- Full text in the metrics (no truncation)
+- Movable splitters in HEOS to adapt the layout
+- Floating widget from the tray
+- Single instance (mutex) — two copies can't run at once
+- Auto-update from haussmed.cl/denon/
 
 ### Fixes
 
-- **Zone 2**: ya no se enciende sola. Power On usa `ZMON` (solo Main)
-- **Volumen slider**: debounce de 300ms, ya no se dispara
-- **HEOS conexion**: lector asíncrono que maneja respuestas "command under process"
-- **Canales**: supresion de eco al arrastrar sliders (no rebotan)
-- **Dark mode**: brushes de texto con contraste alto (WCAG 4.5:1+)
-- **Servicios**: tarjetas cuadradas siempre visibles
+- **Zone 2**: no longer turns on by itself. Power On uses `ZMON` (Main only)
+- **Volume slider**: 300 ms debounce, no more runaway changes
+- **HEOS connection**: asynchronous reader that handles "command under process" responses
+- **Channels**: echo suppression while dragging sliders (no bouncing)
+- **Dark mode**: high-contrast text brushes (WCAG 4.5:1+)
+- **Services**: square tiles always visible
 
-### Notas tecnicas sobre el fondo blur
+### Technical notes on the blurred background
 
-El efecto de caratula difuminada de fondo usa un `Rectangle` con `ImageBrush` +
-`BlurEffect` en WPF. Las limitaciones encontradas:
+The blurred cover-art background uses a `Rectangle` with an `ImageBrush` +
+`BlurEffect` in WPF. Limitations found:
 
-1. WPF no tiene `backdrop-filter` como CSS — el blur se aplica a la imagen,
-   no al contenido que esta encima
-2. Las cards usan un fondo semi-transparente (`#88141820`) para simular el
-   efecto glass. El resultado es sutil pero funcional.
-3. El receptor no soporta seek via HEOS CLI (`Command not recognized`) pero
-   si lo acepta via UPnP AVTransport SOAP en el puerto 60006. La app oficial
-   usa este mismo protocolo para la barra de tiempo.
-4. Las carpetas "My Music" y "What's New" de Tidal devuelven la raiz en loop
-   a traves del CLI — es un bug del firmware HEOS en modelos S-series. La
-   busqueda funciona como workaround.
+1. WPF has no CSS-style `backdrop-filter` — the blur is applied to the image,
+   not to the content on top of it
+2. Cards use a semi-transparent background (`#88141820`) to simulate the
+   glass effect. The result is subtle but works.
+3. The receiver doesn't support seek via the HEOS CLI (`Command not recognized`)
+   but accepts it via UPnP AVTransport SOAP on port 60006. The official app
+   uses the same protocol for its time bar.
+4. Tidal's "My Music" and "What's New" folders return the root in a loop
+   through the CLI — a HEOS firmware bug on S-series models. Search works as
+   a workaround.
 
-### Archivos para el servidor de actualizacion
+### Update server files
 
-Sube el contenido de `updates/denon/` a `https://haussmed.cl/denon/`:
-- `update.json` — manifiesto de version
-- `DenonDesktopControl-1.5.0.zip` — ejecutable standalone (~65 MB)
+Upload the contents of `updates/denon/` to `https://haussmed.cl/denon/`:
+- `update.json` — version manifest
+- `DenonDesktopControl-1.5.0.zip` — standalone executable (~65 MB)

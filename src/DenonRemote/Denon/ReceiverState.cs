@@ -73,6 +73,9 @@ public partial class ReceiverState : ObservableObject
         ? DenonProtocol.FormatTunerLabel(TunerBand, TunerFrequency)
         : "-";
 
+    /// <summary>Named presets stored in the receiver (from <c>OPTPN</c>), unused slots excluded.</summary>
+    public ObservableCollection<TunerPreset> TunerPresets { get; } = new();
+
     public ReceiverState()
     {
         Channels = new ObservableCollection<ChannelState>(
@@ -82,6 +85,9 @@ public partial class ReceiverState : ObservableObject
     public ChannelState? Channel(string label) =>
         Channels.FirstOrDefault(c => c.Label == label);
 }
+
+/// <summary>A tuner preset slot as stored in the receiver (1..56).</summary>
+public sealed record TunerPreset(int Number, string Name, TunerBand Band, double Frequency);
 
 /// <summary>Entry in the source list. Value is the token sent to the AVR (SI ...).</summary>
 public partial class SourceEntry : ObservableObject

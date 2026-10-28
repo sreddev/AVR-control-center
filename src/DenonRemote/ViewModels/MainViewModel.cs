@@ -75,6 +75,25 @@ public partial class MainViewModel : ObservableObject
             OnPropertyChanged(nameof(IsTunerSource));
             if (IsTunerSource) _ = _receiver.RefreshTunerAsync();
         };
+
+        // The receiver sends its 56 preset slots as a burst of OPTPN lines.
+        // Wait for the burst to settle, then seed an empty station list once.
+        _presetImportDebounce = new System.Windows.Threading.DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(600)
+        };
+        _presetImportDebounce.Tick += (_, _) =>
+        {
+            _presetImportDebounce.Stop();
+            if (_settings.RadioPresetsImported || _settings.RadioStations.Count > 0) return;
+            var added = ImportReceiverPresets();
+            if (added > 0) TunerMessage = L.TunerImported(added);
+        };
+        State.TunerPresets.CollectionChanged += (_, _) =>
+        {
+            _presetImportDebounce.Stop();
+            _presetImportDebounce.Start();
+        };
         // Connected fires from a background thread (ReceiverService.ConnectAsync),
         // so we hop to the UI dispatcher before mutating the observable collection.
         _receiver.Connected += (_, _) => System.Windows.Application.Current?.Dispatcher.Invoke(() =>
@@ -334,7 +353,10 @@ public partial class MainViewModel : ObservableObject
     {
         Stations.Clear();
         foreach (var s in _settings.RadioStations)
+        {
+            s.Number = Stations.Count + 1;
             Stations.Add(s);
+        }
         UpdateActiveStation();
     }
 
@@ -453,6 +475,39 @@ public partial class MainViewModel : ObservableObject
         SyncStations();
         CancelStationEdit();
         TunerMessage = L.IsSpanish ? $"Emisora guardada: {name}" : $"Station saved: {name}";
+    }
+
+    private readonly System.Windows.Threading.DispatcherTimer _presetImportDebounce;
+
+    /// <summary>
+    /// Copies the receiver's named presets into the saved list, in slot order,
+    /// skipping frequencies that are already saved. Returns how many were added.
+    /// </summary>
+    private int ImportReceiverPresets()
+    {
+        var added = 0;
+        foreach (var p in State.TunerPresets.OrderBy(p => p.Number))
+        {
+            if (_settings.RadioStations.Any(s => s.Matches(p.Band, p.Frequency))) continue;
+            _settings.RadioStations.Add(new RadioStation { Name = p.Name, Band = p.Band, Frequency = p.Frequency });
+            added++;
+        }
+        _settings.RadioPresetsImported = true;
+        _settings.Save();
+        SyncStations();
+        return added;
+    }
+
+    /// <summary>Re-reads the receiver's presets and adds any not saved yet.</summary>
+    [RelayCommand]
+    private async Task ImportPresetsAsync()
+    {
+        await _receiver.RequestTunerPresetsAsync();
+        // Replies arrive asynchronously on the dispatcher; give the burst time to land.
+        await Task.Delay(1500);
+        _presetImportDebounce.Stop();
+        var added = ImportReceiverPresets();
+        TunerMessage = added > 0 ? L.TunerImported(added) : L.TunerNoNewPresets;
     }
 
     [RelayCommand]

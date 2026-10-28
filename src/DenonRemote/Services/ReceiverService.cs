@@ -76,7 +76,8 @@ public sealed class ReceiverService : IAsyncDisposable
                 "CV?",
                 "SSFUN ?", "SSSOD ?",
                 "SSSPC ?",                // speaker configuration (which channels exist)
-                "TFAN?", "TMAN?", "TFANNAME?"
+                "TFAN?", "TMAN?", "TFANNAME?",
+                "OPTPN ?"                 // tuner preset names + frequencies
             ).ConfigureAwait(false);
         }
         else
@@ -289,6 +290,12 @@ public sealed class ReceiverService : IAsyncDisposable
     public Task RefreshTunerAsync() =>
         _telnet is not null && _telnet.IsConnected
             ? _telnet.SendManyAsync("TFAN?", "TMAN?", "TFANNAME?")
+            : Task.CompletedTask;
+
+    /// <summary>Asks the receiver to re-send its preset list (arrives as OPTPN events).</summary>
+    public Task RequestTunerPresetsAsync() =>
+        _telnet is not null && _telnet.IsConnected
+            ? _telnet.SendAsync("OPTPN ?")
             : Task.CompletedTask;
 
     private async Task EnsureTunerSourceAsync()

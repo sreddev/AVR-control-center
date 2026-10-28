@@ -245,6 +245,9 @@
                             <TextBlock FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="{x:Static services:L.TunerSavedDesc}" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                            <Button Margin="0,0,6,0" Command="{Binding ImportPresetsCommand}" Style="{StaticResource PillBtn}" ToolTip="{x:Static services:L.TunerImport}">
+                                <ui:SymbolIcon FontSize="14" Symbol="ArrowDownload24" />
+                            </Button>
                             <Button Margin="0,0,6,0" Command="{Binding PreviousStationCommand}" Style="{StaticResource PillBtn}" ToolTip="{x:Static services:L.TunerPrevStation}">
                                 <ui:SymbolIcon FontSize="14" Symbol="Previous24" />
                             </Button>
@@ -288,20 +291,44 @@
                                                             </Border>
                                                         </ControlTemplate>
                                                     </Button.Template>
-                                                    <StackPanel>
-                                                        <TextBlock
-                                                            FontSize="14"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="{StaticResource TextPrimaryBrush}"
-                                                            Text="{Binding Name}"
-                                                            TextTrimming="CharacterEllipsis" />
-                                                        <TextBlock
-                                                            x:Name="Freq"
-                                                            FontSize="11"
-                                                            Foreground="{StaticResource TextTertiaryBrush}">
-                                                            <Run Text="{Binding Band, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding FrequencyLabel, Mode=OneWay}" />
-                                                        </TextBlock>
-                                                    </StackPanel>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <!-- List position: 01, 02, 03... -->
+                                                        <Border
+                                                            x:Name="NumBadge"
+                                                            Width="30"
+                                                            Height="24"
+                                                            Margin="0,0,10,0"
+                                                            VerticalAlignment="Center"
+                                                            Background="{StaticResource IdleSpeakerBrush}"
+                                                            CornerRadius="5">
+                                                            <TextBlock
+                                                                x:Name="Num"
+                                                                HorizontalAlignment="Center"
+                                                                VerticalAlignment="Center"
+                                                                FontSize="12"
+                                                                FontWeight="Bold"
+                                                                Foreground="{StaticResource ChannelIdleTextBrush}"
+                                                                Text="{Binding NumberLabel}" />
+                                                        </Border>
+                                                        <StackPanel Grid.Column="1">
+                                                            <TextBlock
+                                                                FontSize="14"
+                                                                FontWeight="SemiBold"
+                                                                Foreground="{StaticResource TextPrimaryBrush}"
+                                                                Text="{Binding Name}"
+                                                                TextTrimming="CharacterEllipsis" />
+                                                            <TextBlock
+                                                                x:Name="Freq"
+                                                                FontSize="11"
+                                                                Foreground="{StaticResource TextTertiaryBrush}">
+                                                                <Run Text="{Binding Band, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding FrequencyLabel, Mode=OneWay}" />
+                                                            </TextBlock>
+                                                        </StackPanel>
+                                                    </Grid>
                                                 </Button>
                                                 <Button
                                                     Grid.Column="1"
@@ -334,6 +361,8 @@
                                             <DataTrigger Binding="{Binding IsActive}" Value="True">
                                                 <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
                                                 <Setter TargetName="Freq" Property="Foreground" Value="{StaticResource AccentBrush}" />
+                                                <Setter TargetName="NumBadge" Property="Background" Value="{StaticResource ActiveSpeakerBrush}" />
+                                                <Setter TargetName="Num" Property="Foreground" Value="{StaticResource ChannelActiveTextBrush}" />
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
                                     </DataTemplate>

@@ -141,8 +141,17 @@ public static class L
     public static string TunerPrevStation => IsSpanish ? "Emisora guardada anterior" : "Previous saved station";
     public static string TunerNextStation => IsSpanish ? "Emisora guardada siguiente" : "Next saved station";
     public static string TunerNoStations => IsSpanish
-        ? "Aun no hay emisoras guardadas. Agrega una abajo."
-        : "No saved stations yet. Add one below.";
+        ? "Aun no hay emisoras guardadas. Agrega una abajo o importa las memorias del receptor (boton de descarga)."
+        : "No saved stations yet. Add one below, or import the receiver's presets with the download button.";
+    public static string TunerImport => IsSpanish
+        ? "Importar las memorias (presets) del receptor"
+        : "Import the receiver's presets";
+    public static string TunerImported(int n) => IsSpanish
+        ? $"{n} emisora(s) importada(s) desde el receptor."
+        : $"Imported {n} station(s) from the receiver.";
+    public static string TunerNoNewPresets => IsSpanish
+        ? "No hay memorias nuevas en el receptor."
+        : "No new presets found on the receiver.";
     public static string TunerAddStation => IsSpanish ? "AGREGAR EMISORA" : "ADD STATION";
     public static string TunerEditStation => IsSpanish ? "EDITAR EMISORA" : "EDIT STATION";
     public static string TunerName => IsSpanish ? "Nombre" : "Name";

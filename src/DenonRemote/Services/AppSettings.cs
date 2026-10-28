@@ -34,6 +34,12 @@ public sealed class AppSettings
     /// <summary>User's saved AM/FM stations, in display order.</summary>
     public List<RadioStation> RadioStations { get; set; } = new();
 
+    /// <summary>
+    /// Set once the receiver's presets were copied into <see cref="RadioStations"/>
+    /// automatically, so deleting every station doesn't bring them back.
+    /// </summary>
+    public bool RadioPresetsImported { get; set; }
+
     /// <summary>Record a successful connection so the sidebar can show it.</summary>
     public void RememberDevice(string host, string friendlyName, string model)
     {
@@ -166,6 +172,15 @@ public sealed partial class RadioStation : CommunityToolkit.Mvvm.ComponentModel.
     [property: JsonIgnore]
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     private bool _isActive;
+
+    /// <summary>1-based position in the saved list, shown as "01", "02"... Not persisted.</summary>
+    [property: JsonIgnore]
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(NumberLabel))]
+    private int _number;
+
+    [JsonIgnore]
+    public string NumberLabel => Number.ToString("00");
 
     [JsonIgnore]
     public string FrequencyLabel => Denon.DenonProtocol.FormatTunerLabel(Band, Frequency);

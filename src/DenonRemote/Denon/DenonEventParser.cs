@@ -125,6 +125,20 @@ public sealed class DenonEventParser
             return;
         }
 
+        // Receiver preset list: OPTPN<nn><name, 8 chars><frequency, 6 digits>
+        // e.g. "OPTPN01Rock FM  009220". Unused slots have a blank name.
+        if (s.StartsWith("OPTPN", StringComparison.Ordinal))
+        {
+            if (s.Length < 13 || !int.TryParse(s.AsSpan(5, 2), out var number)) return;
+            var tuned = DenonProtocol.ParseTunerFrequency(s[^6..]);
+            var name = s[7..^6].Trim();
+            var existing = _state.TunerPresets.FirstOrDefault(p => p.Number == number);
+            if (existing is not null) _state.TunerPresets.Remove(existing);
+            if (tuned is null || name.Length == 0) return;
+            _state.TunerPresets.Add(new TunerPreset(number, name, tuned.Value.Band, tuned.Value.Frequency));
+            return;
+        }
+
         if (s.StartsWith("PSBAS ", StringComparison.Ordinal))
         {
             if (int.TryParse(s.AsSpan(6).Trim(), out var v)) _state.Bass = v - 50;
