@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System.Collections.Generic;
 
@@ -63,6 +63,41 @@ public static class DenonProtocol
             "DTS-HD HR" => "DTS-HD HR",
             _ => string.IsNullOrWhiteSpace(v) ? "-" : v
         };
+    }
+
+    /// <summary>
+    /// Input signal type from <c>SSINFAISSIG</c>. Only the codes confirmed on
+    /// a receiver are named; others are shown as their code.
+    /// </summary>
+    public static string DescribeSignalCode(string code) => code switch
+    {
+        "01" => "Analog",
+        "02" => "PCM",
+        "" => "-",
+        _ => "Digital (" + code + ")"
+    };
+
+    /// <summary>
+    /// Channel layout of the input signal from an <c>OPINFINS</c> matrix,
+    /// counted as base.LFE.height: "2.0", "5.1", "7.1.4".
+    /// </summary>
+    public static string DescribeLayout(string matrix)
+    {
+        int main = 0, lfe = 0, height = 0;
+        for (int i = 0; i < matrix.Length && i < SignalChannels.Length; i++)
+        {
+            if (matrix[i] != '2') continue;
+            switch (SignalChannels[i])
+            {
+                case "SW" or "LFE": lfe = 1; break;
+                case "FHL" or "FHR" or "TFL" or "TFR" or "TML" or "TMR"
+                    or "TRL" or "TRR" or "RRL" or "RRR": height++; break;
+                case "EXT": break;
+                default: main++; break;
+            }
+        }
+        if (main + lfe + height == 0) return "-";
+        return height > 0 ? $"{main}.{lfe}.{height}" : $"{main}.{lfe}";
     }
 
     /// <summary>

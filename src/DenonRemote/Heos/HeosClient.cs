@@ -1,7 +1,7 @@
-// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Collections.Concurrent;
@@ -385,7 +385,7 @@ public sealed class HeosClient : IAsyncDisposable
         var cmd = $"heos://system/sign_in?un={Uri.EscapeDataString(username)}" +
                   $"&pw={Uri.EscapeDataString(password)}";
         var json = await SendAsync(cmd, ct, timeoutSeconds: 15).ConfigureAwait(false);
-        if (json is null) return (false, "Sin respuesta del receptor");
+        if (json is null) return (false, "No response from the receiver");
 
         try
         {
@@ -394,9 +394,9 @@ public sealed class HeosClient : IAsyncDisposable
             var ok = (heos.GetProperty("result").GetString() ?? "")
                 .Equals("success", StringComparison.OrdinalIgnoreCase);
             var message = heos.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "";
-            return (ok, ok ? "Sesion iniciada" : DescribeError(message));
+            return (ok, ok ? "Signed in" : DescribeError(message));
         }
-        catch { return (false, "Respuesta no valida"); }
+        catch { return (false, "Invalid response"); }
     }
 
     public async Task<bool> SignOutAsync(CancellationToken ct = default)
@@ -464,7 +464,7 @@ public sealed class HeosClient : IAsyncDisposable
         foreach (var part in message.Split('&'))
             if (part.StartsWith("text=", StringComparison.OrdinalIgnoreCase))
                 return Uri.UnescapeDataString(part[5..]).Replace('+', ' ');
-        return "No se pudo iniciar sesion";
+        return "Could not sign in";
     }
 
     private static string Str(JsonElement e, string name) =>

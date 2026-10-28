@@ -7,17 +7,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <RootNamespace>DenonRemote</RootNamespace>
-    <AssemblyName>DenonDesktopControl</AssemblyName>
-    <Product>DENON Desktop Control</Product>
-    <Version>1.6.1</Version>
-    <Authors>Felipe (@felipedream)</Authors>
-    <Company>FelipeDream</Company>
-    <Description>DENON Desktop Control — Remote control for Denon and Marantz AVR receivers on Windows. Real-time telnet monitoring, channel matrix, per-speaker trim, system tray widget, auto-discovery.</Description>
-    <Copyright>© 2026 Felipe — Buin, Santiago de Chile — @felipedream</Copyright>
-    <RepositoryUrl>https://github.com/felipedream/denon-desktop-control</RepositoryUrl>
+    <AssemblyName>AVRDesktopControl</AssemblyName>
+    <Product>AVR Desktop Control</Product>
+    <Version>2.0.0</Version>
+    <Authors>Sergio (@sreddev)</Authors>
+    <Company>sreddev</Company>
+    <Description>AVR Desktop Control — Remote control for Denon and Marantz AVR receivers on Windows. Real-time telnet monitoring, channel matrix, per-speaker trim, system tray widget, auto-discovery.</Description>
+    <Copyright>© 2026 Sergio (@sreddev)</Copyright>
+    <RepositoryUrl>https://github.com/sreddev/AVR-desktop-control_tuner</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/felipedream/denon-desktop-control</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/sreddev/AVR-desktop-control_tuner</PackageProjectUrl>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

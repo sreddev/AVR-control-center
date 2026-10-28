@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 namespace DenonRemote.Discovery;
 
@@ -14,6 +14,6 @@ public sealed record ReceiverDescriptor(
     string Uuid)
 {
     public override string ToString() =>
-        string.IsNullOrWhiteSpace(FriendlyName) ? $"{Model} ({Host})" : $"{FriendlyName} Â· {Host}";
+        string.IsNullOrWhiteSpace(FriendlyName) ? $"{Model} ({Host})" : $"{FriendlyName} · {Host}";
 }
 

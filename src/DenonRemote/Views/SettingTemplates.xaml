@@ -1,0 +1,139 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DenonRemote.Controls"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Views/Theme.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Rows for receiver settings (Denon/AvrSetting.cs). Every row collapses
+         until the receiver answers its query, so pages adapt to the model.
+         -->
+
+    <Style x:Key="SettingLabel" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+    </Style>
+    <Style x:Key="SettingDesc" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{StaticResource TextTertiaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <DataTemplate x:Key="SettingToggleRow">
+        <Grid Margin="0,7" Visibility="{Binding IsSupported, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,12,0" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource SettingLabel}" Text="{Binding Label}" />
+                <TextBlock Style="{StaticResource SettingDesc}" Text="{Binding Description}" />
+            </StackPanel>
+            <ui:ToggleSwitch Grid.Column="1" VerticalAlignment="Center" IsChecked="{Binding IsOn, Mode=TwoWay}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SettingChoiceRow">
+        <Grid Margin="0,7" Visibility="{Binding IsSupported, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Margin="0,0,12,0" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource SettingLabel}" Text="{Binding Label}" />
+                <TextBlock Style="{StaticResource SettingDesc}" Text="{Binding Description}" />
+            </StackPanel>
+            <ComboBox
+                Grid.Column="1"
+                MinWidth="170"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding Options}"
+                SelectedItem="{Binding Selected, Mode=TwoWay}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SettingLevelRow">
+        <StackPanel Margin="0,7" Visibility="{Binding IsSupported, Converter={StaticResource BoolToVis}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Margin="0,0,12,0">
+                    <TextBlock Style="{StaticResource SettingLabel}" Text="{Binding Label}" />
+                    <TextBlock Style="{StaticResource SettingDesc}" Text="{Binding Description}" />
+                </StackPanel>
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    FontSize="13"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource AccentTextBrush}"
+                    Text="{Binding NumberLabel}" />
+            </Grid>
+            <Slider
+                Margin="0,4,0,0"
+                IsMoveToPointEnabled="True"
+                IsSnapToTickEnabled="True"
+                LargeChange="{Binding Step}"
+                Maximum="{Binding Max}"
+                Minimum="{Binding Min}"
+                SmallChange="{Binding Step}"
+                TickFrequency="{Binding Step}"
+                Value="{Binding Number, Mode=TwoWay}" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="SettingActionRow">
+        <StackPanel Margin="0,7" Visibility="{Binding IsSupported, Converter={StaticResource BoolToVis}}">
+            <TextBlock Style="{StaticResource SettingLabel}" Text="{Binding Label}" />
+            <TextBlock Style="{StaticResource SettingDesc}" Text="{Binding Description}" />
+            <ItemsControl Margin="0,6,0,0" ItemsSource="{Binding Options}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ui:Button
+                            Margin="0,0,6,6"
+                            Command="{Binding DataContext.RunCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                            CommandParameter="{Binding}"
+                            Content="{Binding Caption}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </DataTemplate>
+
+    <controls:SettingTemplateSelector
+        x:Key="SettingRowSelector"
+        Action="{StaticResource SettingActionRow}"
+        Choice="{StaticResource SettingChoiceRow}"
+        Level="{StaticResource SettingLevelRow}"
+        Toggle="{StaticResource SettingToggleRow}" />
+
+    <!-- A SettingSection (ViewModels/SettingSection.cs) as a card -->
+    <DataTemplate x:Key="SettingSectionCard">
+        <Border Margin="0,0,0,12" Padding="20,16" Style="{StaticResource Card}">
+            <StackPanel>
+                <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Title}" />
+                <TextBlock Margin="0,2,0,6" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="{Binding Subtitle}" TextWrapping="Wrap" />
+                <ItemsControl ItemTemplateSelector="{StaticResource SettingRowSelector}" ItemsSource="{Binding Items}" />
+                <TextBlock
+                    Margin="0,6,0,0"
+                    FontSize="12"
+                    FontStyle="Italic"
+                    Foreground="{StaticResource TextTertiaryBrush}"
+                    Text="Not available on the connected receiver."
+                    TextWrapping="Wrap"
+                    Visibility="{Binding HasAny, Converter={StaticResource InverseBoolToVis}}" />
+            </StackPanel>
+        </Border>
+    </DataTemplate>
+</ResourceDictionary>

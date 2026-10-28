@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Windows;
@@ -59,6 +59,11 @@ public partial class DashboardPage : PageBase
             btn.Click += OnSurroundPopupClick;
             SurroundList.Children.Add(btn);
         }
+    }
+
+    private void OnSignalCardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (DataContext is MainViewModel vm) _ = vm.RefreshSignalCommand.ExecuteAsync(null);
     }
 
     private void OnSourceCardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)

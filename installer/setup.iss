@@ -1,14 +1,14 @@
 ﻿[Setup]
-AppName=DENON Desktop Control
-AppVersion=1.6.1
-AppPublisher=Felipe (@felipedream)
-AppPublisherURL=https://github.com/felipedream/denon-desktop-control
-AppSupportURL=https://t.me/felipedream
-DefaultDirName={autopf}\DENON Desktop Control
-DefaultGroupName=DENON Desktop Control
-UninstallDisplayIcon={app}\DenonDesktopControl.exe
+AppName=AVR Desktop Control
+AppVersion=2.0.0
+AppPublisher=Sergio (@sreddev)
+AppPublisherURL=https://github.com/sreddev/AVR-desktop-control_tuner
+AppSupportURL=https://t.me/sreddev
+DefaultDirName={autopf}\AVR Desktop Control
+DefaultGroupName=AVR Desktop Control
+UninstallDisplayIcon={app}\AVRDesktopControl.exe
 OutputDir=..\installer\out
-OutputBaseFilename=DenonDesktopControl-1.6.1-Setup
+OutputBaseFilename=AVRDesktopControl-2.0.0-Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible
@@ -19,23 +19,22 @@ LicenseFile=..\LICENSE
 PrivilegesRequired=lowest
 
 [Languages]
-Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
-Name: "{group}\DENON Desktop Control"; Filename: "{app}\DenonDesktopControl.exe"
-Name: "{group}\Desinstalar"; Filename: "{uninstallexe}"
-Name: "{autodesktop}\DENON Desktop Control"; Filename: "{app}\DenonDesktopControl.exe"; Tasks: desktopicon
-Name: "{autostartup}\DENON Desktop Control"; Filename: "{app}\DenonDesktopControl.exe"; Tasks: startupicon
+Name: "{group}\AVR Desktop Control"; Filename: "{app}\AVRDesktopControl.exe"
+Name: "{group}\Uninstall AVR Desktop Control"; Filename: "{uninstallexe}"
+Name: "{autodesktop}\AVR Desktop Control"; Filename: "{app}\AVRDesktopControl.exe"; Tasks: desktopicon
+Name: "{autostartup}\AVR Desktop Control"; Filename: "{app}\AVRDesktopControl.exe"; Tasks: startupicon
 
 [Tasks]
-Name: "desktopicon"; Description: "Crear acceso directo en el escritorio"; GroupDescription: "Accesos directos:"
-Name: "startupicon"; Description: "Iniciar con Windows"; GroupDescription: "Opciones:"
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Shortcuts:"
+Name: "startupicon"; Description: "Start with Windows"; GroupDescription: "Options:"
 
 [Run]
-Filename: "{app}\DenonDesktopControl.exe"; Description: "Ejecutar DENON Desktop Control"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\AVRDesktopControl.exe"; Description: "Launch AVR Desktop Control"; Flags: nowait postinstall skipifsilent
 
 

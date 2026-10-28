@@ -150,7 +150,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="HEOS" />
-                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="Musica en red, servicios y cola" />
+                <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="Network music, services and queue" />
             </StackPanel>
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <Ellipse Width="8" Height="8" Margin="0,0,6,0" VerticalAlignment="Center" Fill="{Binding Heos.IsAvailable, Converter={StaticResource ChannelBg}}" />
@@ -228,8 +228,8 @@
                         ToolTip="{Binding Heos.NowPlayingTitle}" />
 
                     <StackPanel Grid.Row="2" Margin="0,3,0,0">
-                        <TextBlock FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" MouseLeftButtonUp="OnArtistClick" Style="{StaticResource LinkText}" Text="{Binding Heos.NowPlayingArtist}" ToolTip="Buscar este artista" />
-                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" MouseLeftButtonUp="OnAlbumClick" Style="{StaticResource LinkText}" Text="{Binding Heos.NowPlayingAlbum}" ToolTip="Buscar este album" />
+                        <TextBlock FontSize="12.5" Foreground="{StaticResource TextSecondaryBrush}" MouseLeftButtonUp="OnArtistClick" Style="{StaticResource LinkText}" Text="{Binding Heos.NowPlayingArtist}" ToolTip="Search for this artist" />
+                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" MouseLeftButtonUp="OnAlbumClick" Style="{StaticResource LinkText}" Text="{Binding Heos.NowPlayingAlbum}" ToolTip="Search for this album" />
                     </StackPanel>
 
                     <StackPanel Grid.Row="3" Margin="0,12,0,0">
@@ -238,7 +238,7 @@
                             IsMoveToPointEnabled="True"
                             Maximum="{Binding Heos.DurationMs}"
                             Minimum="0"
-                            ToolTip="Arrastrar para adelantar o retroceder"
+                            ToolTip="Drag to seek forward or back"
                             ValueChanged="OnSeekChanged"
                             Value="{Binding Heos.PositionMs, Mode=OneWay}" />
                         <Grid Margin="0,3,0,0">
@@ -248,26 +248,26 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="4" Margin="0,12,0,0" HorizontalAlignment="Center" Orientation="Horizontal">
-                        <ui:Button Width="40" Height="40" Margin="0,0,8,0" Command="{Binding HeosPreviousCommand}" Icon="{ui:SymbolIcon Previous24}" ToolTip="Anterior" />
-                        <ui:Button Width="50" Height="50" Margin="0,0,8,0" Appearance="Primary" Command="{Binding HeosPlayPauseCommand}" ToolTip="Reproducir / Pausar">
+                        <ui:Button Width="40" Height="40" Margin="0,0,8,0" Command="{Binding HeosPreviousCommand}" Icon="{ui:SymbolIcon Previous24}" ToolTip="Previous" />
+                        <ui:Button Width="50" Height="50" Margin="0,0,8,0" Appearance="Primary" Command="{Binding HeosPlayPauseCommand}" ToolTip="Play / Pause">
                             <ui:SymbolIcon FontSize="19" Symbol="{Binding Heos.IsPlaying, Converter={StaticResource PlayPauseIcon}}" />
                         </ui:Button>
-                        <ui:Button Width="40" Height="40" Command="{Binding HeosNextCommand}" Icon="{ui:SymbolIcon Next24}" ToolTip="Siguiente" />
+                        <ui:Button Width="40" Height="40" Command="{Binding HeosNextCommand}" Icon="{ui:SymbolIcon Next24}" ToolTip="Next" />
                     </StackPanel>
 
                     <!-- Technical info -->
                     <Border Grid.Row="5" Margin="0,12,0,0" Padding="11" VerticalAlignment="Bottom" Background="#50202430" CornerRadius="8">
                         <StackPanel>
                             <Grid Margin="0,0,0,5">
-                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="FUENTE" />
+                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="SOURCE" />
                                 <TextBlock Margin="60,0,0,0" HorizontalAlignment="Right" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding State.Main.SourceFriendly}" TextTrimming="CharacterEllipsis" />
                             </Grid>
                             <Grid Margin="0,0,0,5">
-                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="FORMATO" />
+                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="FORMAT" />
                                 <TextBlock Margin="60,0,0,0" HorizontalAlignment="Right" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding State.AudioFormat}" TextTrimming="CharacterEllipsis" />
                             </Grid>
                             <Grid Margin="0,0,0,5">
-                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="MUESTREO" />
+                                <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="SAMPLE RATE" />
                                 <TextBlock Margin="60,0,0,0" HorizontalAlignment="Right" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding State.SampleRate}" TextTrimming="CharacterEllipsis" />
                             </Grid>
                             <Grid>
@@ -286,18 +286,18 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
-                                    <TextBlock FontSize="9" Foreground="{StaticResource TextTertiaryBrush}" Text="CUENTA HEOS" />
+                                    <TextBlock FontSize="9" Foreground="{StaticResource TextTertiaryBrush}" Text="HEOS ACCOUNT" />
                                     <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Heos.AccountUsername}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Heos.AccountUsername}" />
                                 </StackPanel>
-                                <Button Grid.Column="1" VerticalAlignment="Center" Command="{Binding HeosSignOutCommand}" Content="Salir" Style="{StaticResource MiniBtn}" />
+                                <Button Grid.Column="1" VerticalAlignment="Center" Command="{Binding HeosSignOutCommand}" Content="Sign out" Style="{StaticResource MiniBtn}" />
                             </Grid>
 
                             <StackPanel Visibility="{Binding Heos.IsSignedIn, Converter={StaticResource InverseBoolToVis}}">
-                                <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Iniciar sesion en HEOS" />
-                                <TextBlock Margin="0,1,0,6" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" Text="Habilita Tidal, TuneIn y favoritos." TextWrapping="Wrap" />
-                                <ui:TextBox x:Name="HeosUser" Margin="0,0,0,4" Padding="7,5" FontSize="11" PlaceholderText="Correo HEOS" />
+                                <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Sign in to HEOS" />
+                                <TextBlock Margin="0,1,0,6" FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" Text="Enables Tidal, TuneIn and favorites." TextWrapping="Wrap" />
+                                <ui:TextBox x:Name="HeosUser" Margin="0,0,0,4" Padding="7,5" FontSize="11" PlaceholderText="HEOS email" />
                                 <PasswordBox x:Name="HeosPass" Margin="0,0,0,6" Padding="7,5" Background="{StaticResource Surface1Brush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" FontSize="11" Foreground="{StaticResource TextPrimaryBrush}" KeyDown="OnPasswordKeyDown" />
-                                <ui:Button HorizontalAlignment="Stretch" Appearance="Primary" Click="OnSignInClick" Content="Entrar" />
+                                <ui:Button HorizontalAlignment="Stretch" Appearance="Primary" Click="OnSignInClick" Content="Sign in" />
                                 <TextBlock Margin="0,5,0,0" FontSize="9.5" Foreground="{StaticResource TextSecondaryBrush}" Text="{Binding Heos.AccountMessage}" TextWrapping="Wrap" Visibility="{Binding Heos.AccountMessage, Converter={StaticResource StringNotEmptyToVis}}" />
                             </StackPanel>
                         </StackPanel>
@@ -343,8 +343,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Command="{Binding HeosBackCommand}" Content="&#x2190;  Atras" Style="{StaticResource MiniBtn}" ToolTip="Volver un nivel" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
-                        <Button Grid.Column="1" Margin="6,0,0,0" Command="{Binding HeosHomeCommand}" Content="Servicios" Style="{StaticResource MiniBtn}" ToolTip="Volver a la lista de servicios" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
+                        <Button Command="{Binding HeosBackCommand}" Content="&#x2190;  Back" Style="{StaticResource MiniBtn}" ToolTip="Up one level" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
+                        <Button Grid.Column="1" Margin="6,0,0,0" Command="{Binding HeosHomeCommand}" Content="Services" Style="{StaticResource MiniBtn}" ToolTip="Back to the service list" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
                         <TextBlock Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Heos.CurrentLocation}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Heos.CurrentLocation}" />
                         <!-- Reveals the queue again when it is collapsed -->
                         <Button
@@ -352,9 +352,9 @@
                             Grid.Column="3"
                             Margin="6,0,0,0"
                             Click="OnToggleQueue"
-                            Content="Cola &#x2192;"
+                            Content="Queue &#x2192;"
                             Style="{StaticResource MiniBtn}"
-                            ToolTip="Mostrar la cola"
+                            ToolTip="Show the queue"
                             Visibility="Collapsed" />
                     </Grid>
 
@@ -365,8 +365,8 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
-                                <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Servicios" />
-                                <TextBlock Margin="0,1,0,8" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="Elige una fuente para navegar su catalogo" />
+                                <TextBlock FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Services" />
+                                <TextBlock Margin="0,1,0,8" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="Pick a source to browse its catalog" />
                             </StackPanel>
                         </Grid>
                     </StackPanel>
@@ -377,9 +377,9 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ui:TextBox x:Name="SearchBox" Padding="9,6" FontSize="12" KeyDown="OnSearchKeyDown" PlaceholderText="Buscar en este servicio..." />
+                        <ui:TextBox x:Name="SearchBox" Padding="9,6" FontSize="12" KeyDown="OnSearchKeyDown" PlaceholderText="Search this service..." />
                         <ComboBox x:Name="SearchKind" Grid.Column="1" MinWidth="92" Margin="6,0" DisplayMemberPath="Name" ItemsSource="{Binding Heos.SearchOptions}" SelectedIndex="0" />
-                        <Button Grid.Column="2" Click="OnSearchClick" Content="Buscar" Style="{StaticResource MiniBtn}" />
+                        <Button Grid.Column="2" Click="OnSearchClick" Content="Search" Style="{StaticResource MiniBtn}" />
                     </Grid>
 
                     <ProgressBar Grid.Row="2" Height="2" VerticalAlignment="Bottom" Foreground="{StaticResource AccentTextBrush}" IsIndeterminate="True" Visibility="{Binding Heos.IsBusy, Converter={StaticResource BoolToVis}}" />
@@ -540,7 +540,7 @@
                                                                 FontWeight="Bold"
                                                                 Foreground="White"
                                                                 Tag="{Binding}"
-                                                                ToolTip="Agregar a la cola"
+                                                                ToolTip="Add to queue"
                                                                 Visibility="{Binding IsPlayable, Converter={StaticResource BoolToVis}}" />
                                                             <StackPanel Grid.Row="1" Margin="6,2,6,6">
                                                                 <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
@@ -600,14 +600,14 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Cola" />
+                            <TextBlock FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Queue" />
                             <TextBlock FontSize="10" Foreground="{StaticResource TextTertiaryBrush}">
                                 <Run Text="{Binding Heos.Queue.Count, Mode=OneWay}" />
-                                <Run Text="pistas" />
+                                <Run Text="tracks" />
                             </TextBlock>
                         </StackPanel>
-                        <Button Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center" Command="{Binding HeosClearQueueCommand}" Content="Limpiar" Style="{StaticResource MiniBtn}" />
-                        <Button Grid.Column="2" VerticalAlignment="Center" Click="OnToggleQueue" Content="&#x2192;" Style="{StaticResource MiniBtn}" ToolTip="Ocultar la cola" />
+                        <Button Grid.Column="1" Margin="0,0,5,0" VerticalAlignment="Center" Command="{Binding HeosClearQueueCommand}" Content="Clear" Style="{StaticResource MiniBtn}" />
+                        <Button Grid.Column="2" VerticalAlignment="Center" Click="OnToggleQueue" Content="&#x2192;" Style="{StaticResource MiniBtn}" ToolTip="Hide the queue" />
                     </Grid>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">

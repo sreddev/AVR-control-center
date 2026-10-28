@@ -1,9 +1,12 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,7 +35,34 @@ public sealed class ReceiverService : IAsyncDisposable
     public event EventHandler? StateChanged;
     public event EventHandler? Connected;   // fired once per successful ConnectAsync
 
-    public ReceiverService(AppSettings settings) => _settings = settings;
+    public ReceiverService(AppSettings settings)
+    {
+        _settings = settings;
+
+        // Extended parameters send themselves when the user changes them.
+        foreach (var s in State.Settings.All)
+            s.CommandRequested += OnSettingCommand;
+
+        // Tone, subwoofer and zone volumes are bound straight to the state, so
+        // user edits are picked up here. Receiver echoes are skipped.
+        State.PropertyChanged += OnStatePropertyChanged;
+        State.Main.PropertyChanged += OnMainPropertyChanged;
+        State.Zone2.PropertyChanged += OnZonePropertyChanged;
+        State.Zone3.PropertyChanged += OnZonePropertyChanged;
+    }
+
+    /// <summary>Signal, Quick Select and zone queries sent on every connection.</summary>
+    private static readonly string[] ExtendedQueries =
+    {
+        "Z3?",
+        "MSQUICK ?", "MSSMART ?", "SSQSNZMA ?",
+        "SYSMI ?", "SSINFAISSIG ?", "SSINFSIGRES ?", "OPINFINS ?", "OPINFASP ?"
+    };
+
+    private static readonly string[] SignalQueries =
+    {
+        "MS?", "SYSMI ?", "SSINFAISSIG ?", "SSINFAISFSV ?", "SSINFSIGRES ?", "OPINFINS ?", "OPINFASP ?"
+    };
 
     // â”€â”€ Connection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public async Task<bool> ConnectAsync(ReceiverDescriptor descriptor, CancellationToken ct = default)
@@ -64,6 +94,16 @@ public sealed class ReceiverService : IAsyncDisposable
             StateChanged?.Invoke(this, EventArgs.Empty);
         });
 
+        // A different receiver may lack features the previous one had.
+        Ui(() =>
+        {
+            State.Settings.ResetSupport();
+            State.Zone2.IsPresent = false;
+            State.Zone3.IsPresent = false;
+            State.QuickSelectPrefix = "";
+            State.QuickSelects.Clear();
+        });
+
         var telnetOk = await _telnet.ConnectAsync(ct).ConfigureAwait(false);
         bool httpOk = false;
         if (telnetOk)
@@ -79,6 +119,12 @@ public sealed class ReceiverService : IAsyncDisposable
                 "TFAN?", "TMAN?", "TFANNAME?",
                 "OPTPN ?"                 // tuner preset names + frequencies
             ).ConfigureAwait(false);
+            await _telnet.SendManyAsync(ExtendedQueries).ConfigureAwait(false);
+            await _telnet.SendManyAsync(State.Settings.All
+                .Where(s => s.Query is not null)
+                .Select(s => s.Query!)
+                .Distinct()
+                .ToArray()).ConfigureAwait(false);
         }
         else
         {
@@ -149,7 +195,7 @@ public sealed class ReceiverService : IAsyncDisposable
                 {
                     var ok = await _telnet.ConnectAsync(token).ConfigureAwait(false);
                     if (ok)
-                        await _telnet.SendManyAsync("ZM?", "MV?", "MU?", "SI?", "MS?", "Z2?");
+                        await _telnet.SendManyAsync("ZM?", "MV?", "MU?", "SI?", "MS?", "Z2?", "Z3?");
                     else
                         await HydrateFromHttpAsync(token).ConfigureAwait(false);
                 }
@@ -240,10 +286,132 @@ public sealed class ReceiverService : IAsyncDisposable
         return SendOrHttp($"CV{channel} {token}");
     }
 
-    public Task Zone2PowerAsync(bool on) => SendOrHttp(on ? "Z2ON" : "Z2OFF");
-    public Task Zone2MuteAsync(bool on) => SendOrHttp("Z2" + (on ? "MUON" : "MUOFF"));
-    public Task Zone2VolumeAsync(double v) => SendOrHttp("Z2" + DenonProtocol.FormatVolume(v));
-    public Task Zone2SourceAsync(string src) => SendOrHttp("Z2" + src);
+    public Task Zone2PowerAsync(bool on) => ZonePowerAsync(ZoneId.Zone2, on);
+
+    // ── Zones 2 and 3 ───────────────────────────────────────────────────────
+    // Same command set, prefixed "Z2" or "Z3". The main zone uses ZM/MV/MU/SI.
+
+    private static string ZonePrefix(ZoneId zone) => zone == ZoneId.Zone3 ? "Z3" : "Z2";
+
+    public Task ZonePowerAsync(ZoneId zone, bool on) =>
+        zone == ZoneId.Main
+            ? (on ? PowerOnAsync() : SendOrHttp("ZMOFF"))
+            : SendOrHttp(ZonePrefix(zone) + (on ? "ON" : "OFF"));
+
+    public Task ZoneMuteAsync(ZoneId zone, bool on) =>
+        zone == ZoneId.Main ? MuteAsync(on) : SendOrHttp(ZonePrefix(zone) + (on ? "MUON" : "MUOFF"));
+
+    public Task ZoneSourceAsync(ZoneId zone, string token) =>
+        zone == ZoneId.Main ? SelectSourceAsync(token) : SendOrHttp(ZonePrefix(zone) + token);
+
+    private Task ZoneVolumeAsync(ZoneId zone, double v) =>
+        SendOrHttp(ZonePrefix(zone) + DenonProtocol.FormatVolume(v));
+
+    // ── Quick Select / Smart Select ─────────────────────────────────────────
+
+    /// <summary>"MSQUICK" on Denon, "MSSMART" on Marantz; falls back to the brand before the receiver answers.</summary>
+    private string QuickSelectCommand =>
+        State.QuickSelectPrefix.Length > 0 ? State.QuickSelectPrefix
+        : State.Brand.Contains("Marantz", StringComparison.OrdinalIgnoreCase) ? "MSSMART" : "MSQUICK";
+
+    /// <summary>Recalls a slot: input, volume, surround mode and sound settings in one go.</summary>
+    public Task QuickSelectAsync(int slot) => SendOrHttp(QuickSelectCommand + slot);
+
+    /// <summary>Stores the current input, volume and sound settings in a slot.</summary>
+    public Task SaveQuickSelectAsync(int slot) => SendOrHttp($"{QuickSelectCommand}{slot} MEMORY");
+
+    // ── Signal information ──────────────────────────────────────────────────
+
+    /// <summary>Asks for the input signal, layout, resolution and decoder again.</summary>
+    public Task RefreshSignalAsync() =>
+        _telnet is not null && _telnet.IsConnected
+            ? _telnet.SendManyAsync(SignalQueries)
+            : Task.CompletedTask;
+
+    // ── Change tracking ─────────────────────────────────────────────────────
+
+    // One pending command per key, so a slider drag sends only its final value.
+    private readonly Dictionary<string, CancellationTokenSource> _pending = new();
+    private CancellationTokenSource? _requeryCts;
+
+    private void OnSettingCommand(AvrSetting setting, string command)
+    {
+        if (setting.Kind == SettingKind.Level) Debounce("set:" + setting.Key, command);
+        else _ = SendOrHttp(command);
+    }
+
+    private void OnStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ReceiverState.SurroundMode))
+        {
+            // Surround and processing parameters are stored per sound mode.
+            ScheduleRequery(includeSettings: true);
+            return;
+        }
+        if (State.IsApplyingRemote) return;
+        switch (e.PropertyName)
+        {
+            case nameof(ReceiverState.Bass): Debounce("bas", () => SetBassAsync(State.Bass)); break;
+            case nameof(ReceiverState.Treble): Debounce("tre", () => SetTrebleAsync(State.Treble)); break;
+            case nameof(ReceiverState.SubwooferLevel): Debounce("swl", () => SetSubwooferAsync(State.SubwooferLevel)); break;
+            case nameof(ReceiverState.ToneControlEnabled): _ = SetToneControlAsync(State.ToneControlEnabled); break;
+        }
+    }
+
+    private void OnMainPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ZoneState.Source)) ScheduleRequery(includeSettings: false);
+    }
+
+    private void OnZonePropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (State.IsApplyingRemote || sender is not ZoneState zone) return;
+        if (e.PropertyName == nameof(ZoneState.Volume))
+            Debounce("vol" + zone.Id, () => ZoneVolumeAsync(zone.Id, zone.Volume));
+    }
+
+    /// <summary>
+    /// After an input or sound mode change, re-reads the signal panel (and the
+    /// per-mode parameters) once the receiver has settled.
+    /// </summary>
+    private void ScheduleRequery(bool includeSettings)
+    {
+        _requeryCts?.Cancel();
+        var cts = _requeryCts = new CancellationTokenSource();
+        _ = Task.Run(async () =>
+        {
+            try { await Task.Delay(1500, cts.Token).ConfigureAwait(false); }
+            catch (OperationCanceledException) { return; }
+            if (_telnet is null || !_telnet.IsConnected) return;
+            await _telnet.SendManyAsync(SignalQueries).ConfigureAwait(false);
+            if (!includeSettings) return;
+            await _telnet.SendManyAsync(State.Settings.All
+                .Where(s => s.Query is not null && s.Group is SettingGroup.Surround
+                                                     or SettingGroup.DialogDynamics
+                                                     or SettingGroup.RoomCorrection)
+                .Select(s => s.Query!)
+                .Distinct()
+                .ToArray()).ConfigureAwait(false);
+        });
+    }
+
+    private void Debounce(string key, string command) => Debounce(key, () => SendOrHttp(command));
+
+    private void Debounce(string key, Func<Task> send)
+    {
+        CancellationTokenSource cts;
+        lock (_pending)
+        {
+            if (_pending.TryGetValue(key, out var old)) old.Cancel();
+            cts = _pending[key] = new CancellationTokenSource();
+        }
+        _ = Task.Run(async () =>
+        {
+            try { await Task.Delay(220, cts.Token).ConfigureAwait(false); }
+            catch (OperationCanceledException) { return; }
+            await send().ConfigureAwait(false);
+        });
+    }
 
     // ── Analog tuner ────────────────────────────────────────────────────────
     // TF / TP / TM commands are ignored unless the main input is TUNER, so

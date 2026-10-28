@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using DenonRemote.Services;
 
@@ -27,9 +27,7 @@ public partial class ConnectPage : PageBase
         AddBtn.Content = L.AddAndConnect;
         HelpTitle.Text = L.DoesntShowUp;
         HelpDesc.Text = L.DoesntShowUpDesc;
-        EmptyTitle.Text = L.IsSpanish ? "Nada por aqui todavia" : "Nothing here yet";
-        EmptyDesc.Text = L.IsSpanish
-            ? "Pulsa Buscar o agrega la IP manualmente."
-            : "Press Rescan or add the IP manually.";
+        EmptyTitle.Text = "Nothing here yet";
+        EmptyDesc.Text = "Press Rescan or add the IP manually.";
     }
 }

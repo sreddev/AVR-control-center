@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Collections.ObjectModel;
@@ -33,6 +33,31 @@ public partial class MainViewModel : ObservableObject
     public ObservableCollection<ChannelProfile> Profiles { get; } = new();
     public ObservableCollection<RadioStation> Stations { get; } = new();
 
+    /// <summary>Inputs not hidden by the user; what every source picker shows.</summary>
+    public ObservableCollection<SourceEntry> VisibleSources { get; } = new();
+
+    /// <summary>Main zone, Zone 2 and Zone 3; the page hides zones the receiver lacks.</summary>
+    public IReadOnlyList<ZonePanel> Zones { get; }
+
+    /// <summary>False until the receiver reports a Zone 2 or Zone 3.</summary>
+    public bool HasExtraZones => State.Zone2.IsPresent || State.Zone3.IsPresent;
+
+    /// <summary>Main zone sleep timer, shown on the dashboard and in the widget.</summary>
+    public AvrSetting MainSleep => State.Settings.ByKey["sleep"];
+
+    // Cards of the Processing and Receiver pages.
+    public SettingSection RoomCorrection { get; }
+    public SettingSection DialogDynamics { get; }
+    public SettingSection SurroundParameters { get; }
+    public SettingSection SpeakerExtras { get; }
+    public SettingSection Video { get; }
+    public SettingSection DisplayPower { get; }
+    public SettingSection Locks { get; }
+    public SettingSection ZoneOptions { get; }
+
+    /// <summary>Sources page: shows rename boxes and hide switches instead of plain tiles.</summary>
+    [ObservableProperty] private bool _isEditingSources;
+
     /// <summary>Channels that the receiver reports as physically connected.</summary>
     public ObservableCollection<Denon.ChannelState> ActiveChannels { get; } = new();
 
@@ -59,6 +84,53 @@ public partial class MainViewModel : ObservableObject
         SyncRecentDevices();
         SyncProfiles();
         SyncStations();
+
+        var set = State.Settings;
+        RoomCorrection = new SettingSection("Audyssey & room correction",
+            "Room EQ and loudness compensation measured during setup.",
+            set.InGroup(SettingGroup.RoomCorrection));
+        DialogDynamics = new SettingSection("Dialog & dynamics",
+            "Speech clarity and dynamic range.",
+            set.InGroup(SettingGroup.DialogDynamics));
+        SurroundParameters = new SettingSection("Surround parameters",
+            "Stored per sound mode; some only take effect in specific modes.",
+            set.InGroup(SettingGroup.Surround));
+        SpeakerExtras = new SettingSection("Speakers & extras",
+            "Model-specific outputs and enhancers.",
+            set.InGroup(SettingGroup.Extras));
+        Video = new SettingSection("Video & A/V sync",
+            "HDMI routing, picture and lip-sync.",
+            set.InGroup(SettingGroup.Video));
+        DisplayPower = new SettingSection("Display & power",
+            "Front panel and energy saving.",
+            set.InGroup(SettingGroup.DisplayPower));
+        Locks = new SettingSection("Locks & limits",
+            "Protect the volume and the controls.",
+            set.InGroup(SettingGroup.Locks));
+        ZoneOptions = new SettingSection("Multi-zone",
+            "Options shared by all zones.",
+            set.InGroup(SettingGroup.Zones));
+
+        Zones = new[]
+        {
+            new ZonePanel(State.Main, set.ByKey["sleep"]),
+            new ZonePanel(State.Zone2, set.ByKey["z2sleep"]),
+            new ZonePanel(State.Zone3, set.ByKey["z3sleep"])
+        };
+
+        foreach (var z in new[] { State.Zone2, State.Zone3 })
+            z.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(Denon.ZoneState.IsPresent)) OnPropertyChanged(nameof(HasExtraZones));
+            };
+
+        // Apply the user's names and hidden flags to inputs as the receiver reports them.
+        State.Sources.CollectionChanged += (_, e) =>
+        {
+            if (e.NewItems is not null)
+                foreach (SourceEntry src in e.NewItems) AttachSource(src);
+            RebuildVisibleSources();
+        };
 
         // Tuner: keep the "now playing" highlight in step with the receiver,
         // and re-read the tuner whenever the input switches to it.
@@ -136,6 +208,90 @@ public partial class MainViewModel : ObservableObject
     }
 
     private System.Threading.Timer? _volumeDebounce;
+
+    // ── Sources: app-side names and hiding ──────────────────────────────────
+
+    private void AttachSource(SourceEntry src)
+    {
+        src.Alias = _settings.SourceAliases.TryGetValue(src.Token, out var alias) ? alias : "";
+        src.IsHidden = _settings.HiddenSources.Contains(src.Token, StringComparer.OrdinalIgnoreCase);
+        src.PropertyChanged -= OnSourceEdited;
+        src.PropertyChanged += OnSourceEdited;
+    }
+
+    private void OnSourceEdited(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (sender is not SourceEntry src) return;
+        if (e.PropertyName == nameof(SourceEntry.Alias))
+        {
+            var alias = (src.Alias ?? "").Trim();
+            if (alias.Length == 0) _settings.SourceAliases.Remove(src.Token);
+            else _settings.SourceAliases[src.Token] = alias;
+            _settings.Save();
+            if (string.Equals(State.Main.Source, src.Token, StringComparison.OrdinalIgnoreCase))
+                State.Main.SourceFriendly = src.Caption;
+        }
+        else if (e.PropertyName == nameof(SourceEntry.IsHidden))
+        {
+            _settings.HiddenSources.RemoveAll(t => string.Equals(t, src.Token, StringComparison.OrdinalIgnoreCase));
+            if (src.IsHidden) _settings.HiddenSources.Add(src.Token);
+            _settings.Save();
+            RebuildVisibleSources();
+        }
+    }
+
+    private void RebuildVisibleSources()
+    {
+        VisibleSources.Clear();
+        foreach (var src in State.Sources)
+            if (!src.IsHidden) VisibleSources.Add(src);
+    }
+
+    [RelayCommand]
+    private void ToggleSourceEditing() => IsEditingSources = !IsEditingSources;
+
+    // ── Quick Select / Smart Select ─────────────────────────────────────────
+
+    [RelayCommand]
+    private async Task QuickSelectAsync(QuickSelectSlot? slot)
+    {
+        if (slot is null) return;
+        await _receiver.QuickSelectAsync(slot.Number);
+    }
+
+    /// <summary>Stores the receiver's current input, volume and sound settings in the slot.</summary>
+    [RelayCommand]
+    private async Task SaveQuickSelectAsync(QuickSelectSlot? slot)
+    {
+        if (slot is null) return;
+        await _receiver.SaveQuickSelectAsync(slot.Number);
+        StatusMessage = $"Current settings stored in {slot.Name}";
+    }
+
+    // ── Zones ───────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private async Task ToggleZonePowerAsync(ZoneState? zone)
+    {
+        if (zone is null) return;
+        await _receiver.ZonePowerAsync(zone.Id, !zone.IsOn);
+    }
+
+    [RelayCommand]
+    private async Task ToggleZoneMuteAsync(ZoneState? zone)
+    {
+        if (zone is null) return;
+        await _receiver.ZoneMuteAsync(zone.Id, !zone.IsMuted);
+    }
+
+    /// <summary>Called by the Zones page when the user picks an input for a zone.</summary>
+    public Task SetZoneSourceAsync(ZoneState zone, string token) =>
+        _receiver.ZoneSourceAsync(zone.Id, token);
+
+    // ── Signal ──────────────────────────────────────────────────────────────
+
+    [RelayCommand]
+    private Task RefreshSignalAsync() => _receiver.RefreshSignalAsync();
 
     private void OnMainZonePropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
@@ -215,15 +371,15 @@ public partial class MainViewModel : ObservableObject
         await _receiver.SetBassAsync(0);
         await _receiver.SetTrebleAsync(0);
 
-        StatusMessage = "Niveles normalizados a 0 dB";
+        StatusMessage = "Levels normalized to 0 dB";
     }
 
     /// <summary>Available units for the volume readout, bound to the Settings combo.</summary>
     public IReadOnlyList<VolumeUnitOption> VolumeUnits { get; } = new[]
     {
-        new VolumeUnitOption(VolumeUnit.Absolute, "Valor absoluto (52.5)"),
-        new VolumeUnitOption(VolumeUnit.Decibels, "Decibelios (-27.5 dB)"),
-        new VolumeUnitOption(VolumeUnit.Percent,  "Porcentaje (56%)")
+        new VolumeUnitOption(VolumeUnit.Absolute, "Absolute value (52.5)"),
+        new VolumeUnitOption(VolumeUnit.Decibels, "Decibels (-27.5 dB)"),
+        new VolumeUnitOption(VolumeUnit.Percent,  "Percent (56%)")
     };
 
     public VolumeUnitOption SelectedVolumeUnit
@@ -263,7 +419,7 @@ public partial class MainViewModel : ObservableObject
     {
         var profile = new ChannelProfile
         {
-            Name = $"Volumen {_settings.ChannelProfiles.Count + 1}",
+            Name = $"Profile {_settings.ChannelProfiles.Count + 1}",
             SubwooferLevel = State.SubwooferLevel,
             Bass = State.Bass,
             Treble = State.Treble,
@@ -279,7 +435,7 @@ public partial class MainViewModel : ObservableObject
         _settings.ChannelProfiles.Add(profile);
         _settings.Save();
         SyncProfiles();
-        StatusMessage = $"Perfil guardado: {profile.Name}";
+        StatusMessage = $"Profile saved: {profile.Name}";
     }
 
     /// <summary>Applies a saved profile to the receiver and to local state.</summary>
@@ -305,7 +461,7 @@ public partial class MainViewModel : ObservableObject
         await _receiver.SetBassAsync(profile.Bass);
         await _receiver.SetTrebleAsync(profile.Treble);
 
-        StatusMessage = $"Perfil cargado: {profile.Name}";
+        StatusMessage = $"Profile loaded: {profile.Name}";
     }
 
     /// <summary>Removes a saved profile.</summary>
@@ -316,7 +472,7 @@ public partial class MainViewModel : ObservableObject
         _settings.ChannelProfiles.Remove(profile);
         _settings.Save();
         SyncProfiles();
-        StatusMessage = $"Perfil eliminado: {profile.Name}";
+        StatusMessage = $"Profile deleted: {profile.Name}";
     }
 
     /// <summary>Writes profile changes (e.g. an inline rename) back to disk.</summary>
@@ -349,6 +505,9 @@ public partial class MainViewModel : ObservableObject
     public string CurrentStationName =>
         Stations.FirstOrDefault(s => s.IsActive)?.Name ?? State.TunerStationName;
 
+    /// <summary>Name from the saved list only; empty for a station that isn't saved.</summary>
+    public string SavedStationName => Stations.FirstOrDefault(s => s.IsActive)?.Name ?? "";
+
     private void SyncStations()
     {
         Stations.Clear();
@@ -365,6 +524,7 @@ public partial class MainViewModel : ObservableObject
         foreach (var s in Stations)
             s.IsActive = State.TunerFrequency > 0 && s.Matches(State.TunerBand, State.TunerFrequency);
         OnPropertyChanged(nameof(CurrentStationName));
+        OnPropertyChanged(nameof(SavedStationName));
     }
 
     [RelayCommand]
@@ -412,12 +572,23 @@ public partial class MainViewModel : ObservableObject
     /// </summary>
     private Task StepSavedStationAsync(int delta)
     {
-        if (Stations.Count == 0) return Task.CompletedTask;
+        if (Stations.Count == 0 || Stations.All(s => s.Skip)) return Task.CompletedTask;
         var current = Stations.ToList().FindIndex(s => s.IsActive);
-        var next = current < 0
-            ? (delta > 0 ? 0 : Stations.Count - 1)
-            : (current + delta + Stations.Count) % Stations.Count;
+        var next = current < 0 ? (delta > 0 ? -1 : Stations.Count) : current;
+        // Walk past stations marked "skip"; at least one is playable (checked above).
+        do next = (next + delta + Stations.Count) % Stations.Count;
+        while (Stations[next].Skip);
         return PlayStationAsync(Stations[next]);
+    }
+
+    /// <summary>Includes or excludes a station from next / previous cycling.</summary>
+    [RelayCommand]
+    private void ToggleStationSkip(RadioStation? station)
+    {
+        if (station is null) return;
+        station.Skip = !station.Skip;
+        _settings.Save();
+        TunerMessage = station.Skip ? $"{station.Name} is skipped by next / previous" : $"{station.Name} is back in the rotation";
     }
 
     /// <summary>Prefills the editor with whatever the receiver is tuned to.</summary>
@@ -474,7 +645,7 @@ public partial class MainViewModel : ObservableObject
 
         SyncStations();
         CancelStationEdit();
-        TunerMessage = L.IsSpanish ? $"Emisora guardada: {name}" : $"Station saved: {name}";
+        TunerMessage = $"Station saved: {name}";
     }
 
     private readonly System.Windows.Threading.DispatcherTimer _presetImportDebounce;
@@ -518,7 +689,7 @@ public partial class MainViewModel : ObservableObject
         _settings.RadioStations.Remove(station);
         _settings.Save();
         SyncStations();
-        TunerMessage = L.IsSpanish ? $"Emisora eliminada: {station.Name}" : $"Station deleted: {station.Name}";
+        TunerMessage = $"Station deleted: {station.Name}";
     }
 
     // ── HEOS ────────────────────────────────────────────────────────────────
@@ -588,7 +759,7 @@ public partial class MainViewModel : ObservableObject
         // connection in ~300 ms rather than waiting for the 3 s SSDP scan.
         if (_settings.AutoConnect && !string.IsNullOrWhiteSpace(_settings.LastHost))
         {
-            StatusMessage = $"Reconnecting to {_settings.LastFriendlyName ?? _settings.LastHost}â€¦";
+            StatusMessage = $"Reconnecting to {_settings.LastFriendlyName ?? _settings.LastHost}…";
             var probed = await _discovery.ProbeAsync(_settings.LastHost);
             if (probed is not null)
             {
@@ -618,7 +789,7 @@ public partial class MainViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            StatusMessage = "Searching the network for Denon / Marantz devicesâ€¦";
+            StatusMessage = "Searching the network for Denon / Marantz devices…";
             var found = await _discovery.DiscoverAsync(TimeSpan.FromSeconds(3));
             Devices.Clear();
             foreach (var d in found) Devices.Add(d);
@@ -648,7 +819,7 @@ public partial class MainViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            StatusMessage = $"Probing {host}â€¦";
+            StatusMessage = $"Probing {host}…";
             var probed = await _discovery.ProbeAsync(host);
             if (probed is null)
             {
@@ -667,9 +838,7 @@ public partial class MainViewModel : ObservableObject
         IsBusy = true;
         try
         {
-            StatusMessage = L.IsSpanish
-                ? $"Conectando a {d.FriendlyName ?? d.Model} en {d.Host}..."
-                : $"Connecting to {d.FriendlyName ?? d.Model} at {d.Host}...";
+            StatusMessage = $"Connecting to {d.FriendlyName ?? d.Model} at {d.Host}...";
 
             var ok = await _receiver.ConnectAsync(d);
 
@@ -678,10 +847,8 @@ public partial class MainViewModel : ObservableObject
             if (ok) _ = _heos.ConnectAsync(d.Host);
 
             StatusMessage = ok
-                ? (L.IsSpanish ? $"Conectado - {State.FriendlyName}"
-                               : $"Connected - {State.FriendlyName}")
-                : (L.IsSpanish ? $"No se pudo alcanzar {d.Host}. Revisa Network Standby."
-                               : $"Could not reach {d.Host}. Is Network Standby enabled?");
+                ? ($"Connected - {State.FriendlyName}")
+                : ($"Could not reach {d.Host}. Is Network Standby enabled?");
         }
         finally { IsBusy = false; }
     }
@@ -734,7 +901,7 @@ public partial class MainViewModel : ObservableObject
     private async Task ConnectToRecentAsync(KnownDevice? device)
     {
         if (device is null || string.IsNullOrWhiteSpace(device.Host)) return;
-        StatusMessage = $"Connecting to {device.FriendlyName}â€¦";
+        StatusMessage = $"Connecting to {device.FriendlyName}…";
         var probed = await _discovery.ProbeAsync(device.Host);
         var target = probed ?? new ReceiverDescriptor(
             device.Host, "Denon", device.Model, device.FriendlyName, "");

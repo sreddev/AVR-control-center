@@ -5,15 +5,16 @@
 
     <!-- ══════════ Brand palette ══════════
          Army green. Two roles, because no single olive is readable both ways:
-         AccentColor fills buttons/chips under white text (5.9:1), while
+         AccentColor fills buttons/chips under white text (4.7:1, as bright
+         as the fill can go while white text stays above WCAG AA 4.5:1), while
          AccentTextColor is for text, outlines and thin lines drawn on the
-         dark cards (7.1:1 on Surface1). -->
-    <Color x:Key="AccentColor">#556B2F</Color>
-    <Color x:Key="AccentColorLight1">#6B7F2A</Color>
-    <Color x:Key="AccentColorLight2">#7A8B3A</Color>
-    <Color x:Key="AccentColorDark1">#4B5320</Color>
-    <Color x:Key="AccentColorDark2">#3E4A1C</Color>
-    <Color x:Key="AccentTextColor">#9DAE5A</Color>
+         dark cards (9.8:1 on Surface1). -->
+    <Color x:Key="AccentColor">#617D2E</Color>
+    <Color x:Key="AccentColorLight1">#6A8833</Color>
+    <Color x:Key="AccentColorLight2">#789640</Color>
+    <Color x:Key="AccentColorDark1">#5A7429</Color>
+    <Color x:Key="AccentColorDark2">#4B5320</Color>
+    <Color x:Key="AccentTextColor">#B8CC6E</Color>
 
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
     <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentColorLight1}" />
@@ -21,7 +22,7 @@
     <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentTextColor}" />
 
     <!-- Channel matrix colors -->
-    <Color x:Key="ActiveSpeakerColor">#556B2F</Color>
+    <Color x:Key="ActiveSpeakerColor">#617D2E</Color>
     <Color x:Key="IdleSpeakerColor">#2F3238</Color>
     <SolidColorBrush x:Key="ActiveSpeakerBrush" Color="{StaticResource ActiveSpeakerColor}" />
     <SolidColorBrush x:Key="IdleSpeakerBrush" Color="{StaticResource IdleSpeakerColor}" />

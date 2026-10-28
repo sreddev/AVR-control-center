@@ -1,0 +1,58 @@
+<pages:PageBase
+    x:Class="DenonRemote.Views.Pages.ProcessingPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:DenonRemote.Views.Pages"
+    mc:Ignorable="d">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20,16,20,16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header with the sound mode the parameters belong to -->
+            <Grid Grid.Row="0" Margin="0,0,0,14">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="Processing" />
+                    <TextBlock Style="{StaticResource Subtitle}" Text="Room correction, dialogue, dynamics and surround fine-tuning." />
+                </StackPanel>
+                <Border
+                    Grid.Column="1"
+                    Padding="14,8"
+                    VerticalAlignment="Center"
+                    Background="{StaticResource Surface2Brush}"
+                    BorderBrush="{StaticResource CardBorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="10">
+                    <StackPanel>
+                        <TextBlock FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" Text="SOUND MODE" />
+                        <TextBlock FontSize="15" FontWeight="Bold" Foreground="{StaticResource AccentTextBrush}" Text="{Binding State.SurroundMode}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                    <ContentControl Content="{Binding RoomCorrection}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                    <ContentControl Content="{Binding DialogDynamics}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                    <ContentControl Content="{Binding SurroundParameters}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                    <ContentControl Content="{Binding SpeakerExtras}" ContentTemplate="{StaticResource SettingSectionCard}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</pages:PageBase>

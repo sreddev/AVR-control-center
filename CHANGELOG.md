@@ -1,17 +1,72 @@
 # Changelog
 
+## v2.0 — AVR Desktop Control (2026-10-28)
+
+### Changes
+
+**Rebrand**
+- The app is now **AVR Desktop Control** (`AVRDesktopControl.exe`), maintained by Sergio ([@sreddev](https://github.com/sreddev)). Settings are still read from `%LocalAppData%\DenonRemote`, so saved stations and profiles carry over
+- New green app icon
+- The GitHub repository is now [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner)
+- "Radio" is renamed **Tuner**. Below the station name, the tuner now shows the RDS name the station broadcasts, live, with an RDS badge
+
+**Settings**
+- "Start minimized" is now on by default for new installs (existing `settings.json` values are kept)
+- Auto-update now checks the GitHub Releases API of [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner/releases) instead of haussmed.cl; the Download button opens the release's ZIP asset
+- Fixed the About card always showing "v1.0.0": the version is now read from the assembly, i.e. `<Version>` in `DenonRemote.csproj`, which must match the GitHub release tag (`v2.0.0`)
+- About card: "Created by" Sergio, Telegram [@sreddev](https://t.me/sreddev), PayPal donate button ([paypal.me/sreddev](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO)), link to the GitHub repo
+
+**Features from the official Denon / Marantz AVR Remote app**
+
+Every new control stays hidden until the receiver answers its status query, so each page only shows what the connected model supports.
+
+- **Processing** page (new)
+  - Audyssey: MultEQ, Dynamic EQ, Reference Level Offset, Dynamic Volume, LFC and containment amount, Dirac Live slot
+  - Dialog & dynamics: Dialog Enhancer, Dialog Level, Cinema EQ, Dynamic Compression, Loudness Management
+  - Surround parameters: Center Spread, Panorama, Dimension, Center Width, Center Image, Delay Time, Effect Level, Room Size, LFE level, Neural:X. They are re-read after every sound-mode change, since the receiver stores them per mode
+  - Speakers & extras: Speaker A/B, Graphic EQ, Compressed Audio Restorer, Bluetooth transmitter and its output mode
+- **Zones** page (new): Main, Zone 2 and Zone 3 cards with power, mute, volume, input and sleep timer, plus All Zone Stereo. Zone 3 is supported for the first time, and extra zones appear only when the receiver reports them
+- **Receiver** page (new)
+  - Device info
+  - Video & A/V sync: HDMI audio output, HDMI monitor, output resolution, video mode, picture mode, aspect ratio, Auto Lip Sync, audio delay
+  - Display & power: dimmer, ECO mode, auto standby
+  - Locks & limits: volume limit, front panel lock, IR remote lock
+- **Home**
+  - Quick Select (Denon) / Smart Select (Marantz) bar. Slot names are read from the receiver; click a slot to recall it, right-click to store the current input, volume and sound settings in it
+  - Sleep timer
+  - The FORMAT card becomes a SIGNAL card: signal type, channel layout (2.0 / 5.1 / 7.1.4), sample rate, decoder, video in → out and number of active speakers. Click it to refresh
+- **Sources**: a new "Customize" mode renames inputs or hides them from every source picker. Names are stored in the app; the receiver keeps its own
+- **Tuner**: saved stations can be marked "skip" so previous / next passes over them
+- **Sound**: subwoofer output on/off switch. The Zones card moved to the new Zones page
+- **Tray widget and tray menu**: Quick / Smart Select slots and the sleep timer
+- Navigation is grouped as listening (Home, Sources, Tuner, HEOS), audio (Sound, Processing, Zones) and system (Receiver, Devices)
+
+**Fixes**
+- Bass, Treble, Subwoofer level, Tone Control and the Zone 2 volume on the Sound page now actually reach the receiver; before, the sliders only changed the on-screen value
+- The Home header shows the real brand (it always said "DENON")
+- The "New version" banner in Settings no longer shows when there is no update
+- Inputs without a custom receiver name show a friendly caption ("Tuner", "HEOS Music") instead of the raw token
+- Zone replies such as channel levels are no longer mistaken for a zone's input
+
 ## v1.6.1 — Army Green (2026-10-28)
 
 ### Changes
 
 **New colour scheme**
-- The red accent is replaced by army green throughout the app: buttons, toggles, sliders, channel chips, station badges, highlights and status dots
-- Two shades keep everything readable on the dark theme: dark olive `#556B2F` for fills under white text, light olive `#9DAE5A` for accent-coloured text and outlines
-- Primary buttons (Power, Tune, Save, Play…) now pin WPF-UI's accent shades explicitly; its automatic dark-theme tint would have dropped white button text to 3.5:1, now 8.2:1
+- The red accent is replaced by a bright army green throughout the app: buttons, toggles, sliders, channel chips, station badges, highlights and status dots
+- Two shades keep everything readable on the dark theme: olive `#617D2E` for fills under white text (4.7:1, the brightest that still passes WCAG AA), light olive `#B8CC6E` for accent-coloured text and outlines (9.8:1)
+- Primary buttons (Power, Tune, Save, Play…) pin WPF-UI's accent shades explicitly; its automatic dark-theme tint would have dropped white button text below 4.5:1
 - Mute indicator follows the accent colour
+
+**English-only interface**
+- Every Spanish text is now English: page titles, labels, tooltips, buttons, HEOS sign-in and queue, Sound and Sources pages, status messages, volume unit names and HEOS item types
+- The automatic Spanish mode (based on the Windows language) is removed; all strings live in one English table (`Services/Localization.cs`)
+- Fixed garbled characters in a few strings ("â€¦" now shows as "…", the tray menu's "Volume –", the widget's "Open full window ›")
+- Frequency validation messages always use "87.5" style numbers, whatever the Windows regional format
 
 **Docs**
 - New screenshots for Home, Radio and HEOS; the Radio page is now shown in the README
+- `CONTRIBUTING.md` and `RELEASE-v1.5.0.md` translated to English
 
 ## v1.6.0 — Radio Edition (2026-10-28)
 
@@ -60,7 +115,7 @@
 - Movable splitters in HEOS to adapt the layout
 - Floating widget from the tray
 - Single instance (mutex) — two copies can't run at once
-- Auto-update from haussmed.cl/denon/
+- Auto-update check at startup
 
 ### Fixes
 
@@ -86,9 +141,3 @@ The blurred cover-art background uses a `Rectangle` with an `ImageBrush` +
 4. Tidal's "My Music" and "What's New" folders return the root in a loop
    through the CLI — a HEOS firmware bug on S-series models. Search works as
    a workaround.
-
-### Update server files
-
-Upload the contents of `updates/denon/` to `https://haussmed.cl/denon/`:
-- `update.json` — version manifest
-- `DenonDesktopControl-1.5.0.zip` — standalone executable (~65 MB)

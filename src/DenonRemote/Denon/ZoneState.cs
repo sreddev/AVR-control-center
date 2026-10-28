@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using CommunityToolkit.Mvvm.ComponentModel;
 
@@ -24,6 +24,9 @@ public partial class ZoneState : ObservableObject
     [ObservableProperty] private double _volumeMax = 98;
     [ObservableProperty] private string _source = "";
     [ObservableProperty] private string _sourceFriendly = "";
+
+    /// <summary>True once the receiver answered for this zone; models without it stay silent.</summary>
+    [ObservableProperty] private bool _isPresent;
 
     public ZoneState(ZoneId id, string displayName)
     {

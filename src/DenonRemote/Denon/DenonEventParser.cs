@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Linq;
@@ -23,7 +23,16 @@ public sealed class DenonEventParser
 
     private void Apply(string line)
     {
-        var s = line.TrimEnd();
+        _state.IsApplyingRemote = true;
+        try { ApplyCore(line.TrimEnd()); }
+        finally { _state.IsApplyingRemote = false; }
+    }
+
+    private void ApplyCore(string s)
+    {
+        // Catalog parameters first (Audyssey, video, dimmer, sleep timers...):
+        // their prefixes are specific, and Z2SLP must not reach the zone parser.
+        if (_state.Settings.TryApply(s)) return;
 
         // Power. Note: PW reports ON when ANY zone is on, so it is NOT the
         // main-zone state. ZM (Zone Main) is the authoritative main power flag.
@@ -32,13 +41,12 @@ public sealed class DenonEventParser
             // Whole unit asleep: every zone is off.
             _state.Main.IsOn = false;
             _state.Zone2.IsOn = false;
+            _state.Zone3.IsOn = false;
             return;
         }
         if (s == "PWON") return;                       // ignore: ambiguous
         if (s == "ZMON") { _state.Main.IsOn = true; return; }
         if (s == "ZMOFF") { _state.Main.IsOn = false; return; }
-        if (s == "Z2ON") { _state.Zone2.IsOn = true; return; }
-        if (s == "Z2OFF") { _state.Zone2.IsOn = false; return; }
 
         if (s.StartsWith("MVMAX ", StringComparison.Ordinal))
         {
@@ -54,26 +62,8 @@ public sealed class DenonEventParser
             return;
         }
 
-        if (s.StartsWith("Z2", StringComparison.Ordinal))
-        {
-            var rest = s[2..];
-            if (rest == "ON") { _state.Zone2.IsOn = true; return; }
-            if (rest == "OFF") { _state.Zone2.IsOn = false; return; }
-            if (rest == "MUON") { _state.Zone2.IsMuted = true; return; }
-            if (rest == "MUOFF") { _state.Zone2.IsMuted = false; return; }
-            if (rest.Length is >= 2 and <= 3 && int.TryParse(rest, out _))
-            {
-                var v = DenonProtocol.ParseVolume(rest);
-                if (v is not null) _state.Zone2.Volume = v.Value;
-                return;
-            }
-            if (!rest.StartsWith("SLP", StringComparison.Ordinal))
-            {
-                _state.Zone2.Source = rest;
-                _state.Zone2.SourceFriendly = rest;
-            }
-            return;
-        }
+        if (s.StartsWith("Z2", StringComparison.Ordinal)) { ApplyZone(_state.Zone2, s[2..]); return; }
+        if (s.StartsWith("Z3", StringComparison.Ordinal)) { ApplyZone(_state.Zone3, s[2..]); return; }
 
         if (s == "MUON") { _state.Main.IsMuted = true; return; }
         if (s == "MUOFF") { _state.Main.IsMuted = false; return; }
@@ -86,7 +76,27 @@ public sealed class DenonEventParser
             return;
         }
 
-        if (s.StartsWith("MS", StringComparison.Ordinal) && !s.StartsWith("MSSMART") && !s.StartsWith("MSQUICK"))
+        // Quick Select (Denon) / Smart Select (Marantz): "MSQUICK2", "MSSMART0" (none active).
+        foreach (var qs in new[] { "MSQUICK", "MSSMART" })
+        {
+            if (!s.StartsWith(qs, StringComparison.Ordinal)) continue;
+            var rest = s[qs.Length..].Trim();
+            if (rest.EndsWith("MEMORY", StringComparison.Ordinal)) return;
+            if (int.TryParse(rest, out var slot)) ApplyQuickSelect(qs, slot);
+            return;
+        }
+        // Slot names: "SSQSNZMAQS1 Smart Select 1"
+        if (s.StartsWith("SSQSNZMAQS", StringComparison.Ordinal))
+        {
+            var rest = s[10..];
+            var space = rest.IndexOf(' ');
+            if (space > 0 && int.TryParse(rest[..space], out var n))
+                QuickSelectSlot(n).Name = rest[(space + 1)..].Trim();
+            return;
+        }
+        if (s.StartsWith("SSQSN", StringComparison.Ordinal)) return;
+
+        if (s.StartsWith("MS", StringComparison.Ordinal))
         {
             _state.SurroundMode = s[2..].Trim();
             return;
@@ -160,15 +170,6 @@ public sealed class DenonEventParser
             return;
         }
 
-        if (s.StartsWith("ECO", StringComparison.Ordinal))
-        {
-            _state.EcoMode = s[3..].Trim() switch
-            {
-                "AUTO" => "Auto", "ON" => "On", "OFF" => "Off", _ => _state.EcoMode
-            };
-            return;
-        }
-
         if (s.StartsWith("NSFRN ", StringComparison.Ordinal))
         {
             _state.FriendlyName = s[6..].Trim();
@@ -182,7 +183,29 @@ public sealed class DenonEventParser
         }
         if (s.StartsWith("SSINFAISFSV ", StringComparison.Ordinal))
         {
-            _state.SampleRate = s[12..].Trim();
+            var fs = s[12..].Trim();
+            _state.SampleRate = fs is "NON" or "" ? "-" : fs;
+            return;
+        }
+        if (s.StartsWith("SSINFAISSIG ", StringComparison.Ordinal))
+        {
+            _state.InputSignal = DenonProtocol.DescribeSignalCode(s[12..].Trim());
+            return;
+        }
+        // Video resolution: "SSINFSIGRES I1080P60" (input) / "SSINFSIGRES O---" (output)
+        if (s.StartsWith("SSINFSIGRES ", StringComparison.Ordinal))
+        {
+            var v = s[12..].Trim();
+            if (v.Length == 0) return;
+            var res = v[1..].Trim('-', ' ');
+            if (res.Length == 0) res = "-";
+            if (v[0] == 'I') _state.VideoInput = res;
+            else if (v[0] == 'O') _state.VideoOutput = res;
+            return;
+        }
+        if (s.StartsWith("SYSMI ", StringComparison.Ordinal))
+        {
+            _state.SoundModeInfo = s[6..].Trim();
             return;
         }
 
@@ -232,7 +255,7 @@ public sealed class DenonEventParser
             if (string.IsNullOrEmpty(token)) return;
             var existing = _state.Sources.FirstOrDefault(x => string.Equals(x.Token, token, StringComparison.OrdinalIgnoreCase));
             if (existing is not null) existing.Rename = label;
-            else _state.Sources.Add(new SourceEntry { Token = token, Display = token, Rename = label });
+            else _state.Sources.Add(new SourceEntry { Token = token, Display = DefaultCaption(token), Rename = label });
             return;
         }
 
@@ -254,13 +277,64 @@ public sealed class DenonEventParser
                     else if (rest == "USE")
                     {
                         if (!_state.Sources.Any(x => string.Equals(x.Token, kt, StringComparison.OrdinalIgnoreCase)))
-                            _state.Sources.Add(new SourceEntry { Token = kt, Display = kt, Rename = "" });
+                            _state.Sources.Add(new SourceEntry { Token = kt, Display = DefaultCaption(kt), Rename = "" });
                     }
                     break;
                 }
             }
             return;
         }
+    }
+
+    /// <summary>Zone 2 / Zone 3 replies, already stripped of "Z2" / "Z3".</summary>
+    private void ApplyZone(ZoneState zone, string rest)
+    {
+        zone.IsPresent = true;
+        switch (rest)
+        {
+            case "ON": zone.IsOn = true; return;
+            case "OFF": zone.IsOn = false; return;
+            case "MUON": zone.IsMuted = true; return;
+            case "MUOFF": zone.IsMuted = false; return;
+        }
+        if (rest.Length is >= 2 and <= 3 && int.TryParse(rest, out _))
+        {
+            var v = DenonProtocol.ParseVolume(rest);
+            if (v is not null) zone.Volume = v.Value;
+            return;
+        }
+        // Only accept real input names: zones also report channel levels,
+        // tone and other parameters on the same prefix.
+        if (rest == "SOURCE" || DenonProtocol.DefaultSources.ContainsKey(rest) ||
+            _state.Sources.Any(x => string.Equals(x.Token, rest, StringComparison.OrdinalIgnoreCase)))
+        {
+            zone.Source = rest;
+            zone.SourceFriendly = rest == "SOURCE" ? "Main zone source" : LookupSourceFriendly(rest);
+        }
+    }
+
+    private void ApplyQuickSelect(string prefix, int active)
+    {
+        _state.QuickSelectPrefix = prefix;
+        if (_state.QuickSelects.Count == 0)
+        {
+            // Names arrive separately (SSQSNZMA); until then use the receiver's default labels.
+            var title = prefix == "MSSMART" ? "Smart Select" : "Quick Select";
+            for (int i = 1; i <= 4; i++)
+                _state.QuickSelects.Add(new QuickSelectSlot { Number = i, Name = $"{title} {i}" });
+        }
+        foreach (var slot in _state.QuickSelects)
+            slot.IsActive = slot.Number == active;
+    }
+
+    private QuickSelectSlot QuickSelectSlot(int number)
+    {
+        var slot = _state.QuickSelects.FirstOrDefault(q => q.Number == number);
+        if (slot is not null) return slot;
+        slot = new QuickSelectSlot { Number = number };
+        var index = _state.QuickSelects.TakeWhile(q => q.Number < number).Count();
+        _state.QuickSelects.Insert(index, slot);
+        return slot;
     }
 
     private void ApplyMatrix(string payload, bool input)
@@ -282,7 +356,13 @@ public sealed class DenonEventParser
                 channels[i].IsSpeakerPresent = present;
             }
         }
+
+        if (input) _state.InputChannelLayout = DenonProtocol.DescribeLayout(payload);
+        else _state.ActiveSpeakerCount = payload.Count(c => c == '2');
     }
+
+    private static string DefaultCaption(string token) =>
+        DenonProtocol.DefaultSources.TryGetValue(token, out var friendly) ? friendly : token;
 
     private string LookupSourceFriendly(string token)
     {

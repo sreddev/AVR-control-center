@@ -1,4 +1,4 @@
-<pages:PageBase
+﻿<pages:PageBase
     x:Class="DenonRemote.Views.Pages.TunerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -118,14 +118,40 @@
                             FontWeight="Bold"
                             Foreground="{StaticResource TextPrimaryBrush}"
                             Text="{Binding State.TunerFrequencyLabel}" />
+                        <!-- Saved name, when the frequency is in the list -->
                         <TextBlock
-                            MinHeight="24"
                             HorizontalAlignment="Center"
                             FontSize="17"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource AccentTextBrush}"
-                            Text="{Binding CurrentStationName}"
-                            TextTrimming="CharacterEllipsis" />
+                            Text="{Binding SavedStationName}"
+                            TextTrimming="CharacterEllipsis"
+                            Visibility="{Binding SavedStationName, Converter={StaticResource StringNotEmptyToVis}}" />
+                        <!-- Live RDS station name (PS). Stations often rotate several texts. -->
+                        <StackPanel
+                            MinHeight="26"
+                            Margin="0,4,0,2"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal"
+                            ToolTip="{x:Static services:L.TunerRdsHint}">
+                            <Border
+                                Margin="0,0,8,0"
+                                Padding="6,1"
+                                VerticalAlignment="Center"
+                                BorderBrush="{StaticResource AccentTextBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4"
+                                Visibility="{Binding State.TunerStationName, Converter={StaticResource StringNotEmptyToVis}}">
+                                <TextBlock FontSize="10" FontWeight="Bold" Foreground="{StaticResource AccentTextBrush}" Text="RDS" />
+                            </Border>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="Consolas, Segoe UI"
+                                FontSize="17"
+                                FontWeight="SemiBold"
+                                Foreground="{StaticResource TextPrimaryBrush}"
+                                Text="{Binding State.TunerStationName}" />
+                        </StackPanel>
                         <TextBlock HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -274,6 +300,7 @@
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <!-- Click tunes to the station -->
                                                 <Button
@@ -330,8 +357,22 @@
                                                         </StackPanel>
                                                     </Grid>
                                                 </Button>
+                                                <!-- Skip: left out of next / previous -->
                                                 <Button
+                                                    x:Name="SkipBtn"
                                                     Grid.Column="1"
+                                                    Padding="6"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Command="{Binding DataContext.ToggleStationSkipCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Cursor="Hand"
+                                                    Foreground="{StaticResource TextTertiaryBrush}"
+                                                    ToolTip="Skip this station with next / previous">
+                                                    <ui:SymbolIcon x:Name="SkipIcon" FontSize="15" Symbol="ArrowForward24" />
+                                                </Button>
+                                                <Button
+                                                    Grid.Column="2"
                                                     Padding="6"
                                                     Background="Transparent"
                                                     BorderThickness="0"
@@ -343,7 +384,7 @@
                                                     <ui:SymbolIcon FontSize="15" Symbol="Edit24" />
                                                 </Button>
                                                 <Button
-                                                    Grid.Column="2"
+                                                    Grid.Column="3"
                                                     Margin="0,0,6,0"
                                                     Padding="6"
                                                     Background="Transparent"
@@ -358,6 +399,11 @@
                                             </Grid>
                                         </Border>
                                         <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding Skip}" Value="True">
+                                                <Setter TargetName="Row" Property="Opacity" Value="0.55" />
+                                                <Setter TargetName="SkipBtn" Property="Foreground" Value="{StaticResource AccentTextBrush}" />
+                                                <Setter TargetName="SkipBtn" Property="ToolTip" Value="Skipped by next / previous. Click to include it again." />
+                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding IsActive}" Value="True">
                                                 <Setter TargetName="Row" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
                                                 <Setter TargetName="Freq" Property="Foreground" Value="{StaticResource AccentTextBrush}" />

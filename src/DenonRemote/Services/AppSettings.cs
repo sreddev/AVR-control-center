@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ public sealed class AppSettings
     public string? LastHost { get; set; }
     public string? LastFriendlyName { get; set; }
     public bool AutoConnect { get; set; } = true;
-    public bool StartMinimized { get; set; }
+    public bool StartMinimized { get; set; } = true;
     public bool CloseToTray { get; set; } = true;
     public bool AutoUpdate { get; set; } = true;
 
@@ -28,7 +28,7 @@ public sealed class AppSettings
     /// <summary>Devices the user connected to at least once, most recent first.</summary>
     public List<KnownDevice> KnownDevices { get; set; } = new();
 
-    /// <summary>Saved per-channel level presets ("Volumen 1", "Cine", etc.).</summary>
+    /// <summary>Saved per-channel level presets ("Profile 1", "Movies", etc.).</summary>
     public List<ChannelProfile> ChannelProfiles { get; set; } = new();
 
     /// <summary>User's saved AM/FM stations, in display order.</summary>
@@ -39,6 +39,12 @@ public sealed class AppSettings
     /// automatically, so deleting every station doesn't bring them back.
     /// </summary>
     public bool RadioPresetsImported { get; set; }
+
+    /// <summary>App-side input names, by receiver token ("CD" → "Turntable").</summary>
+    public Dictionary<string, string> SourceAliases { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Input tokens hidden from the source pickers.</summary>
+    public List<string> HiddenSources { get; set; } = new();
 
     /// <summary>Record a successful connection so the sidebar can show it.</summary>
     public void RememberDevice(string host, string friendlyName, string model)
@@ -167,6 +173,10 @@ public sealed partial class RadioStation : CommunityToolkit.Mvvm.ComponentModel.
     [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
     [CommunityToolkit.Mvvm.ComponentModel.NotifyPropertyChangedFor(nameof(FrequencyLabel))]
     private double _frequency;
+
+    /// <summary>Left out when cycling with next / previous station.</summary>
+    [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+    private bool _skip;
 
     /// <summary>True while the receiver is tuned to this station. Not persisted.</summary>
     [property: JsonIgnore]

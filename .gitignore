@@ -28,3 +28,9 @@ desktop.ini
 
 # Updates (ZIP is too large for git — use GitHub Releases)
 updates/denon/*.zip
+
+# Reference material, too large for git
+*.apk
+
+# Installer output (published as release assets)
+installer/out/

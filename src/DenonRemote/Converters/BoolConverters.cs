@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Globalization;
@@ -75,7 +75,7 @@ public sealed class PlayPauseIconConverter : IValueConverter
 public sealed class HeosStatusConverter : IValueConverter
 {
     public object Convert(object? value, Type _, object? __, CultureInfo ___) =>
-        (value is bool ok && ok) ? "Conectado" : "No disponible";
+        (value is bool ok && ok) ? "Connected" : "Unavailable";
 
     public object ConvertBack(object value, Type _, object? __, CultureInfo ___) => throw new NotSupportedException();
 }

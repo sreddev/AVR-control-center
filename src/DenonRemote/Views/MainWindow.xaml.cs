@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System.ComponentModel;
 using System.Windows;
@@ -29,6 +29,9 @@ public partial class MainWindow : FluentWindow
         NavSources.Content = L.Sources;
         NavTuner.Content = L.Tuner;
         NavSound.Content = L.Sound;
+        NavProcessing.Content = L.Processing;
+        NavZones.Content = L.Zones;
+        NavReceiver.Content = L.Receiver;
         NavHeos.Content = "HEOS";
         NavDevices.Content = L.Devices;
         NavSettings.Content = L.Settings;

@@ -1,7 +1,7 @@
-// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System.Collections.Generic;
 
@@ -33,13 +33,13 @@ public sealed record BrowseItem(
     /// <summary>Secondary line shown under the name in the list.</summary>
     public string Subtitle => Type switch
     {
-        "song"      => "Cancion",
+        "song"      => "Song",
         "album"     => "Album",
-        "artist"    => "Artista",
-        "playlist"  => "Lista",
-        "station"   => "Emisora",
-        "container" => "Carpeta",
-        "heos_service" => "Servicio",
+        "artist"    => "Artist",
+        "playlist"  => "Playlist",
+        "station"   => "Station",
+        "container" => "Folder",
+        "heos_service" => "Service",
         _ => Type
     };
 }

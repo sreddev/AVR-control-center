@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Collections.Generic;
@@ -436,7 +436,7 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
         {
             Items.Clear();
             foreach (var i in parsed) Items.Add(i);
-            CurrentLocation = $"{service.Label}  >  Busqueda: {term}";
+            CurrentLocation = $"{service.Label}  >  Search: {term}";
             CanGoBack = true;
             IsBusy = false;
         });
@@ -575,7 +575,7 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     public async Task<bool> SignInAsync(string username, string password, CancellationToken ct = default)
     {
         if (_client is null) return false;
-        Ui(() => AccountMessage = "Iniciando sesion...");
+        Ui(() => AccountMessage = "Signing in...");
 
         var (ok, message) = await _client.SignInAsync(username, password, ct).ConfigureAwait(false);
         Ui(() => AccountMessage = message);
@@ -594,7 +594,7 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
         await _client.SignOutAsync(ct).ConfigureAwait(false);
         await RefreshAccountAsync(ct).ConfigureAwait(false);
         await RefreshSourcesAsync(ct).ConfigureAwait(false);
-        Ui(() => AccountMessage = "Sesion cerrada");
+        Ui(() => AccountMessage = "Signed out");
     }
 
     // â”€â”€ Transport â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

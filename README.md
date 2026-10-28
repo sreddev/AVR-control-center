@@ -1,20 +1,20 @@
-# DENON Desktop Control
+# AVR Desktop Control
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" width="800" alt="Dashboard">
 </p>
 
 **Full remote control for Denon and Marantz receivers on Windows.**  
-Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, AM/FM radio tuner with saved stations, floating system-tray widget, automatic network discovery, real-time monitoring, UPnP seek and complete control of volume, sources, channels, zones and sound profiles.
+Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, AM/FM tuner with RDS and saved stations, floating system-tray widget, automatic network discovery, real-time monitoring, UPnP seek and complete control of volume, sources, channels, zones and sound profiles.
 
-[![Release](https://img.shields.io/github/v/release/sreddev/denon-desktop-control_tuner?style=flat-square)](https://github.com/sreddev/denon-desktop-control_tuner/releases)
-[![License](https://img.shields.io/github/license/sreddev/denon-desktop-control_tuner?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control_tuner?style=flat-square)](https://github.com/sreddev/AVR-desktop-control_tuner/releases)
+[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control_tuner?style=flat-square)](LICENSE)
 
 ---
 
 ## Features
 
-### 📻 AM / FM Radio (Tuner)
+### 📻 AM / FM Tuner
 
 - 📡 **Now tuned** — Large frequency readout, band (FM / AM), AUTO / MANUAL mode and the RDS station name on models that report it
 - ⌨️ **Manual tuning** — Type a frequency and press Enter: `95.5` (or `95,5`) tunes FM in MHz, `1010` tunes AM in kHz; the band is detected automatically
@@ -45,16 +45,23 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 - 🎛️ **Sources** — Quick switching using the receiver's own input names (SHIELD, ROG GAME, nintendo...)
 - 🎭 **Surround modes** — Stereo, Direct, Pure Direct, Multi Ch, Neural:X, Dolby and more
 - 🎵 **Tone** — Bass, Treble and Subwoofer with fine control
-- 🏠 **Zones** — Independent control of Main and Zone 2 (Zone 2 never turns on by itself)
+- 🏠 **Zones** — Main, Zone 2 and Zone 3 with power, volume, input, mute and sleep timer; All Zone Stereo (Zone 2 never turns on by itself)
+- 🎧 **Audyssey & processing** — MultEQ, Dynamic EQ, Reference Level, Dynamic Volume, LFC, Dirac Live, Dialog Enhancer, Cinema EQ, dynamic compression and per-mode surround parameters
+- ⚡ **Quick / Smart Select** — Recall and store the receiver's memory slots from the dashboard, the widget or the tray menu
+- 😴 **Sleep timer** — For each zone
+- 📶 **Signal panel** — Signal type, channel layout (e.g. 7.1.4), sample rate, decoder, video resolution in → out
+- 📺 **Receiver settings** — HDMI audio/monitor/resolution, picture mode, Auto Lip Sync, audio delay, dimmer, ECO, auto standby, volume limit, panel and remote lock
+- ✏️ **Customize inputs** — Rename or hide inputs in the app
+- 🧩 **Model-aware** — Every option appears only when the receiver reports it, so the app adapts to each Denon / Marantz model
 
 ### Interface
 
 - 📌 **Floating widget** — Single-click the tray icon for a mini control, double-click for the full window
-- 🌐 **Bilingual** — Spanish / English, chosen automatically from your Windows language
-- 🔄 **Automatic updates** — Checks for new versions at startup from [haussmed.cl](https://haussmed.cl/denon/)
+- 🌐 **English interface** — All UI text, tooltips and messages in English
+- 🔄 **Automatic updates** — Checks [GitHub Releases](https://github.com/sreddev/AVR-desktop-control_tuner/releases) for new versions at startup
 - ⚡ **Smart reconnection** — HTTP fallback while the AVR is in standby
 - 🔇 **Mute indicator** — Icon and text switch to the accent colour while the receiver is muted
-- 🖥️ **Dark mode** — High-contrast Fluent/Mica interface with an army-green accent (white button text at 5.9:1 or better)
+- 🖥️ **Dark mode** — High-contrast Fluent/Mica interface with a bright army-green accent (white button text stays above WCAG AA 4.5:1)
 
 ---
 
@@ -73,15 +80,15 @@ Modern Fluent/Mica interface, HEOS integration with Tidal and TuneIn browsing, A
 
 ### Direct download
 
-1. Go to [**Releases**](https://github.com/sreddev/denon-desktop-control_tuner/releases)
-2. Download `DenonDesktopControl-1.6.1.zip` (portable)
-3. Unzip and run `DenonDesktopControl.exe` — no .NET installation needed (self-contained)
+1. Go to [**Releases**](https://github.com/sreddev/AVR-desktop-control_tuner/releases)
+2. Download `AVRDesktopControl-2.0.0.zip` (portable)
+3. Unzip and run `AVRDesktopControl.exe` — no .NET installation needed (self-contained)
 
 ### Build from source
 
 ```bash
-git clone https://github.com/sreddev/denon-desktop-control_tuner.git
-cd denon-desktop-control_tuner/src/DenonRemote
+git clone https://github.com/sreddev/AVR-desktop-control_tuner.git
+cd AVR-desktop-control_tuner/src/DenonRemote
 dotnet run
 ```
 
@@ -96,7 +103,7 @@ Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). You
 3. **Click** the tray icon = quick widget
 4. **Double-click** = full window
 5. In **HEOS**: pick a service, browse or search, click to play
-6. In **Radio**: click a saved station to listen, type a frequency to tune manually, or use seek / step; manage stations with the editor below the list
+6. In **Tuner**: click a saved station to listen, type a frequency to tune manually, or use seek / step; manage stations with the editor below the list
 
 ---
 
@@ -121,6 +128,7 @@ Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). You
 - **Seek**: the HEOS CLI doesn't support seek (`Command not recognized`). The official app uses UPnP AVTransport SOAP on port 60006, which is what this app implements.
 - **Tidal "My Music"**: personal folders return the root in a loop through the CLI (an S-series firmware bug). Searching by playlist name works as an alternative.
 - **Blurred background**: WPF has no CSS-style `backdrop-filter`, so a `BlurEffect` is applied to an `ImageBrush` on a `Rectangle`, with semi-transparent cards on top.
+- **Extended settings**: defined once in `Denon/AvrSettingsCatalog.cs` (prefix, query, kind, options). The receiver stays silent for parameters it lacks, which is how the UI decides what to show. Entries marked "verified" were read back from a Marantz NR1508.
 - **Zone 2**: `PWON` powers on every zone, so the app uses `ZMON` + `Z2OFF` to power on Main only.
 - **Tuner**: frequencies are sent with `TFAN` as six digits (value × 100: `TFAN009550` = 95.50 MHz, `TFAN101000` = 1010 kHz). Tuner commands are ignored unless the input is TUNER, so the app switches input first. Stepping needs MANUAL mode, which on Denon/Marantz also forces FM to mono, so AUTO is restored after each step. Receiver presets are read with `OPTPN ?`; the protocol has no command to rename or erase a preset, which is why saved stations are kept in the app (`%LocalAppData%\DenonRemote\settings.json`).
 
@@ -130,9 +138,10 @@ Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). You
 
 <p align="center">
   <img src="docs/screenshot-dashboard.png" width="400" alt="Dashboard">
-  <img src="docs/screenshot-radio.png" width="400" alt="AM / FM Radio">
+  <img src="docs/screenshot-tuner.png" width="400" alt="AM / FM Tuner with RDS">
 </p>
 <p align="center">
+  <img src="docs/screenshot-processing.png" width="400" alt="Processing">
   <img src="docs/screenshot-heos.png" width="400" alt="HEOS">
 </p>
 
@@ -146,13 +155,13 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development instructions and the proj
 
 ## Credits
 
-Originally created by **Felipe** · Buin, Santiago de Chile — [felipedream/denon-desktop-control](https://github.com/felipedream/denon-desktop-control)
+Made with ♥ by **Sergio** — [sreddev/AVR-desktop-control_tuner](https://github.com/sreddev/AVR-desktop-control_tuner)
 
 | | |
 |---|---|
-| Telegram | [@felipedream](https://t.me/felipedream) |
-| Email | felipedream@gmail.com |
-| Donate | [![PayPal](https://img.shields.io/badge/PayPal-Buy_a_coffee-blue?logo=paypal)](https://www.paypal.com/donate/?business=felipedream@gmail.com&currency_code=USD) |
+| GitHub | [@sreddev](https://github.com/sreddev) |
+| Telegram | [@sreddev](https://t.me/sreddev) |
+| Donate | [![PayPal](https://img.shields.io/badge/PayPal-Buy_me_a_coffee-blue?logo=paypal)](https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO) |
 
 ---
 

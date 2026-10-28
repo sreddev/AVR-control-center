@@ -44,11 +44,59 @@
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="24" MaxWidth="1000">
-            <TextBlock Style="{StaticResource H1}" Text="Fuentes" />
-            <TextBlock Margin="0,4,0,20" Style="{StaticResource Subtitle}" Text="Selecciona una fuente para la zona principal." />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Style="{StaticResource H1}" Text="Sources" />
+                    <TextBlock Margin="0,4,0,20" Style="{StaticResource Subtitle}" Text="Select a source for the main zone." />
+                </StackPanel>
+                <ui:Button
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Command="{Binding ToggleSourceEditingCommand}"
+                    Content="Customize"
+                    Icon="{ui:SymbolIcon Edit24}"
+                    ToolTip="Rename or hide inputs in this app" />
+            </Grid>
+
+            <!-- Customize: app-side names and hide switches -->
+            <Border Margin="0,0,0,20" Padding="20,14" Style="{StaticResource Card}" Visibility="{Binding IsEditingSources, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Text="Customize inputs" />
+                    <TextBlock
+                        Margin="0,2,0,10"
+                        FontSize="12"
+                        Foreground="{StaticResource TextTertiaryBrush}"
+                        Text="Names and hidden inputs are stored in this app only; the receiver keeps its own. Leave a name empty to use the receiver's."
+                        TextWrapping="Wrap" />
+                    <ItemsControl ItemsSource="{Binding State.Sources}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Center" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" Text="{Binding Token}" />
+                                    <ui:TextBox
+                                        Grid.Column="1"
+                                        Margin="0,0,12,0"
+                                        PlaceholderText="{Binding ReceiverName}"
+                                        Text="{Binding Alias, Mode=TwoWay}" />
+                                    <CheckBox Grid.Column="2" VerticalAlignment="Center" Content="Hide" IsChecked="{Binding IsHidden, Mode=TwoWay}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
             <!-- Live sources from the receiver (includes renames, excludes hidden) -->
-            <ItemsControl ItemsSource="{Binding State.Sources}">
+            <ItemsControl ItemsSource="{Binding VisibleSources}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel Orientation="Horizontal" />
@@ -106,12 +154,12 @@
             </ItemsControl>
 
             <!-- Surround Mode Selector -->
-            <TextBlock Margin="0,24,0,0" Style="{StaticResource H1}" Text="Modo Surround" />
-            <TextBlock Margin="0,4,0,16" Style="{StaticResource Subtitle}" Text="Selecciona el modo de procesamiento de audio." />
+            <TextBlock Margin="0,24,0,0" Style="{StaticResource H1}" Text="Surround Mode" />
+            <TextBlock Margin="0,4,0,16" Style="{StaticResource Subtitle}" Text="Select the audio processing mode." />
 
             <Border Style="{StaticResource Card}">
                 <StackPanel>
-                    <TextBlock Style="{StaticResource Caption}" Text="MODO ACTUAL" />
+                    <TextBlock Style="{StaticResource Caption}" Text="CURRENT MODE" />
                     <TextBlock
                         Margin="0,0,0,16"
                         FontSize="20"

@@ -38,7 +38,7 @@
             <!-- ── Preferences (single card, compact rows) ────────────────── -->
             <Border Grid.Column="0" Margin="0,0,6,0" Padding="20" Style="{StaticResource Card}" VerticalAlignment="Top">
                 <StackPanel>
-                    <TextBlock Margin="0,0,0,4" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Preferencias" />
+                    <TextBlock Margin="0,0,0,4" FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Preferences" />
 
                     <!-- Auto-connect -->
                     <Grid Margin="0,10,0,0">
@@ -127,7 +127,7 @@
                         BorderBrush="{StaticResource AccentTextBrush}"
                         BorderThickness="1"
                         CornerRadius="10"
-                        Visibility="{Binding AvailableUpdate, Converter={StaticResource NotNullToBool}}">
+                        Visibility="{Binding AvailableUpdate.Version, Converter={StaticResource StringNotEmptyToVis}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -144,7 +144,7 @@
                                 Grid.Column="1"
                                 Appearance="Primary"
                                 Click="OnUpdateClick"
-                                Content="Descargar"
+                                Content="Download"
                                 Icon="{ui:SymbolIcon ArrowSync24}" />
                         </Grid>
                     </Border>
@@ -164,7 +164,7 @@
                             <ui:SymbolIcon FontSize="20" Foreground="White" Symbol="Speaker224" />
                         </Border>
                         <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="DENON Desktop Control" />
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="AVR Desktop Control" />
                             <TextBlock x:Name="VersionText" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
                     </StackPanel>
@@ -179,17 +179,20 @@
                     <Border Style="{StaticResource RowLine}" Margin="0,14" />
 
                     <!-- Author -->
-                    <TextBlock x:Name="CreatedByLabel" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" />
-                    <TextBlock Margin="0,2,0,0" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Felipe" />
-                    <TextBlock FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Text="Buin, Santiago de Chile" />
+                    <TextBlock x:Name="ModifiedByLabel" FontSize="10" FontWeight="SemiBold" Foreground="{StaticResource TextTertiaryBrush}" />
+                    <TextBlock Margin="0,2,0,0" FontSize="15" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}">
+                        <Run Text="Sergio" />
+                        <Run FontWeight="Normal" Foreground="{StaticResource TextSecondaryBrush}" Text="with" />
+                        <Run Foreground="{StaticResource AccentTextBrush}" Text="♥" />
+                    </TextBlock>
 
-                    <!-- Links -->
                     <ui:Button
                         x:Name="TelegramBtn"
-                        Margin="0,14,0,6"
+                        Margin="0,12,0,6"
                         HorizontalAlignment="Stretch"
                         Click="OnTelegramClick"
                         Icon="{ui:SymbolIcon Send24}" />
+                    <!-- Disabled until the PayPal donate button exists; set DonateUrl to enable it -->
                     <ui:Button
                         x:Name="DonateBtn"
                         HorizontalAlignment="Stretch"
@@ -202,13 +205,11 @@
                     <TextBlock
                         FontSize="10"
                         Foreground="{StaticResource TextTertiaryBrush}"
-                        Text="MIT License - Codigo abierto"
+                        Text="MIT License - Open source"
                         TextWrapping="Wrap" />
-                    <TextBlock
-                        FontSize="10"
-                        Foreground="{StaticResource TextTertiaryBrush}"
-                        Text="github.com/felipedream/denon-desktop-control"
-                        TextWrapping="Wrap" />
+                    <TextBlock FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" TextWrapping="Wrap">
+                        <Hyperlink Click="OnRepoClick" Foreground="{StaticResource TextTertiaryBrush}">github.com/sreddev/AVR-desktop-control_tuner</Hyperlink>
+                    </TextBlock>
                 </StackPanel>
             </Border>
         </Grid>

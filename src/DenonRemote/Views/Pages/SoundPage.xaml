@@ -51,8 +51,8 @@
 
         <!-- Header -->
         <StackPanel Grid.Row="0" Margin="0,0,0,14">
-            <TextBlock FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="Sonido" />
-            <TextBlock Style="{StaticResource Subtitle}" Text="Nivel por canal, tono, subwoofer y perfiles." />
+            <TextBlock FontSize="26" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="Sound" />
+            <TextBlock Style="{StaticResource Subtitle}" Text="Per-channel level, tone, subwoofer and profiles. Audyssey and surround settings are under Processing." />
         </StackPanel>
 
         <!-- Profiles bar -->
@@ -69,7 +69,7 @@
                     FontSize="13"
                     FontWeight="SemiBold"
                     Foreground="{StaticResource TextSecondaryBrush}"
-                    Text="PERFILES" />
+                    Text="PROFILES" />
 
                 <!-- Saved profile chips -->
                 <ItemsControl Grid.Column="1" Margin="14,0" VerticalAlignment="Center" ItemsSource="{Binding Profiles}">
@@ -99,7 +99,7 @@
                                         Foreground="{StaticResource TextPrimaryBrush}"
                                         MouseDoubleClick="OnRenameProfile"
                                         Tag="{Binding}"
-                                        ToolTip="Click para cargar, doble click para renombrar">
+                                        ToolTip="Click to load, double-click to rename">
                                         <Grid>
                                             <TextBlock x:Name="NameText" Text="{Binding Name}" />
                                             <TextBox
@@ -128,7 +128,7 @@
                                         FontSize="10"
                                         Foreground="{StaticResource TextTertiaryBrush}"
                                         Tag="{Binding}"
-                                        ToolTip="Eliminar" />
+                                        ToolTip="Delete" />
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -139,14 +139,14 @@
                     <Button
                         Margin="0,0,6,0"
                         Command="{Binding NormalizeChannelsCommand}"
-                        Content="Normalizar"
+                        Content="Normalize"
                         Style="{StaticResource PillBtn}"
-                        ToolTip="Todos los canales a 0 dB" />
+                        ToolTip="All channels to 0 dB" />
                     <Button
                         Command="{Binding SaveProfileCommand}"
-                        Content="+ Guardar"
+                        Content="+ Save"
                         Style="{StaticResource PillBtn}"
-                        ToolTip="Guardar niveles actuales" />
+                        ToolTip="Save current levels" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -167,8 +167,8 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Margin="0,0,0,10">
-                        <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Nivel por canal" />
-                        <TextBlock FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Ajuste fino de cada altavoz (-12 a +12 dB)" />
+                        <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Channel levels" />
+                        <TextBlock FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Fine trim for each speaker (-12 to +12 dB)" />
                     </StackPanel>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
@@ -188,7 +188,7 @@
                                                 VerticalAlignment="Center"
                                                 Background="{Binding IsSpeakerActive, Converter={StaticResource ChannelBg}}"
                                                 CornerRadius="5"
-                                                ToolTip="Verde = reproduciendo en el modo actual">
+                                                ToolTip="Green = playing in the current mode">
                                                 <TextBlock
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
@@ -227,7 +227,7 @@
                                 Margin="0,10,0,0"
                                 FontSize="12"
                                 Foreground="{StaticResource TextTertiaryBrush}"
-                                Text="Conecta el receptor para ver los canales activos."
+                                Text="Connect the receiver to see the active channels."
                                 TextWrapping="Wrap"
                                 Visibility="{Binding ActiveChannels.Count, Converter={StaticResource ZeroToVisible}}" />
                         </StackPanel>
@@ -244,11 +244,11 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Control de tono" />
+                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Tone control" />
                             <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding State.ToneControlEnabled, Mode=TwoWay}" />
                         </Grid>
 
-                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="GRAVES" />
+                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="BASS" />
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -271,7 +271,7 @@
                                 Text="{Binding State.Bass, StringFormat='{}{0:+0;-0;0} dB'}" />
                         </Grid>
 
-                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="AGUDOS" />
+                        <TextBlock FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="TREBLE" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -298,8 +298,20 @@
 
                 <Border Margin="0,0,0,12" Padding="18" Style="{StaticResource Card}">
                     <StackPanel>
-                        <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Subwoofer" />
-                        <TextBlock Margin="0,2,0,10" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Salida del subwoofer (pasos de 0.5 dB)" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Subwoofer" />
+                            <!-- Sub pre-out on/off, on models that report PSSWR -->
+                            <ui:ToggleSwitch
+                                Grid.Column="1"
+                                IsChecked="{Binding State.Settings.ByKey[swr].IsOn, Mode=TwoWay}"
+                                ToolTip="Subwoofer output on / off"
+                                Visibility="{Binding State.Settings.ByKey[swr].IsSupported, Converter={StaticResource BoolToVis}}" />
+                        </Grid>
+                        <TextBlock Margin="0,2,0,10" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Subwoofer output (0.5 dB steps)" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -323,106 +335,6 @@
                     </StackPanel>
                 </Border>
 
-                <!-- ── Zones (moved here from its own tab) ─────────────────── -->
-                <Border Padding="18" Style="{StaticResource Card}">
-                    <StackPanel>
-                        <TextBlock FontSize="17" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="Zonas" />
-                        <TextBlock Margin="0,2,0,12" FontSize="12" Foreground="{StaticResource TextTertiaryBrush}" Text="Audio independiente para otras habitaciones" />
-
-                        <!-- Main zone -->
-                        <Grid Margin="0,0,0,6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="46" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Ellipse
-                                    Width="8"
-                                    Height="8"
-                                    VerticalAlignment="Center"
-                                    Fill="{Binding State.Main.IsOn, Converter={StaticResource ChannelBg}}" />
-                                <TextBlock
-                                    Margin="6,0,8,0"
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Foreground="{StaticResource TextPrimaryBrush}"
-                                    Text="Principal" />
-                            </StackPanel>
-                            <Slider
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                IsEnabled="{Binding State.Main.IsOn}"
-                                LargeChange="1"
-                                Maximum="150"
-                                Minimum="0"
-                                SmallChange="0.5"
-                                Value="{Binding State.Main.Volume, Mode=TwoWay, Delay=250}" />
-                            <TextBlock
-                                Grid.Column="2"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource TextPrimaryBrush}"
-                                Text="{Binding State.Main.Volume, Converter={StaticResource VolumeLabel}}" />
-                        </Grid>
-
-                        <!-- Zone 2 -->
-                        <Grid Margin="0,6,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="46" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Ellipse
-                                    Width="8"
-                                    Height="8"
-                                    VerticalAlignment="Center"
-                                    Fill="{Binding State.Zone2.IsOn, Converter={StaticResource ChannelBg}}" />
-                                <TextBlock
-                                    Margin="6,0,8,0"
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    FontWeight="SemiBold"
-                                    Foreground="{StaticResource TextPrimaryBrush}"
-                                    Text="Zona 2" />
-                            </StackPanel>
-                            <Slider
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                IsEnabled="{Binding State.Zone2.IsOn}"
-                                LargeChange="1"
-                                Maximum="98"
-                                Minimum="0"
-                                SmallChange="0.5"
-                                Value="{Binding State.Zone2.Volume, Mode=TwoWay, Delay=250}" />
-                            <TextBlock
-                                Grid.Column="2"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                FontWeight="SemiBold"
-                                Foreground="{StaticResource TextPrimaryBrush}"
-                                Text="{Binding State.Zone2.Volume, Converter={StaticResource VolumeLabel}}" />
-                        </Grid>
-
-                        <Button
-                            Margin="0,10,0,0"
-                            HorizontalAlignment="Stretch"
-                            Command="{Binding ToggleZone2Command}"
-                            Content="Encender / Apagar Zona 2"
-                            Style="{StaticResource PillBtn}" />
-                        <TextBlock
-                            Margin="0,6,0,0"
-                            FontSize="10"
-                            Foreground="{StaticResource TextTertiaryBrush}"
-                            Text="Zona 2 se enciende solo manualmente y se apaga con la principal."
-                            TextWrapping="Wrap" />
-                    </StackPanel>
-                </Border>
             </StackPanel>
         </Grid>
     </Grid>

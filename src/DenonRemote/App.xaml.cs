@@ -1,7 +1,7 @@
-﻿// DENON Desktop Control
-// Copyright (c) 2026 Felipe (@felipedream) - Buin, Santiago de Chile
+﻿// AVR Desktop Control
+// Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/felipedream/denon-desktop-control
+// https://github.com/sreddev/AVR-desktop-control_tuner
 
 using System;
 using System.Windows;
@@ -26,7 +26,7 @@ public partial class App : Application
 
     private async void OnStartup(object sender, StartupEventArgs e)
     {
-        _singleInstance = new System.Threading.Mutex(true, @"Local\DenonDesktopControl", out var isFirst);
+        _singleInstance = new System.Threading.Mutex(true, @"Local\AVRDesktopControl", out var isFirst);
         if (!isFirst)
         {
             // Another copy owns the sockets: bring it forward and bail out.
@@ -39,12 +39,12 @@ public partial class App : Application
         // "Appearance=Primary" button, toggle track and slider thumb picks it
         // up automatically. All four shades are set explicitly: the
         // single-colour overload lightens the fill for dark themes, which
-        // drops white button text to 3.5:1. These keep it at 5.9:1 or better.
+        // drops white button text below 4.5:1. These keep it at 4.7:1 or better.
         Wpf.Ui.Appearance.ApplicationAccentColorManager.Apply(
-            System.Windows.Media.Color.FromRgb(0x55, 0x6B, 0x2F),   // system
-            System.Windows.Media.Color.FromRgb(0x4B, 0x53, 0x20),   // primary
-            System.Windows.Media.Color.FromRgb(0x55, 0x6B, 0x2F),   // secondary (default fill)
-            System.Windows.Media.Color.FromRgb(0x4F, 0x62, 0x28));  // tertiary
+            System.Windows.Media.Color.FromRgb(0x61, 0x7D, 0x2E),   // system
+            System.Windows.Media.Color.FromRgb(0x61, 0x7D, 0x2E),   // primary (button fill)
+            System.Windows.Media.Color.FromRgb(0x5E, 0x7A, 0x2E),   // secondary
+            System.Windows.Media.Color.FromRgb(0x5A, 0x74, 0x29));  // tertiary
 
         // Global exception handler â€” writes to %TEMP%\DenonRemote-crash.log
         DispatcherUnhandledException += (_, ev) =>
