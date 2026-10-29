@@ -263,7 +263,7 @@ The **About** card shows the version, a Telegram link and a PayPal button if you
 | **Power on doesn't work from standby** | Network Control must be on, or the receiver ignores the network while asleep |
 | **No RDS name** | The station doesn't broadcast RDS, reception is weak, or you're on AM |
 | **Quick / Smart Select bar is empty** | The model has no Quick Select over the network |
-| **The app crashed** | A crash report is written to `%TEMP%\AvrRemote-crash.log`. Please attach it to a [GitHub issue](https://github.com/sreddev/AVR-control-center/issues) |
+| **The app crashed** | A crash report is written to `%TEMP%\AvrControlCenter-crash.log`. Please attach it to a [GitHub issue](https://github.com/sreddev/AVR-control-center/issues) |
 
 ---
 
@@ -273,7 +273,7 @@ The **About** card shows the version, a Telegram link and a PayPal button if you
 No. On connect it only reads values. Commands are sent only when you use a control.
 
 **Where are my settings stored?**
-In `%LocalAppData%\AvrRemote\settings.json`: saved stations, profiles, input names, recent receivers and preferences. Uninstalling the app leaves the file in place.
+In `%LocalAppData%\AvrControlCenter\settings.json`: saved stations, profiles, input names, recent receivers and preferences. Uninstalling the app leaves the file in place.
 
 **Does the app send data anywhere?**
 It talks only to the receiver on your local network. At startup, if Auto-update is on, it also asks GitHub for the latest release.

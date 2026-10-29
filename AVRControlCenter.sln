@@ -5,11 +5,11 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4B278E05-0549-4DB4-A5AE-0C24773BD557}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvrRemote", "src\AvrRemote\AvrRemote.csproj", "{E296C0FF-483B-4DDC-BE81-4B61728ABAB1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvrControlCenter", "src\AvrControlCenter\AvrControlCenter.csproj", "{E296C0FF-483B-4DDC-BE81-4B61728ABAB1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvrRemote.Tests", "tests\AvrRemote.Tests\AvrRemote.Tests.csproj", "{2B6C9EE6-ED3D-442C-AB1A-E9384B4F8862}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvrControlCenter.Tests", "tests\AvrControlCenter.Tests\AvrControlCenter.Tests.csproj", "{2B6C9EE6-ED3D-442C-AB1A-E9384B4F8862}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

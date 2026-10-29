@@ -18,7 +18,7 @@ Open an [issue](https://github.com/sreddev/AVR-control-center/issues) with:
 - your receiver model and firmware, if known
 - your Windows version and the app version (Settings → About)
 - the steps to reproduce the problem
-- a screenshot and `%TEMP%\AvrRemote-crash.log`, if the app crashed
+- a screenshot and `%TEMP%\AvrControlCenter-crash.log`, if the app crashed
 
 Reports that a feature does or doesn't appear on a given model are very useful, because the app shows options based on what the receiver answers.
 
@@ -28,11 +28,11 @@ Requirements: Windows 10/11 and the [.NET 8 SDK](https://dotnet.microsoft.com/do
 
 ```bash
 git clone https://github.com/sreddev/AVR-control-center.git
-cd AVR-control-center/src/AvrRemote
+cd AVR-control-center/src/AvrControlCenter
 dotnet run
 ```
 
-The solution file is `AVRControlCenter.sln`; the app lives in `src/AvrRemote` and the unit tests (xUnit) in `tests/AvrRemote.Tests`. Run them from the repository root with `dotnet test`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
+The solution file is `AVRControlCenter.sln`; the app lives in `src/AvrControlCenter` and the unit tests (xUnit) in `tests/AvrControlCenter.Tests`. Run them from the repository root with `dotnet test`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
 
 > Receivers accept only one telnet client. Close other remote apps (or Home Assistant's Denon integration) while debugging.
 
@@ -45,7 +45,7 @@ The solution file is `AVRControlCenter.sln`; the app lives in `src/AvrRemote` an
 
 ## Adding a receiver setting
 
-Most receiver parameters need **one line** in `src/AvrRemote/Avr/AvrSettingsCatalog.cs`, and no UI code:
+Most receiver parameters need **one line** in `src/AvrControlCenter/Avr/AvrSettingsCatalog.cs`, and no UI code:
 
 ```csharp
 yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
@@ -73,11 +73,11 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
 
 ## Building a release
 
-1. Set the version in `src/AvrRemote/AvrRemote.csproj` (`<Version>`) and in `installer/setup.iss` (`AppVersion`, `OutputBaseFilename`).
+1. Set the version in `src/AvrControlCenter/AvrControlCenter.csproj` (`<Version>`) and in `installer/setup.iss` (`AppVersion`, `OutputBaseFilename`).
 2. Add a section to `CHANGELOG.md`, and run `dotnet test`: every test must pass.
 3. Publish a self-contained single-file build:
    ```powershell
-   dotnet publish src/AvrRemote/AvrRemote.csproj -c Release -r win-x64 --self-contained true `
+   dotnet publish src/AvrControlCenter/AvrControlCenter.csproj -c Release -r win-x64 --self-contained true `
      -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
      -p:EnableCompressionInSingleFile=true -p:DebugType=none -o publish
    ```

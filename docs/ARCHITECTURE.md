@@ -26,7 +26,7 @@ How AVR Control Center talks to a Denon / Marantz receiver, and how the code is 
 ## Project layout
 
 ```
-src/AvrRemote/
+src/AvrControlCenter/
 ├── App.xaml(.cs)            Startup, DI container, single instance, accent colours, crash log
 ├── Assets/app.ico           App icon (12 sizes, 16–256 px)
 ├── Avr/                   Receiver protocol
@@ -43,7 +43,7 @@ src/AvrRemote/
 ├── Heos/                    HEOS CLI client, models, service, UPnP seek
 ├── Services/
 │   ├── ReceiverService      Facade the UI talks to: connect, commands, change tracking
-│   ├── AppSettings          settings.json (%LocalAppData%\AvrRemote)
+│   ├── AppSettings          settings.json (%LocalAppData%\AvrControlCenter)
 │   ├── AutoUpdateService    GitHub Releases check
 │   └── Localization         All UI strings
 ├── ViewModels/
@@ -61,7 +61,7 @@ src/AvrRemote/
                              Processing, Zones, Receiver, Devices (Connect), Settings
 ```
 
-`tests/AvrRemote.Tests` holds the xUnit tests: protocol encoding, the event parser, the derived power state and the updater's version check. Run them with `dotnet test`.
+`tests/AvrControlCenter.Tests` holds the xUnit tests: protocol encoding, the event parser, the derived power state and the updater's version check. Run them with `dotnet test`.
 
 ## Data flow
 
@@ -120,7 +120,7 @@ Commands marked `// verified` in `AvrSettingsCatalog.cs` were read back from a M
 
 ## Settings file
 
-`%LocalAppData%\AvrRemote\settings.json` holds:
+`%LocalAppData%\AvrControlCenter\settings.json` holds:
 - preferences
 - recent receivers (last 5)
 - sound profiles
@@ -128,7 +128,7 @@ Commands marked `// verified` in `AvrSettingsCatalog.cs` were read back from a M
 - input aliases and hidden inputs
 - the "presets imported" flag
 
-Versions before 2.1 used `%LocalAppData%\DenonRemote`; on first start the app copies `settings.json` from there.
+Versions 2.1 to 3.0 used `%LocalAppData%\AvrRemote`, and earlier ones `%LocalAppData%\DenonRemote`; on first start the app copies `settings.json` from the newest of these it finds.
 
 ## Themes
 

@@ -18,7 +18,7 @@ SolidCompression=yes
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 WizardStyle=modern
-SetupIconFile=..\src\AvrRemote\Assets\app.ico
+SetupIconFile=..\src\AvrControlCenter\Assets\app.ico
 LicenseFile=..\LICENSE
 PrivilegesRequired=lowest
 

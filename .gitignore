@@ -24,7 +24,7 @@ desktop.ini
 *.log
 
 # Local settings (user-specific, not source-controlled)
-# AppSettings are stored in %LOCALAPPDATA%\AvrRemote
+# AppSettings are stored in %LOCALAPPDATA%\AvrControlCenter
 
 # Reference material, too large for git
 *.apk

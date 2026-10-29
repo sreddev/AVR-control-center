@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Code
+- The `AvrRemote` namespace, project and folder are now `AvrControlCenter`: `src/AvrControlCenter/AvrControlCenter.csproj` and `tests/AvrControlCenter.Tests`
+- Settings move to `%LocalAppData%\AvrControlCenter`. On first start the app copies `settings.json` from `AvrRemote` (or the older `DenonRemote`), so stations, profiles and devices carry over
+- The crash log is now `%TEMP%\AvrControlCenter-crash.log`
+- The single-instance lock keeps its old name, so an old and a new copy still never run at the same time
+
 ## v3.0 — AVR Control Center (2026-10-29)
 
 ### New name
