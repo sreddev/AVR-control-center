@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.2 (2026-10-29)
+
+### New icon
+- A bolder app icon that is easier to spot in the tray, the taskbar and the title bar: a deep green tile with a white receiver front panel (display and volume knob) inside a black outline
+- Each size from 16 to 256 px is drawn on its own pixel grid, so the small tray icon stays sharp
+
 ## v3.0.1 (2026-10-29)
 
 ### Code
