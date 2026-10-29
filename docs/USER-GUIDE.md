@@ -1,4 +1,4 @@
-# AVR Desktop Control — User Guide
+# AVR Control Center — User Guide
 
 This guide covers every page of the app. For download and installation, see the [README](../README.md#download-and-install).
 
@@ -263,7 +263,7 @@ The **About** card shows the version, a Telegram link and a PayPal button if you
 | **Power on doesn't work from standby** | Network Control must be on, or the receiver ignores the network while asleep |
 | **No RDS name** | The station doesn't broadcast RDS, reception is weak, or you're on AM |
 | **Quick / Smart Select bar is empty** | The model has no Quick Select over the network |
-| **The app crashed** | A crash report is written to `%TEMP%\AvrRemote-crash.log`. Please attach it to a [GitHub issue](https://github.com/sreddev/AVR-desktop-control/issues) |
+| **The app crashed** | A crash report is written to `%TEMP%\AvrRemote-crash.log`. Please attach it to a [GitHub issue](https://github.com/sreddev/AVR-control-center/issues) |
 
 ---
 

@@ -1,7 +1,7 @@
-﻿// AVR Desktop Control
+﻿// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 namespace AvrRemote.Services;
 
@@ -27,7 +27,7 @@ public static class L
     public static string SettingsStartMinimized => "Start minimized";
     public static string SettingsStartMinimizedDesc => "Launches the app to the tray so it doesn't steal focus.";
     public static string SettingsAutoUpdate => "Auto-update";
-    public static string SettingsAutoUpdateDesc => "Checks GitHub (sreddev/AVR-desktop-control) for new releases at startup.";
+    public static string SettingsAutoUpdateDesc => "Checks GitHub (sreddev/AVR-control-center) for new releases at startup.";
     public static string SettingsVolumeUnit => "Volume unit";
     public static string SettingsVolumeUnitDesc => "How the master volume is displayed.";
     public static string SettingsTheme => "Theme";

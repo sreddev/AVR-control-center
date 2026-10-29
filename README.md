@@ -1,11 +1,11 @@
-# AVR Desktop Control
+# AVR Control Center
 
 **Full remote control for Denon and Marantz AV receivers on Windows.**
 
 Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tuner with RDS, HEOS streaming and receiver settings, in one Fluent desktop app with a tray widget and dark or light themes. It adapts to your model: options appear only when the receiver reports them.
 
-[![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control?style=flat-square)](https://github.com/sreddev/AVR-desktop-control/releases/latest)
-[![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/sreddev/AVR-control-center?style=flat-square)](https://github.com/sreddev/AVR-control-center/releases/latest)
+[![License](https://img.shields.io/github/license/sreddev/AVR-control-center?style=flat-square)](LICENSE)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?style=flat-square)
 
 <p align="center">
@@ -45,12 +45,12 @@ Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tun
 
 ## Download and install
 
-Get the latest version from [**Releases**](https://github.com/sreddev/AVR-desktop-control/releases/latest):
+Get the latest version from [**Releases**](https://github.com/sreddev/AVR-control-center/releases/latest):
 
 | File | |
 |---|---|
-| `AVRDesktopControl-<version>-Setup.exe` | **Installer** (recommended). Start-menu entry, optional desktop shortcut and start with Windows. No admin rights needed |
-| `AVRDesktopControl-<version>.zip` | **Portable**: extract anywhere and run `AVRDesktopControl.exe` |
+| `AVRControlCenter-<version>-Setup.exe` | **Installer** (recommended). Start-menu entry, optional desktop shortcut and start with Windows. No admin rights needed |
+| `AVRControlCenter-<version>.zip` | **Portable**: extract anywhere and run `AVRControlCenter.exe` |
 
 Both are self-contained, so no .NET installation is needed. Windows SmartScreen may warn about an unknown publisher the first time, because the app isn't code-signed: choose **More info → Run anyway**.
 
@@ -108,12 +108,12 @@ The full walkthrough of every page is in the **[User Guide](docs/USER-GUIDE.md)*
 ## Build from source
 
 ```bash
-git clone https://github.com/sreddev/AVR-desktop-control.git
-cd AVR-desktop-control/src/AvrRemote
+git clone https://github.com/sreddev/AVR-control-center.git
+cd AVR-control-center/src/AvrRemote
 dotnet run
 ```
 
-Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). See [CONTRIBUTING.md](CONTRIBUTING.md) for release builds and the installer.
+Requires the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Run the unit tests with `dotnet test` from the repository root. See [CONTRIBUTING.md](CONTRIBUTING.md) for release builds and the installer.
 
 ---
 

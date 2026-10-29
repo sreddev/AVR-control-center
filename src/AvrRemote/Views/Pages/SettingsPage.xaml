@@ -197,7 +197,7 @@
                             <ui:SymbolIcon FontSize="20" Foreground="White" Symbol="Speaker224" />
                         </Border>
                         <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
-                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="AVR Desktop Control" />
+                            <TextBlock FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" Text="AVR Control Center" />
                             <TextBlock x:Name="VersionText" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
                     </StackPanel>

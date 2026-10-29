@@ -1,7 +1,7 @@
-﻿// AVR Desktop Control
+﻿// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 using System;
 using System.Linq;
@@ -21,7 +21,8 @@ public sealed class AvrEventParser
         Application.Current?.Dispatcher.BeginInvoke(new Action(() => Apply(line)));
     }
 
-    private void Apply(string line)
+    /// <summary>Applies one receiver line on the calling thread. Internal for the tests.</summary>
+    internal void Apply(string line)
     {
         _state.IsApplyingRemote = true;
         try { ApplyCore(line.TrimEnd()); }

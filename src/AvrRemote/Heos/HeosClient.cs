@@ -1,7 +1,7 @@
-// AVR Desktop Control
+// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 using System;
 using System.Collections.Concurrent;

@@ -8,7 +8,7 @@
     xmlns:pages="clr-namespace:AvrRemote.Views.Pages"
     xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="AVR Desktop Control"
+    Title="AVR Control Center"
     Width="1280"
     Height="940"
     MinWidth="980"
@@ -39,7 +39,7 @@
 
         <ui:TitleBar
             Grid.Row="0"
-            Title="AVR Desktop Control"
+            Title="AVR Control Center"
             CanMaximize="True"
             ShowMaximize="True"
             ShowMinimize="True">

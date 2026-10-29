@@ -1,5 +1,20 @@
 # Changelog
 
+## v3.0 — AVR Control Center (2026-10-29)
+
+### New name
+- **AVR Desktop Control is now AVR Control Center.** The window, tray, installer, Start-menu and desktop shortcuts use the new name, and the program is now `AVRControlCenter.exe`
+- The repository moved to [sreddev/AVR-control-center](https://github.com/sreddev/AVR-control-center). The old address redirects, so 2.x installs still find this update
+- The installer upgrades an existing *AVR Desktop Control* install in place and removes its old program file and shortcuts
+- Your settings, saved stations, profiles and devices carry over (they stay in `%LocalAppData%\AvrRemote`)
+- Portable zip: extract over the old folder and start `AVRControlCenter.exe`; the old `AVRDesktopControl.exe` can be deleted
+
+### Code
+- Solution renamed to `AVRControlCenter.sln`, assembly to `AVRControlCenter`. The `AvrRemote` namespace and project folder are unchanged
+- New xUnit test project `tests/AvrRemote.Tests` (50 tests): volume and tuner encoding, the event parser, the derived power state, version comparison and the app identity used by the updater
+- `nuget.config` adds nuget.org, so a fresh clone restores the test packages
+- The single-instance lock keeps its old name, so an old and a new copy never run against the receiver at the same time
+
 ## v2.5 (2026-10-29)
 
 ### Window

@@ -1,6 +1,6 @@
 # Architecture
 
-How AVR Desktop Control talks to a Denon / Marantz receiver, and how the code is organised. For development setup and the release process, see [CONTRIBUTING.md](../CONTRIBUTING.md).
+How AVR Control Center talks to a Denon / Marantz receiver, and how the code is organised. For development setup and the release process, see [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Tech stack
 
@@ -49,7 +49,7 @@ src/AvrRemote/
 ├── ViewModels/
 │   ├── MainViewModel        Root view model (commands, collections)
 │   └── SettingSection       SettingSection (titled card) and ZonePanel
-├── Controls/                ChannelChip, SettingTemplateSelector
+├── Controls/                ChannelChip, PowerIndicator, PowerGate, Feedback, SliderWheel, SettingTemplateSelector
 ├── Converters/              Binding converters
 └── Views/
     ├── MainWindow, WidgetWindow
@@ -60,6 +60,8 @@ src/AvrRemote/
     └── Pages/               Home (Dashboard), Sources, Tuner, HEOS, Sound,
                              Processing, Zones, Receiver, Devices (Connect), Settings
 ```
+
+`tests/AvrRemote.Tests` holds the xUnit tests: protocol encoding, the event parser, the derived power state and the updater's version check. Run them with `dotnet test`.
 
 ## Data flow
 

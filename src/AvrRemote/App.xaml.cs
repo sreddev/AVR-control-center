@@ -1,7 +1,7 @@
-﻿// AVR Desktop Control
+﻿// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 using System;
 using System.Windows;
@@ -35,6 +35,8 @@ public partial class App : Application
     private async void OnStartup(object sender, StartupEventArgs e)
     {
         IsRestart = Array.IndexOf(e.Args, RestartArg) >= 0;
+        // The name predates the rename to AVR Control Center. It stays, so an old
+        // copy and a new one can't both hold the receiver's single telnet slot.
         _singleInstance = new System.Threading.Mutex(true, @"Local\AVRDesktopControl", out var isFirst);
         if (!isFirst && IsRestart)
         {

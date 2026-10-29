@@ -1,7 +1,7 @@
-﻿// AVR Desktop Control
+﻿// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 using System;
 using System.Diagnostics;
@@ -23,7 +23,7 @@ namespace AvrRemote.Services;
 /// </summary>
 public sealed class AutoUpdateService
 {
-    public const string RepoSlug = "sreddev/AVR-desktop-control";
+    public const string RepoSlug = "sreddev/AVR-control-center";
     public const string RepoUrl = "https://github.com/" + RepoSlug;
     public const string ReleasesUrl = RepoUrl + "/releases";
 
@@ -98,12 +98,12 @@ public sealed class AutoUpdateService
     {
         var http = new HttpClient { Timeout = TimeSpan.FromSeconds(8) };
         // GitHub's API rejects requests without a User-Agent.
-        http.DefaultRequestHeaders.UserAgent.ParseAdd("AVRDesktopControl/" + GetCurrentVersion());
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("AVRControlCenter/" + GetCurrentVersion());
         http.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
         return http;
     }
 
-    private static bool IsNewer(string remote, string local)
+    internal static bool IsNewer(string remote, string local)
     {
         if (Version.TryParse(remote, out var r) && Version.TryParse(local, out var l))
             return r > l;

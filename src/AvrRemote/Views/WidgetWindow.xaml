@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:AvrRemote.Controls"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-    Title="AVR Desktop Control"
+    Title="AVR Control Center"
     Width="340"
     Height="350"
     AllowsTransparency="False"

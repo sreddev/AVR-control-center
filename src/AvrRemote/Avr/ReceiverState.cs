@@ -1,7 +1,7 @@
-﻿// AVR Desktop Control
+﻿// AVR Control Center
 // Copyright (c) 2026 Sergio (@sreddev)
 // Licensed under MIT License
-// https://github.com/sreddev/AVR-desktop-control
+// https://github.com/sreddev/AVR-control-center
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -75,7 +75,7 @@ public partial class ReceiverState : ObservableObject
     /// <summary>Tray icon tooltip: "Living Room · On".</summary>
     public string PowerTooltip => IsConnected || IsConnecting
         ? $"{FriendlyName} · {PowerLabel}"
-        : "AVR Desktop Control · Offline";
+        : "AVR Control Center · Offline";
 
     // â”€â”€ Zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public ZoneState Main { get; } = new(ZoneId.Main, "Main");

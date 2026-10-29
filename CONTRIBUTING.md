@@ -1,4 +1,4 @@
-# Contributing to AVR Desktop Control
+# Contributing to AVR Control Center
 
 Contributions are welcome: bug reports, receiver compatibility notes and pull requests.
 
@@ -14,7 +14,7 @@ Contributions are welcome: bug reports, receiver compatibility notes and pull re
 
 ## Reporting bugs
 
-Open an [issue](https://github.com/sreddev/AVR-desktop-control/issues) with:
+Open an [issue](https://github.com/sreddev/AVR-control-center/issues) with:
 - your receiver model and firmware, if known
 - your Windows version and the app version (Settings → About)
 - the steps to reproduce the problem
@@ -27,19 +27,19 @@ Reports that a feature does or doesn't appear on a given model are very useful, 
 Requirements: Windows 10/11 and the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0). Visual Studio 2022 or VS Code are optional.
 
 ```bash
-git clone https://github.com/sreddev/AVR-desktop-control.git
-cd AVR-desktop-control/src/AvrRemote
+git clone https://github.com/sreddev/AVR-control-center.git
+cd AVR-control-center/src/AvrRemote
 dotnet run
 ```
 
-The solution file is `AVRDesktopControl.sln`; the project lives in `src/AvrRemote`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
+The solution file is `AVRControlCenter.sln`; the app lives in `src/AvrRemote` and the unit tests (xUnit) in `tests/AvrRemote.Tests`. Run them from the repository root with `dotnet test`. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organised.
 
 > Receivers accept only one telnet client. Close other remote apps (or Home Assistant's Denon integration) while debugging.
 
 ## Pull requests
 
 1. Fork the repository and create a branch: `git checkout -b feature/my-improvement`
-2. Keep changes focused, and build with no warnings: `dotnet build -c Release`
+2. Keep changes focused, build with no warnings (`dotnet build -c Release`) and keep the tests green (`dotnet test`)
 3. Describe what you tested and on which receiver
 4. Open a pull request against `main`
 
@@ -74,7 +74,7 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
 ## Building a release
 
 1. Set the version in `src/AvrRemote/AvrRemote.csproj` (`<Version>`) and in `installer/setup.iss` (`AppVersion`, `OutputBaseFilename`).
-2. Add a section to `CHANGELOG.md`.
+2. Add a section to `CHANGELOG.md`, and run `dotnet test`: every test must pass.
 3. Publish a self-contained single-file build:
    ```powershell
    dotnet publish src/AvrRemote/AvrRemote.csproj -c Release -r win-x64 --self-contained true `
@@ -83,7 +83,7 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
    ```
 4. Build the portable zip and the installer:
    ```powershell
-   Compress-Archive publish\* installer\out\AVRDesktopControl-<version>.zip
+   Compress-Archive publish\* installer\out\AVRControlCenter-<version>.zip
    & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer\setup.iss
    ```
 5. Commit, then create a GitHub release with the tag `v<version>` (for example `v2.1.0`) and attach both files. The in-app update check compares this tag with the running version, so they must match.
