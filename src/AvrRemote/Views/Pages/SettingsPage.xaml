@@ -202,13 +202,6 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <TextBlock
-                        x:Name="FreeVersionText"
-                        Margin="0,14,0,0"
-                        FontSize="12"
-                        Foreground="{StaticResource TextSecondaryBrush}"
-                        TextWrapping="Wrap" />
-
                     <Border Style="{StaticResource RowLine}" Margin="0,14" />
 
                     <!-- Author -->
@@ -232,17 +225,6 @@
                         Appearance="Primary"
                         Click="OnDonateClick"
                         Icon="{ui:SymbolIcon Heart24}" />
-
-                    <Border Style="{StaticResource RowLine}" Margin="0,14" />
-
-                    <TextBlock
-                        FontSize="10"
-                        Foreground="{StaticResource TextTertiaryBrush}"
-                        Text="MIT License - Open source"
-                        TextWrapping="Wrap" />
-                    <TextBlock FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" TextWrapping="Wrap">
-                        <Hyperlink Click="OnRepoClick" Foreground="{StaticResource TextTertiaryBrush}">github.com/sreddev/AVR-desktop-control</Hyperlink>
-                    </TextBlock>
                 </StackPanel>
             </Border>
         </Grid>

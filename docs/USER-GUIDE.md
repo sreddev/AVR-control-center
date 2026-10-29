@@ -44,6 +44,7 @@ This guide covers every page of the app. For download and installation, see the 
   - master volume slider and value, with a "MUTE" label in the accent colour while muted. The **mouse wheel** over any volume slider changes the volume in 0.5 steps
   - **Mute** and **Power** buttons. Power switches only the **main zone**; Zone 2 never wakes up with it. The Power button is filled while the receiver is on and outlined in standby.
 - The ☰ button collapses the sidebar to icons.
+- The window opens at 1280 × 940, large enough to show every page without scrolling. On smaller screens it shrinks to fit.
 
 ### Power indicator
 
@@ -230,7 +231,7 @@ A card that says *"Not available on the connected receiver"* means your model re
 
 <img src="screenshot-light-home.png" width="700" alt="Light theme">
 
-The **About** card shows the version, links to Telegram and the GitHub repository, and a PayPal button if you'd like to support the project.
+The **About** card shows the version, a Telegram link and a PayPal button if you'd like to support the project.
 
 ---
 

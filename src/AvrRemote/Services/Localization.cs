@@ -17,7 +17,6 @@ public static class L
     public static string AboutDonate => "Donate with PayPal";
     public static string AboutDonateSoon => "PayPal donations - coming soon";
     public static string AboutTelegram => "Telegram @sreddev";
-    public static string AboutFreeVersion => "Free version - If you like it, buy me a coffee";
 
     // -- Settings --
     public static string SettingsTitle => "Settings";

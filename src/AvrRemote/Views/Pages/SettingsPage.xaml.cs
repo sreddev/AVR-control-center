@@ -37,7 +37,6 @@ public partial class SettingsPage : PageBase
         ThemeLabel.Text = L.SettingsTheme;
         ThemeDesc.Text = L.SettingsThemeDesc;
         ThemeRestartBtn.Content = L.SettingsThemeRestart;
-        FreeVersionText.Text = L.AboutFreeVersion;
         ModifiedByLabel.Text = L.AboutCreatedBy;
         TelegramBtn.Content = L.AboutTelegram;
         DonateBtn.Content = DonateUrl is null ? L.AboutDonateSoon : L.AboutDonate;
@@ -57,9 +56,6 @@ public partial class SettingsPage : PageBase
     {
         if (DonateUrl is not null) OpenUrl(DonateUrl);
     }
-
-    private void OnRepoClick(object sender, RoutedEventArgs e) =>
-        OpenUrl(AutoUpdateService.RepoUrl);
 
     private void OnUpdateClick(object sender, RoutedEventArgs e)
     {

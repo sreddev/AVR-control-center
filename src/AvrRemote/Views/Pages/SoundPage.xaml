@@ -125,12 +125,12 @@
                                         BorderThickness="0"
                                         controls:Feedback.Confirm="True"
                                         Click="OnDeleteProfile"
-                                        Content="✕"
                                         Cursor="Hand"
-                                        FontSize="10"
                                         Foreground="{StaticResource TextTertiaryBrush}"
                                         Tag="{Binding}"
-                                        ToolTip="Delete" />
+                                        ToolTip="Delete">
+                                        <ui:SymbolIcon FontSize="12" Symbol="Dismiss24" />
+                                    </Button>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

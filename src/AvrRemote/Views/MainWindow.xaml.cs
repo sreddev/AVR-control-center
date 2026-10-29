@@ -37,6 +37,12 @@ public partial class MainWindow : FluentWindow
         NavSettings.Content = L.Settings;
         RecentLabel.Text = L.Recent;
 
+        // 1280×940 shows every page without scrolling; on smaller screens
+        // shrink to the work area (taskbar excluded) instead of running off it.
+        var area = SystemParameters.WorkArea;
+        Width = Math.Max(MinWidth, Math.Min(Width, area.Width));
+        Height = Math.Max(MinHeight, Math.Min(Height, area.Height));
+
         // A restart the user asked for (theme change) should come back visible.
         if (settings.StartMinimized && !App.IsRestart) WindowState = WindowState.Minimized;
     }

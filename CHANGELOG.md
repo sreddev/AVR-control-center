@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.5 (2026-10-29)
+
+### Window
+- Opens at **1280 × 940** (was 1200 × 820), so every page shows without scrolling. Processing was cut off by about 100 px, Home and Sources by a few
+- On screens smaller than that, the window shrinks to the work area instead of running under the taskbar
+
+### Icons
+- The last text-character icons are now Fluent UI System Icons, like the rest of the app: **Back**, **Favorites**, **Queue** and hide-queue on the HEOS page, and the delete ✕ on Sound profiles
+
+### Settings
+- The About card no longer shows the "Free version" line or the GitHub repository link
+
 ## v2.4 (2026-10-29)
 
 ### Power status
