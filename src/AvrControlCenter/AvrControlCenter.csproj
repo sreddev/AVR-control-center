@@ -9,7 +9,7 @@
     <RootNamespace>AvrControlCenter</RootNamespace>
     <AssemblyName>AVRControlCenter</AssemblyName>
     <Product>AVR Control Center</Product>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
     <Authors>Sergio (@sreddev)</Authors>
     <Company>sreddev</Company>
     <Description>AVR Control Center — Remote control for Denon and Marantz AVR receivers on Windows. Real-time telnet monitoring, channel matrix, per-speaker trim, system tray widget, auto-discovery.</Description>

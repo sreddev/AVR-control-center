@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v3.0.1 (2026-10-29)
 
 ### Code
 - The `AvrRemote` namespace, project and folder are now `AvrControlCenter`: `src/AvrControlCenter/AvrControlCenter.csproj` and `tests/AvrControlCenter.Tests`
