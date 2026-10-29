@@ -37,7 +37,8 @@ public partial class MainWindow : FluentWindow
         NavSettings.Content = L.Settings;
         RecentLabel.Text = L.Recent;
 
-        if (settings.StartMinimized) WindowState = WindowState.Minimized;
+        // A restart the user asked for (theme change) should come back visible.
+        if (settings.StartMinimized && !App.IsRestart) WindowState = WindowState.Minimized;
     }
 
     private WidgetWindow GetOrCreateWidget()

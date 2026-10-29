@@ -25,6 +25,9 @@ public sealed class AppSettings
     /// <summary>How the master volume is presented: Absolute, Decibels or Percent.</summary>
     public VolumeUnit VolumeUnit { get; set; } = VolumeUnit.Absolute;
 
+    /// <summary>Colour theme; applied at startup, so a change needs a restart.</summary>
+    public AppTheme Theme { get; set; } = AppTheme.Dark;
+
     /// <summary>Devices the user connected to at least once, most recent first.</summary>
     public List<KnownDevice> KnownDevices { get; set; } = new();
 
@@ -124,6 +127,13 @@ public enum VolumeUnit
     Decibels,
     /// <summary>Share of the configured maximum, e.g. "56%".</summary>
     Percent
+}
+
+/// <summary>Colour theme: picks Views/Palette.Dark.xaml or Views/Palette.Light.xaml.</summary>
+public enum AppTheme
+{
+    Dark,
+    Light
 }
 
 /// <summary>Serialized entry in <see cref="AppSettings.KnownDevices"/>.</summary>

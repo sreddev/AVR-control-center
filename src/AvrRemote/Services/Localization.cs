@@ -31,6 +31,9 @@ public static class L
     public static string SettingsAutoUpdateDesc => "Checks GitHub (sreddev/AVR-desktop-control) for new releases at startup.";
     public static string SettingsVolumeUnit => "Volume unit";
     public static string SettingsVolumeUnitDesc => "How the master volume is displayed.";
+    public static string SettingsTheme => "Theme";
+    public static string SettingsThemeDesc => "Dark or Light. Applied when the app restarts.";
+    public static string SettingsThemeRestart => "Restart now";
 
     // -- Navigation --
     public static string Devices => "Devices";

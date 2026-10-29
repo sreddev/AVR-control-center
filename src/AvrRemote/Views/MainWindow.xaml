@@ -12,11 +12,11 @@
     Height="820"
     MinWidth="980"
     MinHeight="640"
-    Background="#0B0D11"
+    Background="{StaticResource Surface0Brush}"
     ExtendsContentIntoTitleBar="True"
     FontFamily="Segoe UI Variable, Segoe UI"
     Foreground="{StaticResource TextPrimaryBrush}"
-    WindowBackdropType="Mica"
+    WindowBackdropType="None"
     WindowCornerPreference="Round"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -199,7 +199,7 @@
         <Border
             Grid.Row="2"
             Padding="20,14"
-            Background="#111318"
+            Background="{StaticResource StatusBarBrush}"
             BorderBrush="{StaticResource CardBorderBrush}"
             BorderThickness="0,1,0,0">
             <Grid>

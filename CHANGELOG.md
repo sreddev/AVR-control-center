@@ -1,5 +1,21 @@
 # Changelog
 
+## v2.3 (2026-10-29)
+
+### Themes
+- **Dark** (default) and **Light** themes. Pick one in **Settings → Preferences → Theme**; **Restart now** applies it and the app reconnects by itself
+- Dark is now true black (#000000 window, #060708 page, #121418 cards). WPF-UI's stock greys gave the window a brown cast next to the cool cards; they are replaced
+- Light: cool light grey page, white cards, the same army-green buttons and a deeper olive for accent text. Every text colour meets WCAG AA (4.5:1 or better)
+- The window no longer uses the Mica backdrop, which tinted it with the desktop wallpaper
+- The HEOS page and the tray widget follow the theme
+
+### Fixes
+- Opening Settings reset **Volume unit** to Absolute: a saved Decibels or Percent was lost every time the page was visited
+
+### Code
+- All colours live in `Views/Palette.Dark.xaml` and `Views/Palette.Light.xaml` (same keys). `Views/Theme.xaml` keeps styles and converters only
+- Hard-coded colours on the HEOS page and tray widget are now palette brushes
+
 ## v2.2 (2026-10-29)
 
 ### HEOS Favorites

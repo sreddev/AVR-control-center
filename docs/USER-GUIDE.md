@@ -206,6 +206,9 @@ A card that says *"Not available on the connected receiver"* means your model re
 | **Start minimized** | Starts in the tray without opening the window |
 | **Auto-update** | Checks GitHub at startup. When a newer version exists, a banner offers the download |
 | **Volume unit** | Absolute (52.5, like the front panel), decibels (−27.5 dB) or percent of the maximum |
+| **Theme** | **Dark** (default) or **Light**. The change applies on restart: click **Restart now** and the app reopens and reconnects by itself |
+
+<img src="screenshot-light-home.png" width="700" alt="Light theme">
 
 The **About** card shows the version, links to Telegram and the GitHub repository, and a PayPal button if you'd like to support the project.
 

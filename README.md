@@ -2,7 +2,7 @@
 
 **Full remote control for Denon and Marantz AV receivers on Windows.**
 
-Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tuner with RDS, HEOS streaming and receiver settings, in one Fluent desktop app with a tray widget. It adapts to your model: options appear only when the receiver reports them.
+Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tuner with RDS, HEOS streaming and receiver settings, in one Fluent desktop app with a tray widget and dark or light themes. It adapts to your model: options appear only when the receiver reports them.
 
 [![Release](https://img.shields.io/github/v/release/sreddev/AVR-desktop-control?style=flat-square)](https://github.com/sreddev/AVR-desktop-control/releases/latest)
 [![License](https://img.shields.io/github/license/sreddev/AVR-desktop-control?style=flat-square)](LICENSE)
@@ -38,6 +38,7 @@ Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tun
 | 🏘️ **Zones** | Main, Zone 2 and Zone 3: power, volume, mute, input, sleep timer; All Zone Stereo |
 | 📺 **Receiver** | HDMI audio / monitor / resolution, picture and video mode, Auto Lip Sync, audio delay, dimmer, ECO, auto standby, volume limit, panel and remote lock |
 | 📌 **Tray** | Click for a floating mini remote, double-click for the full window, right-click for a quick menu |
+| 🌓 **Themes** | True-black **Dark** (default) or **Light**, chosen in Settings |
 | 🔄 **Updates** | Checks GitHub Releases at startup |
 
 ---
@@ -88,6 +89,8 @@ The full walkthrough of every page is in the **[User Guide](docs/USER-GUIDE.md)*
 | **Zones**: one card per zone | **Receiver**: video, display, power, locks |
 | <img src="docs/screenshot-heos.png" alt="HEOS"> | <img src="docs/screenshot-sound.png" alt="Sound"> |
 | **HEOS** streaming and favorites | **Sound**: trims, tone, subwoofer, profiles |
+| <img src="docs/screenshot-light-home.png" alt="Light theme"> | <img src="docs/screenshot-light-heos.png" alt="Light theme, HEOS"> |
+| **Light theme**: Home | **Light theme**: HEOS Favorites |
 
 ---
 

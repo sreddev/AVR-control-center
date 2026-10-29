@@ -395,6 +395,36 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>Theme choices, bound to the Settings combo.</summary>
+    public IReadOnlyList<ThemeOption> Themes { get; } = new[]
+    {
+        new ThemeOption(AppTheme.Dark,  "Dark"),
+        new ThemeOption(AppTheme.Light, "Light")
+    };
+
+    public ThemeOption SelectedTheme
+    {
+        get => Themes.FirstOrDefault(t => t.Theme == _settings.Theme) ?? Themes[0];
+        set
+        {
+            if (value is null || value.Theme == _settings.Theme) return;
+            _settings.Theme = value.Theme;
+            _settings.Save();
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ThemeRestartPending));
+        }
+    }
+
+    /// <summary>True when the saved theme differs from the one this process is running.</summary>
+    public bool ThemeRestartPending => _settings.Theme != App.RunningTheme;
+
+    [RelayCommand]
+    private async Task RestartForThemeAsync()
+    {
+        if (System.Windows.Application.Current is App app)
+            await app.RestartAsync();
+    }
+
     /// <summary>
     /// Pushes the chosen unit into the converter and nudges every volume binding
     /// so the labels re-render without needing a restart.
@@ -925,6 +955,8 @@ public partial class MainViewModel : ObservableObject
 public sealed record SourceTile(string Token, string Caption);
 
 /// <summary>Combo entry for the volume-unit selector in Settings.</summary>
+public sealed record ThemeOption(AppTheme Theme, string Caption);
+
 public sealed record VolumeUnitOption(VolumeUnit Unit, string Caption)
 {
     public override string ToString() => Caption;

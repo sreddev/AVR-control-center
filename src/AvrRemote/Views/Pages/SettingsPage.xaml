@@ -115,8 +115,41 @@
                             MinWidth="180"
                             VerticalAlignment="Center"
                             DisplayMemberPath="Caption"
+                            IsSynchronizedWithCurrentItem="False"
                             ItemsSource="{Binding VolumeUnits}"
                             SelectedItem="{Binding SelectedVolumeUnit, Mode=TwoWay}" />
+                    </Grid>
+
+                    <Border Style="{StaticResource RowLine}" />
+
+                    <!-- Theme -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock x:Name="ThemeLabel" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock x:Name="ThemeDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" TextWrapping="Wrap" />
+                        </StackPanel>
+                        <ui:Button
+                            x:Name="ThemeRestartBtn"
+                            Grid.Column="1"
+                            Margin="0,0,8,0"
+                            VerticalAlignment="Center"
+                            Appearance="Primary"
+                            Command="{Binding RestartForThemeCommand}"
+                            Icon="{ui:SymbolIcon ArrowClockwise24}"
+                            Visibility="{Binding ThemeRestartPending, Converter={StaticResource BoolToVis}}" />
+                        <ComboBox
+                            Grid.Column="2"
+                            MinWidth="180"
+                            VerticalAlignment="Center"
+                            DisplayMemberPath="Caption"
+                            IsSynchronizedWithCurrentItem="False"
+                            ItemsSource="{Binding Themes}"
+                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
                     </Grid>
 
                     <!-- Update banner, only when a newer version exists -->

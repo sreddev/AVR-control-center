@@ -1,6 +1,6 @@
 [Setup]
 AppName=AVR Desktop Control
-AppVersion=2.2.0
+AppVersion=2.3.0
 AppPublisher=Sergio (@sreddev)
 AppPublisherURL=https://github.com/sreddev/AVR-desktop-control
 AppSupportURL=https://t.me/sreddev
@@ -8,7 +8,7 @@ DefaultDirName={autopf}\AVR Desktop Control
 DefaultGroupName=AVR Desktop Control
 UninstallDisplayIcon={app}\AVRDesktopControl.exe
 OutputDir=..\installer\out
-OutputBaseFilename=AVRDesktopControl-2.2.0-Setup
+OutputBaseFilename=AVRDesktopControl-2.3.0-Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible

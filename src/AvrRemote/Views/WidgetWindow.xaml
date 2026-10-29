@@ -7,7 +7,7 @@
     Width="340"
     Height="350"
     AllowsTransparency="False"
-    Background="#CC0E1015"
+    Background="{StaticResource WidgetBackgroundBrush}"
     ExtendsContentIntoTitleBar="True"
     FontFamily="Segoe UI Variable, Segoe UI"
     ResizeMode="NoResize"
@@ -46,7 +46,7 @@
                 <TextBlock
                     FontSize="16"
                     FontWeight="Bold"
-                    Foreground="White"
+                    Foreground="{StaticResource TextPrimaryBrush}"
                     Text="{Binding State.FriendlyName}" />
                 <TextBlock
                     FontSize="11"
@@ -94,7 +94,7 @@
                 VerticalAlignment="Center"
                 FontSize="18"
                 FontWeight="Bold"
-                Foreground="White"
+                Foreground="{StaticResource TextPrimaryBrush}"
                 Text="{Binding State.Main.Volume, Converter={StaticResource VolumeLabel}}" />
         </Grid>
 

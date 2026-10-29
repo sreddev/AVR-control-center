@@ -7,7 +7,7 @@ How AVR Desktop Control talks to a Denon / Marantz receiver, and how the code is
 | Component | Technology |
 |---|---|
 | Framework | [.NET 8](https://dotnet.microsoft.com/) + WPF |
-| UI | [WPF-UI](https://github.com/lepoco/wpfui) 3.0.5 (Fluent / Mica) |
+| UI | [WPF-UI](https://github.com/lepoco/wpfui) 3.0.5 (Fluent) |
 | MVVM | [CommunityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) 8.4 |
 | Tray | [H.NotifyIcon](https://github.com/HavenDV/H.NotifyIcon) |
 | Installer | [Inno Setup 6](https://jrsoftware.org/isinfo.php) |
@@ -53,7 +53,9 @@ src/AvrRemote/
 ├── Converters/              Binding converters
 └── Views/
     ├── MainWindow, WidgetWindow
-    ├── Theme.xaml           Colours, typography, card styles
+    ├── Palette.Dark.xaml    Every colour, dark theme (default)
+    ├── Palette.Light.xaml   The same keys, light theme
+    ├── Theme.xaml           Typography, card styles, converters
     ├── SettingTemplates.xaml  Row templates for AvrSetting + section card
     └── Pages/               Home (Dashboard), Sources, Tuner, HEOS, Sound,
                              Processing, Zones, Receiver, Devices (Connect), Settings
@@ -124,4 +126,8 @@ Commands marked `// verified` in `AvrSettingsCatalog.cs` were read back from a M
 - input aliases and hidden inputs
 - the "presets imported" flag
 
-The folder keeps its historical name so settings carry over from earlier versions.
+Versions before 2.1 used `%LocalAppData%\DenonRemote`; on first start the app copies `settings.json` from there.
+
+## Themes
+
+Every brush is a `StaticResource`, so the palette is chosen once at startup: `App.ApplyTheme` swaps `Palette.Dark.xaml` for `Palette.Light.xaml` in the merged dictionaries and switches WPF-UI's own controls to its light theme, before any window exists. Changing the theme in Settings saves it and offers **Restart now**, which closes the receiver and HEOS connections, starts a new copy with `--restart` (it waits for the old one to release the single-instance mutex and opens visible) and exits. The palettes also override WPF-UI's background keys (`ApplicationBackgroundBrush`, `WindowBackground`, `NavigationViewContentBackground`).

@@ -32,6 +32,9 @@ public partial class SettingsPage : PageBase
         UpdateDesc.Text = L.SettingsAutoUpdateDesc;
         UnitLabel.Text = L.SettingsVolumeUnit;
         UnitDesc.Text = L.SettingsVolumeUnitDesc;
+        ThemeLabel.Text = L.SettingsTheme;
+        ThemeDesc.Text = L.SettingsThemeDesc;
+        ThemeRestartBtn.Content = L.SettingsThemeRestart;
         FreeVersionText.Text = L.AboutFreeVersion;
         ModifiedByLabel.Text = L.AboutCreatedBy;
         TelegramBtn.Content = L.AboutTelegram;

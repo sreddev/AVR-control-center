@@ -3,56 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="clr-namespace:AvrRemote.Converters">
 
-    <!-- ══════════ Brand palette ══════════
-         Army green. Two roles, because no single olive is readable both ways:
-         AccentColor fills buttons/chips under white text (4.7:1, as bright
-         as the fill can go while white text stays above WCAG AA 4.5:1), while
-         AccentTextColor is for text, outlines and thin lines drawn on the
-         dark cards (9.8:1 on Surface1). -->
-    <Color x:Key="AccentColor">#617D2E</Color>
-    <Color x:Key="AccentColorLight1">#6A8833</Color>
-    <Color x:Key="AccentColorLight2">#789640</Color>
-    <Color x:Key="AccentColorDark1">#5A7429</Color>
-    <Color x:Key="AccentColorDark2">#4B5320</Color>
-    <Color x:Key="AccentTextColor">#B8CC6E</Color>
-
-    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentColorLight1}" />
-    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentColorDark1}" />
-    <SolidColorBrush x:Key="AccentTextBrush" Color="{StaticResource AccentTextColor}" />
-
-    <!-- Channel matrix colors -->
-    <Color x:Key="ActiveSpeakerColor">#617D2E</Color>
-    <Color x:Key="IdleSpeakerColor">#2F3238</Color>
-    <SolidColorBrush x:Key="ActiveSpeakerBrush" Color="{StaticResource ActiveSpeakerColor}" />
-    <SolidColorBrush x:Key="IdleSpeakerBrush" Color="{StaticResource IdleSpeakerColor}" />
-    <SolidColorBrush x:Key="ChannelActiveTextBrush" Color="White" />
-    <SolidColorBrush x:Key="ChannelIdleTextBrush" Color="#9096A0" />
-
-    <!-- ══════════ Surfaces ══════════
-         Semi-transparent tones so Mica/Acrylic bleeds through subtly. -->
-    <SolidColorBrush x:Key="Surface0Brush" Color="#0B0D11" />
-    <SolidColorBrush x:Key="Surface1Brush" Color="#181B22" Opacity="0.85" />
-    <SolidColorBrush x:Key="Surface2Brush" Color="#20242D" Opacity="0.80" />
-    <SolidColorBrush x:Key="NavBrush"      Color="#0F1116" />
-    <SolidColorBrush x:Key="CardBorderBrush" Color="#2C313A" Opacity="0.7" />
-    <SolidColorBrush x:Key="StrongBorderBrush" Color="#3A4049" />
-
-    <!-- ══════════ Text ══════════
-         WPF-UI's Dark theme ships primary text at ~0.9 alpha on Fluent black
-         which loses contrast on top of Mica. We override the ramp with values
-         tuned for legibility (WCAG 4.5:1+ on Surface0). -->
-    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#C7CBD1" />
-    <SolidColorBrush x:Key="TextTertiaryBrush" Color="#8B919B" />
-    <SolidColorBrush x:Key="TextDisabledBrush" Color="#5A5F68" />
-
-    <!-- WPF-UI Fluent brush names — overridden so every packaged control
-         (buttons, toggles, cards, headers) inherits our contrast. -->
-    <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#C7CBD1" />
-    <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#8B919B" />
-    <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="#5A5F68" />
+    <!-- Colours live in Palette.Dark.xaml / Palette.Light.xaml, merged before
+         this file. Only styles and converters are defined here. -->
 
     <!-- ══════════ Converters ══════════ -->
     <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
@@ -140,7 +92,7 @@
                 <DropShadowEffect
                     BlurRadius="18"
                     Direction="270"
-                    Opacity="0.35"
+                    Opacity="{StaticResource CardShadowOpacity}"
                     ShadowDepth="4"
                     Color="Black" />
             </Setter.Value>

@@ -170,7 +170,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- â•â•â•â•â•â• Panel 1: Now playing â•â•â•â•â•â• -->
-            <Border Grid.Column="0" Background="#88141820" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
+            <Border Grid.Column="0" Background="{StaticResource HeosPanelBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -206,7 +206,7 @@
                         Grid.Row="0"
                         Height="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
                         MaxHeight="420"
-                        Background="#50202430"
+                        Background="{StaticResource HeosTileBrush}"
                         CornerRadius="10">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="16" Opacity="0.4" ShadowDepth="4" Color="Black" />
@@ -257,7 +257,7 @@
                     </StackPanel>
 
                     <!-- Technical info -->
-                    <Border Grid.Row="5" Margin="0,12,0,0" Padding="11" VerticalAlignment="Bottom" Background="#50202430" CornerRadius="8">
+                    <Border Grid.Row="5" Margin="0,12,0,0" Padding="11" VerticalAlignment="Bottom" Background="{StaticResource HeosTileBrush}" CornerRadius="8">
                         <StackPanel>
                             <Grid Margin="0,0,0,5">
                                 <TextBlock HorizontalAlignment="Left" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="SOURCE" />
@@ -279,7 +279,7 @@
                     </Border>
 
                     <!-- Account, right under the playback info -->
-                    <Border Grid.Row="6" Margin="0,8,0,0" Padding="11" Background="#50202430" CornerRadius="8">
+                    <Border Grid.Row="6" Margin="0,8,0,0" Padding="11" Background="{StaticResource HeosTileBrush}" CornerRadius="8">
                         <StackPanel>
                             <Grid Visibility="{Binding Heos.IsSignedIn, Converter={StaticResource BoolToVis}}">
                                 <Grid.ColumnDefinitions>
@@ -309,7 +309,7 @@
             <GridSplitter Grid.Column="1" Style="{StaticResource Splitter}" ResizeBehavior="PreviousAndNext" />
 
             <!-- â•â•â•â•â•â• Panel 2: Browse / search â•â•â•â•â•â• -->
-            <Border Grid.Column="2" Background="#88141820" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
+            <Border Grid.Column="2" Background="{StaticResource HeosPanelBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -439,7 +439,7 @@
                                                 <ControlTemplate TargetType="Button">
                                                     <Border
                                                         x:Name="Root"
-                                                        Background="#50202430"
+                                                        Background="{StaticResource HeosTileBrush}"
                                                         BorderBrush="{StaticResource CardBorderBrush}"
                                                         BorderThickness="1"
                                                         CornerRadius="12">
@@ -528,7 +528,7 @@
                                                 <ControlTemplate TargetType="Button">
                                                     <Border
                                                         x:Name="Root"
-                                                        Background="#50202430"
+                                                        Background="{StaticResource HeosTileBrush}"
                                                         BorderBrush="{StaticResource CardBorderBrush}"
                                                         BorderThickness="1"
                                                         CornerRadius="10">
@@ -553,7 +553,7 @@
                                                                 Margin="0,8,8,0"
                                                                 HorizontalAlignment="Right"
                                                                 VerticalAlignment="Top"
-                                                                Background="#CC1A1C20"
+                                                                Background="{StaticResource ArtworkChipBrush}"
                                                                 BorderThickness="0"
                                                                 Click="OnQueueClick"
                                                                 Content="+"
@@ -573,7 +573,7 @@
                                                                 Margin="8,8,0,0"
                                                                 HorizontalAlignment="Left"
                                                                 VerticalAlignment="Top"
-                                                                Background="#CC1A1C20"
+                                                                Background="{StaticResource ArtworkChipBrush}"
                                                                 BorderThickness="0"
                                                                 Click="OnAddFavoriteClick"
                                                                 Padding="0"
@@ -592,7 +592,7 @@
                                                                 Margin="8,8,0,0"
                                                                 HorizontalAlignment="Left"
                                                                 VerticalAlignment="Top"
-                                                                Background="#CC1A1C20"
+                                                                Background="{StaticResource ArtworkChipBrush}"
                                                                 BorderThickness="0"
                                                                 Click="OnRemoveFavoriteClick"
                                                                 Padding="0"
@@ -635,7 +635,7 @@
             <GridSplitter x:Name="QueueSplitter" Grid.Column="3" Style="{StaticResource Splitter}" ResizeBehavior="PreviousAndNext" />
 
             <!-- â•â•â•â•â•â• Panel 3: Queue (collapsible) â•â•â•â•â•â• -->
-            <Border x:Name="QueuePanel" Grid.Column="4" Background="#88141820" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
+            <Border x:Name="QueuePanel" Grid.Column="4" Background="{StaticResource HeosPanelBrush}" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" CornerRadius="14" Padding="14">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -686,7 +686,7 @@
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border Width="42" Height="42" VerticalAlignment="Center" Background="#50202430" CornerRadius="6">
+                                            <Border Width="42" Height="42" VerticalAlignment="Center" Background="{StaticResource HeosTileBrush}" CornerRadius="6">
                                                 <Image Source="{Binding ImageUrl, TargetNullValue={x:Null}}" Stretch="UniformToFill" />
                                             </Border>
                                             <StackPanel Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">

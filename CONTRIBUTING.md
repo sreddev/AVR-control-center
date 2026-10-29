@@ -68,7 +68,7 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
 
 - Match the surrounding code: file header, `/// <summary>` on public members, comments that explain *why*.
 - UI strings go in `Services/Localization.cs`.
-- Colours and text styles come from `Views/Theme.xaml`. Use the existing brushes rather than hex values.
+- Colours come from `Views/Palette.Dark.xaml` and `Views/Palette.Light.xaml`, text styles from `Views/Theme.xaml`. Use the existing brushes rather than hex values; a new colour needs the same key in both palettes.
 - The receiver must never get a command the user didn't make. Use `ReceiverState.IsApplyingRemote` to tell user edits from receiver echoes.
 
 ## Building a release

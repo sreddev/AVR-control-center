@@ -9,6 +9,8 @@
             <ResourceDictionary.MergedDictionaries>
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
+                <!-- Swapped for Palette.Light.xaml at startup when the user picks Light -->
+                <ResourceDictionary Source="/Views/Palette.Dark.xaml" />
                 <ResourceDictionary Source="/Views/Theme.xaml" />
                 <ResourceDictionary Source="/Controls/ChannelChip.xaml" />
                 <ResourceDictionary Source="/Views/SettingTemplates.xaml" />
