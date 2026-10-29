@@ -2,6 +2,7 @@
     x:Class="AvrRemote.Views.WidgetWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:AvrRemote.Controls"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="AVR Desktop Control"
     Width="340"
@@ -79,6 +80,7 @@
                 Symbol="Speaker224"
                 VerticalAlignment="Center" />
             <Slider
+                controls:SliderWheel.IsEnabled="True"
                 Grid.Column="1"
                 Margin="10,0"
                 VerticalAlignment="Center"

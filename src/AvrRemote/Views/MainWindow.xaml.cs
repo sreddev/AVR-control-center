@@ -62,6 +62,9 @@ public partial class MainWindow : FluentWindow
             Nav.Navigate(typeof(Views.Pages.DashboardPage));
     }
 
+    /// <summary>Opens a page from outside the navigation pane (the "Open Devices" banner button).</summary>
+    public void NavigateTo(System.Type page) => Nav.Navigate(page);
+
     protected override void OnClosing(CancelEventArgs e)
     {
         if (_settings.CloseToTray)

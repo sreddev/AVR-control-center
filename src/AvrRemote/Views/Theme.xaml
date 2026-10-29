@@ -16,6 +16,7 @@
                                TrueBrush="{StaticResource ChannelActiveTextBrush}"
                                FalseBrush="{StaticResource ChannelIdleTextBrush}" />
     <conv:VolumeLabelConverter x:Key="VolumeLabel" />
+    <conv:BoolToOpacityConverter x:Key="OperableOpacity" />
     <conv:NotNullToBoolConverter x:Key="NotNullToBool" />
     <conv:StringNotEmptyToVisibilityConverter x:Key="StringNotEmptyToVis" />
     <conv:ZeroToVisibleConverter x:Key="ZeroToVisible" />

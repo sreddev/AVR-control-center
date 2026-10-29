@@ -9,6 +9,8 @@ namespace AvrRemote.Views.Pages;
 
 public partial class ConnectPage : PageBase
 {
+    protected override bool RequiresPower => false;
+
     public ConnectPage()
     {
         InitializeComponent();

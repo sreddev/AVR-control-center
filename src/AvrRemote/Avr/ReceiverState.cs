@@ -22,7 +22,60 @@ public partial class ReceiverState : ObservableObject
     [ObservableProperty] private string _modelName = "";
     [ObservableProperty] private string _brand = "Denon";
     [ObservableProperty] private string _ipAddress = "";
-    [ObservableProperty] private bool _isConnected;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Power))]
+    private bool _isConnected;
+
+    // ── Power ───────────────────────────────────────────────────────────────
+    /// <summary>True while <see cref="ReceiverService.ConnectAsync"/> runs.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Power))]
+    private bool _isConnecting;
+
+    /// <summary>
+    /// False until the receiver reports its power (ZM, PWSTANDBY or the HTTP
+    /// status). Until then <see cref="Power"/> stays Connecting instead of
+    /// showing a guessed "Standby".
+    /// </summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Power))]
+    private bool _powerKnown;
+
+    /// <summary>Set by the power commands until the receiver confirms the change.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Power))]
+    private PowerTransit _powerTransit;
+
+    /// <summary>One value for every power indicator: status bar, Home, tray and the page banners.</summary>
+    public PowerState Power =>
+        IsConnecting && !IsConnected ? PowerState.Connecting
+        : !IsConnected ? PowerState.Offline
+        : !PowerKnown ? PowerState.Connecting
+        : PowerTransit == PowerTransit.TurningOn ? PowerState.TurningOn
+        : PowerTransit == PowerTransit.GoingToStandby ? PowerState.GoingToStandby
+        : Main.IsOn ? PowerState.On
+        : Zone2.IsOn || Zone3.IsOn ? PowerState.ZoneOnly
+        : PowerState.Standby;
+
+    /// <summary>True when the main zone is on and accepts commands.</summary>
+    public bool IsOperable => Power == PowerState.On;
+
+    public string PowerLabel => Power switch
+    {
+        PowerState.Connecting => "Connecting…",
+        PowerState.Offline => "Offline",
+        PowerState.TurningOn => "Turning on…",
+        PowerState.GoingToStandby => "Going to standby…",
+        PowerState.On => "On",
+        PowerState.ZoneOnly => Zone2.IsOn ? "Standby · Zone 2 on" : "Standby · Zone 3 on",
+        _ => "Standby"
+    };
+
+    /// <summary>Tray icon tooltip: "Living Room · On".</summary>
+    public string PowerTooltip => IsConnected || IsConnecting
+        ? $"{FriendlyName} · {PowerLabel}"
+        : "AVR Desktop Control · Offline";
 
     // â”€â”€ Zones â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public ZoneState Main { get; } = new(ZoneId.Main, "Main");
@@ -137,11 +190,42 @@ public partial class ReceiverState : ObservableObject
         Channels = new ObservableCollection<ChannelState>(
             AvrProtocol.SignalChannels.Select(c => new ChannelState(c)));
         Main.IsPresent = true;
+
+        // Power reads zone flags, so re-raise it whenever one of them moves.
+        foreach (var zone in new[] { Main, Zone2, Zone3 })
+            zone.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName != nameof(ZoneState.IsOn)) return;
+                // The receiver confirmed the change the user asked for.
+                if (zone == Main && (PowerTransit == PowerTransit.TurningOn && Main.IsOn
+                                  || PowerTransit == PowerTransit.GoingToStandby && !Main.IsOn))
+                    PowerTransit = PowerTransit.None;
+                else
+                    OnPropertyChanged(nameof(Power));
+            };
+
+        PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(Power))
+            {
+                OnPropertyChanged(nameof(IsOperable));
+                OnPropertyChanged(nameof(PowerLabel));
+                OnPropertyChanged(nameof(PowerTooltip));
+            }
+            else if (e.PropertyName == nameof(FriendlyName))
+                OnPropertyChanged(nameof(PowerTooltip));
+        };
     }
 
     public ChannelState? Channel(string label) =>
         Channels.FirstOrDefault(c => c.Label == label);
 }
+
+/// <summary>What the power indicators show. Derived by <see cref="ReceiverState.Power"/>.</summary>
+public enum PowerState { Connecting, Offline, Standby, ZoneOnly, TurningOn, GoingToStandby, On }
+
+/// <summary>A power change sent by the user and not yet confirmed by the receiver.</summary>
+public enum PowerTransit { None, TurningOn, GoingToStandby }
 
 /// <summary>A tuner preset slot as stored in the receiver (1..56).</summary>
 public sealed record TunerPreset(int Number, string Name, TunerBand Band, double Frequency);

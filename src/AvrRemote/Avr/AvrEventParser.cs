@@ -42,11 +42,12 @@ public sealed class AvrEventParser
             _state.Main.IsOn = false;
             _state.Zone2.IsOn = false;
             _state.Zone3.IsOn = false;
+            _state.PowerKnown = true;
             return;
         }
         if (s == "PWON") return;                       // ignore: ambiguous
-        if (s == "ZMON") { _state.Main.IsOn = true; return; }
-        if (s == "ZMOFF") { _state.Main.IsOn = false; return; }
+        if (s == "ZMON") { _state.Main.IsOn = true; _state.PowerKnown = true; return; }
+        if (s == "ZMOFF") { _state.Main.IsOn = false; _state.PowerKnown = true; return; }
 
         if (s.StartsWith("MVMAX ", StringComparison.Ordinal))
         {

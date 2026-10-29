@@ -15,6 +15,8 @@ namespace AvrRemote.Views.Pages;
 
 public partial class DashboardPage : PageBase
 {
+    protected override bool RequiresPower => false;
+
     // Debounces the CV command so a slider drag doesn't flood the AVR.
     private readonly DispatcherTimer _debounce;
     private ChannelState? _pendingChannel;
@@ -63,7 +65,8 @@ public partial class DashboardPage : PageBase
 
     private void OnSignalCardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
-        if (DataContext is MainViewModel vm) _ = vm.RefreshSignalCommand.ExecuteAsync(null);
+        if (sender is FrameworkElement card && DataContext is MainViewModel vm)
+            _ = Feedback.Run(card, vm.RefreshSignalCommand.ExecuteAsync(null), always: true);
     }
 
     private void OnSourceCardClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -80,6 +83,9 @@ public partial class DashboardPage : PageBase
     {
         if (sender is FrameworkElement el && el.Tag is string token && DataContext is MainViewModel vm)
         {
+            // Busy line on the card until the receiver reports the new input.
+            if (!string.Equals(token, vm.State.Main.Source, StringComparison.OrdinalIgnoreCase))
+                Feedback.BeginPending(SourceCard);
             _ = vm.SelectSourceCommand.ExecuteAsync(token);
             SourcePopup.IsOpen = false;
         }
@@ -89,6 +95,8 @@ public partial class DashboardPage : PageBase
     {
         if (sender is FrameworkElement el && el.Tag is string mode && DataContext is MainViewModel vm)
         {
+            if (!string.Equals(mode, vm.State.SurroundMode, StringComparison.OrdinalIgnoreCase))
+                Feedback.BeginPending(SurroundCard);
             _ = vm.SetSurroundCommand.ExecuteAsync(mode);
             SurroundPopup.IsOpen = false;
         }

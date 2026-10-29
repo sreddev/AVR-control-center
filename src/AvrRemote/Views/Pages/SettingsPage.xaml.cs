@@ -12,6 +12,8 @@ namespace AvrRemote.Views.Pages;
 
 public partial class SettingsPage : PageBase
 {
+    protected override bool RequiresPower => false;
+
     public SettingsPage()
     {
         InitializeComponent();

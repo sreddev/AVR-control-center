@@ -34,6 +34,15 @@ public sealed class BoolToColorConverter : IValueConverter
     public object ConvertBack(object value, Type _, object? __, CultureInfo ___) => throw new NotSupportedException();
 }
 
+/// <summary>Full opacity when true; dimmed when false (controls that need the receiver on).</summary>
+public sealed class BoolToOpacityConverter : IValueConverter
+{
+    public double FalseOpacity { get; set; } = 0.45;
+    public object Convert(object value, Type _, object? __, CultureInfo ___) =>
+        (value is bool b && b) ? 1.0 : FalseOpacity;
+    public object ConvertBack(object value, Type _, object? __, CultureInfo ___) => throw new NotSupportedException();
+}
+
 /// <summary>
 /// Picks the speaker glyph that matches the mute state, so the toolbar button
 /// reads at a glance instead of always showing the same icon.

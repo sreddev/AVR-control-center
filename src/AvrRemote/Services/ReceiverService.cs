@@ -73,6 +73,9 @@ public sealed class ReceiverService : IAsyncDisposable
         // instantly, even before telnet negotiates.
         Ui(() =>
         {
+            State.IsConnecting = true;
+            State.PowerKnown = false;
+            State.PowerTransit = PowerTransit.None;
             State.IpAddress = descriptor.Host;
             State.ModelName = descriptor.Model;
             State.Brand = descriptor.Manufacturer;
@@ -132,7 +135,12 @@ public sealed class ReceiverService : IAsyncDisposable
         }
 
         var success = telnetOk || httpOk;
-        Ui(() => State.IsConnected = success);
+        Ui(() =>
+        {
+            State.IsConnected = success;
+            State.IsConnecting = false;
+        });
+        if (telnetOk) _ = EnsurePowerKnownAsync(ct);
         if (success)
         {
             _settings.RememberDevice(descriptor.Host,
@@ -168,12 +176,26 @@ public sealed class ReceiverService : IAsyncDisposable
         Ui(() =>
         {
             State.Main.IsOn = status.Value.Power;
+            State.PowerKnown = true;
             State.Main.Source = status.Value.Input;
             State.Main.SourceFriendly = status.Value.Input;
             State.Main.Volume = status.Value.Volume;
             State.Main.IsMuted = status.Value.Mute;
         });
         return true;
+    }
+
+    /// <summary>
+    /// Telnet normally answers ZM? within a second. If it stays silent, ask
+    /// the HTTP status so the indicators don't sit on "Connecting…".
+    /// </summary>
+    private async Task EnsurePowerKnownAsync(CancellationToken ct)
+    {
+        try { await Task.Delay(3000, ct).ConfigureAwait(false); }
+        catch (OperationCanceledException) { return; }
+        if (State.PowerKnown) return;
+        if (!await HydrateFromHttpAsync(ct).ConfigureAwait(false))
+            Ui(() => State.PowerKnown = true);   // fall back to the last ZM state
     }
 
     /// <summary>
@@ -215,6 +237,7 @@ public sealed class ReceiverService : IAsyncDisposable
     /// </summary>
     public async Task PowerOnAsync()
     {
+        BeginPowerTransit(PowerTransit.TurningOn);
         await SendOrHttp("ZMON").ConfigureAwait(false);
         // Belt and braces: if the unit came out of standby it may have restored
         // Zone 2, so force it off unless the user turns it on explicitly.
@@ -227,6 +250,7 @@ public sealed class ReceiverService : IAsyncDisposable
     /// </summary>
     public async Task StandbyAsync()
     {
+        BeginPowerTransit(PowerTransit.GoingToStandby);
         await SendOrHttp("Z2OFF").ConfigureAwait(false);
         await SendOrHttp("PWSTANDBY").ConfigureAwait(false);
     }
@@ -235,6 +259,25 @@ public sealed class ReceiverService : IAsyncDisposable
     {
         if (State.Main.IsOn) await StandbyAsync();
         else                 await PowerOnAsync();
+    }
+
+    private CancellationTokenSource? _transitCts;
+
+    /// <summary>
+    /// Shows "Turning on…" / "Going to standby…" until the receiver confirms
+    /// (see <see cref="ReceiverState"/>), or for 10 seconds at most.
+    /// </summary>
+    private void BeginPowerTransit(PowerTransit transit)
+    {
+        _transitCts?.Cancel();
+        var cts = _transitCts = new CancellationTokenSource();
+        Ui(() => State.PowerTransit = transit);
+        _ = Task.Run(async () =>
+        {
+            try { await Task.Delay(TimeSpan.FromSeconds(10), cts.Token).ConfigureAwait(false); }
+            catch (OperationCanceledException) { return; }
+            Ui(() => { if (State.PowerTransit == transit) State.PowerTransit = PowerTransit.None; });
+        });
     }
 
     public Task MuteAsync(bool on) => SendOrHttp(on ? "MUON" : "MUOFF");

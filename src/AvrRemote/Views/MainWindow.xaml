@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:AvrRemote.Controls"
     xmlns:pages="clr-namespace:AvrRemote.Views.Pages"
     xmlns:tb="clr-namespace:H.NotifyIcon;assembly=H.NotifyIcon.Wpf"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -210,26 +211,34 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Ellipse
-                        Width="10"
-                        Height="10"
-                        VerticalAlignment="Center"
-                        Fill="{Binding State.IsConnected, Converter={StaticResource ChannelBg}}" />
-                    <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                <!-- Receiver name + power pill: the same indicator as on Home -->
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
                         <TextBlock
+                            VerticalAlignment="Center"
                             FontSize="13"
                             FontWeight="SemiBold"
                             Foreground="{StaticResource TextPrimaryBrush}"
                             Text="{Binding State.FriendlyName}" />
-                        <TextBlock
-                            FontSize="11"
-                            Foreground="{StaticResource TextSecondaryBrush}"
-                            Text="{Binding State.IpAddress}" />
+                        <controls:PowerIndicator
+                            Margin="10,0,0,0"
+                            Label="{Binding State.PowerLabel}"
+                            Power="{Binding State.Power}" />
                     </StackPanel>
+                    <TextBlock
+                        Margin="0,2,0,0"
+                        FontSize="11"
+                        Foreground="{StaticResource TextSecondaryBrush}"
+                        Text="{Binding State.IpAddress}" />
                 </StackPanel>
 
-                <Grid Grid.Column="1" Margin="28,0" VerticalAlignment="Center">
+                <!-- Volume and mute only work while the main zone is on -->
+                <Grid
+                    Grid.Column="1"
+                    Margin="28,0"
+                    VerticalAlignment="Center"
+                    IsEnabled="{Binding State.IsOperable}"
+                    Opacity="{Binding State.IsOperable, Converter={StaticResource OperableOpacity}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -242,6 +251,7 @@
                         Foreground="{StaticResource TextSecondaryBrush}"
                         Symbol="Speaker224" />
                     <Slider
+                        controls:SliderWheel.IsEnabled="True"
                         Grid.Column="1"
                         Margin="12,0"
                         VerticalAlignment="Center"
@@ -251,7 +261,11 @@
                         Minimum="0"
                         SmallChange="0.5"
                         Value="{Binding State.Main.Volume, Mode=TwoWay, Delay=200}" />
-                    <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <StackPanel
+                        Grid.Column="2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        controls:Feedback.Echo="{Binding State.Main.Volume}">
                         <TextBlock
                             HorizontalAlignment="Right"
                             FontSize="14"
@@ -272,6 +286,7 @@
                     Grid.Column="2"
                     Margin="0,0,8,0"
                     Command="{Binding MuteToggleCommand}"
+                    IsEnabled="{Binding State.IsOperable}"
                     ToolTip="Mute / Unmute">
                     <ui:SymbolIcon
                         FontSize="18"
@@ -280,10 +295,9 @@
                 </ui:Button>
                 <ui:Button
                     Grid.Column="3"
-                    Appearance="Primary"
                     Command="{Binding PowerToggleCommand}"
                     Icon="{ui:SymbolIcon Power24}"
-                    ToolTip="Power (toggle)" />
+                    Style="{StaticResource PowerButton}" />
             </Grid>
         </Border>
 
@@ -299,7 +313,7 @@
             VerticalAlignment="Top"
             IconSource="/Assets/app.ico"
             NoLeftClickDelay="True"
-            ToolTipText="AVR Desktop Control"
+            ToolTipText="{Binding State.PowerTooltip}"
             TrayMouseDoubleClick="OnTrayDoubleClick"
             TrayLeftMouseUp="OnTrayLeftClick">
             <tb:TaskbarIcon.ContextMenu>

@@ -18,7 +18,7 @@ public sealed class AppSettings
     public string? LastHost { get; set; }
     public string? LastFriendlyName { get; set; }
     public bool AutoConnect { get; set; } = true;
-    public bool StartMinimized { get; set; } = true;
+    public bool StartMinimized { get; set; }
     public bool CloseToTray { get; set; } = true;
     public bool AutoUpdate { get; set; } = true;
 

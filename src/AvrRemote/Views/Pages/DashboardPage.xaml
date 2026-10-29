@@ -28,14 +28,10 @@
                         <Run Text="{Binding State.Brand, Mode=OneWay}" /><Run Text=" · " /><Run Text="{Binding State.ModelName, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock Style="{StaticResource H1}" Text="{Binding State.FriendlyName}" />
-                    <StackPanel Margin="0,4,0,0" Orientation="Horizontal">
-                        <Ellipse
-                            Width="8"
-                            Height="8"
-                            VerticalAlignment="Center"
-                            Fill="{Binding State.IsConnected, Converter={StaticResource ChannelBg}}" />
+                    <StackPanel Margin="0,6,0,0" Orientation="Horizontal">
+                        <controls:PowerIndicator Label="{Binding State.PowerLabel}" Power="{Binding State.Power}" />
                         <TextBlock
-                            Margin="6,0,0,0"
+                            Margin="8,0,0,0"
                             VerticalAlignment="Center"
                             FontSize="12"
                             Foreground="{StaticResource TextSecondaryBrush}"
@@ -47,26 +43,41 @@
                         Margin="0,0,8,0"
                         Command="{Binding MuteToggleCommand}"
                         Icon="{ui:SymbolIcon SpeakerMute24}"
+                        IsEnabled="{Binding State.IsOperable}"
                         ToolTip="Mute" />
                     <ui:Button
-                        Appearance="Primary"
                         Command="{Binding PowerToggleCommand}"
-                        Content="Power"
-                        Icon="{ui:SymbolIcon Power24}" />
+                        Icon="{ui:SymbolIcon Power24}"
+                        Style="{StaticResource PowerButtonLabeled}" />
                 </StackPanel>
             </Grid>
 
             <!-- ── Metrics strip (clickable cards) ─────────────────────────── -->
-            <UniformGrid Grid.Row="1" Columns="4" Margin="0,0,0,14" Rows="1">
+            <!-- Rows below the header dim while the receiver isn't on; the header
+                 keeps the Power button usable. -->
+            <UniformGrid
+                Grid.Row="1"
+                Margin="0,0,0,14"
+                Columns="4"
+                IsEnabled="{Binding State.IsOperable}"
+                Opacity="{Binding State.IsOperable, Converter={StaticResource OperableOpacity}}"
+                Rows="1">
                 <!-- Volume -->
-                <Border Margin="0,0,6,0" Style="{StaticResource Card}">
+                <Border Margin="0,0,6,0" controls:Feedback.Echo="{Binding State.Main.Volume}" Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="VOLUME" />
                         <TextBlock Style="{StaticResource MetricValue}" Text="{Binding State.Main.Volume, Converter={StaticResource VolumeLabel}}" />
                     </StackPanel>
                 </Border>
                 <!-- Source (clickable → opens source selector popup) -->
-                <Border Margin="6,0,6,0" Style="{StaticResource Card}" Cursor="Hand" MouseLeftButtonUp="OnSourceCardClick">
+                <Border
+                    x:Name="SourceCard"
+                    Margin="6,0,6,0"
+                    controls:Feedback.Echo="{Binding State.Main.SourceFriendly}"
+                    controls:Feedback.IsPressable="True"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="OnSourceCardClick"
+                    Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="SOURCE" />
                         <TextBlock FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap" Text="{Binding State.Main.SourceFriendly}" />
@@ -81,7 +92,14 @@
                     </StackPanel>
                 </Border>
                 <!-- Surround (clickable → opens surround mode popup) -->
-                <Border Margin="6,0,6,0" Style="{StaticResource Card}" Cursor="Hand" MouseLeftButtonUp="OnSurroundCardClick">
+                <Border
+                    x:Name="SurroundCard"
+                    Margin="6,0,6,0"
+                    controls:Feedback.Echo="{Binding State.SurroundMode}"
+                    controls:Feedback.IsPressable="True"
+                    Cursor="Hand"
+                    MouseLeftButtonUp="OnSurroundCardClick"
+                    Style="{StaticResource Card}">
                     <StackPanel>
                         <TextBlock Style="{StaticResource Caption}" Text="SURROUND" />
                         <TextBlock FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" TextWrapping="Wrap" Text="{Binding State.SurroundMode}" />
@@ -90,6 +108,7 @@
                 <!-- Signal (click to refresh) -->
                 <Border
                     Margin="6,0,0,0"
+                    controls:Feedback.IsPressable="True"
                     Cursor="Hand"
                     MouseLeftButtonUp="OnSignalCardClick"
                     Style="{StaticResource Card}"
@@ -106,7 +125,13 @@
             </UniformGrid>
 
             <!-- ── Quick / Smart Select + sleep timer ─────────────────────── -->
-            <Border Grid.Row="2" Margin="0,0,0,14" Padding="16,12" Style="{StaticResource Card}">
+            <Border
+                Grid.Row="2"
+                Margin="0,0,0,14"
+                Padding="16,12"
+                IsEnabled="{Binding State.IsOperable}"
+                Opacity="{Binding State.IsOperable, Converter={StaticResource OperableOpacity}}"
+                Style="{StaticResource Card}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -183,7 +208,10 @@
             </Border>
 
             <!-- ── Volume & Channel matrix row ────────────────────────────── -->
-            <Grid Grid.Row="3">
+            <Grid
+                Grid.Row="3"
+                IsEnabled="{Binding State.IsOperable}"
+                Opacity="{Binding State.IsOperable, Converter={StaticResource OperableOpacity}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -204,6 +232,7 @@
                                 Icon="{ui:SymbolIcon Subtract24}"
                                 ToolTip="Volume down" />
                             <Slider
+                                controls:SliderWheel.IsEnabled="True"
                                 Grid.Column="1"
                                 Margin="12,0"
                                 VerticalAlignment="Center"

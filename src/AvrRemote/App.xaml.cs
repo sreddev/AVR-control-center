@@ -51,6 +51,7 @@ public partial class App : Application
 
         var settings = AppSettings.Load();
         ApplyTheme(settings.Theme);
+        Controls.Feedback.Install();
 
         // WPF-UI defaults to the Windows accent color. Override it with the
         // app's army green (AccentColor in Theme.xaml) so every

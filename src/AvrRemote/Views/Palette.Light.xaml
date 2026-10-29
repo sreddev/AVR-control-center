@@ -1,4 +1,4 @@
-<!--
+﻿<!--
     Light palette. Same keys as Palette.Dark.xaml; see that file for what
     each one is for. Contrast ratios are against the white cards (Surface1).
 -->
@@ -64,4 +64,14 @@
     <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#3A4049" />
     <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#5F6670" />
     <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="#9AA0A9" />
+
+    <!-- ══════════ Power and feedback ══════════
+         Status dots (On / Standby; Offline uses TextTertiaryBrush) and the
+         armed state of two-click Delete / Clear buttons. -->
+    <Color x:Key="PowerOnColor">#4E7A12</Color>
+    <Color x:Key="PowerStandbyColor">#A86A00</Color>
+    <Color x:Key="DangerColor">#C62828</Color>
+    <SolidColorBrush x:Key="PowerOnBrush" Color="{StaticResource PowerOnColor}" />
+    <SolidColorBrush x:Key="PowerStandbyBrush" Color="{StaticResource PowerStandbyColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
 </ResourceDictionary>

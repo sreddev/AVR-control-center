@@ -40,10 +40,30 @@ This guide covers every page of the app. For download and installation, see the 
   - **System**: Receiver, Devices
   - **Settings** sits at the bottom, with your **recent receivers** under it. Click one to connect.
 - **Status bar** at the bottom, on every page:
-  - connection dot, receiver name and IP
-  - master volume slider and value, with a "MUTE" label in the accent colour while muted
-  - **Mute** and **Power** buttons. Power switches only the **main zone**; Zone 2 never wakes up with it.
+  - receiver name and IP, with the **power indicator** (see below)
+  - master volume slider and value, with a "MUTE" label in the accent colour while muted. The **mouse wheel** over any volume slider changes the volume in 0.5 steps
+  - **Mute** and **Power** buttons. Power switches only the **main zone**; Zone 2 never wakes up with it. The Power button is filled while the receiver is on and outlined in standby.
 - The ☰ button collapses the sidebar to icons.
+
+### Power indicator
+
+The same pill appears in the status bar, on Home and in the page banners. The tray tooltip shows the same text.
+
+| Indicator | Meaning |
+|---|---|
+| 🟢 **On** | The main zone is on |
+| 🟠 **Standby** | The receiver answers but is asleep. **Standby · Zone 2 on** when only another zone plays |
+| ⚪ ring **Offline** | The receiver doesn't answer |
+| pulsing **Connecting… / Turning on… / Going to standby…** | Waiting for the receiver to report its state |
+
+While the receiver isn't on, the pages that control it (Sources, Tuner, HEOS, Sound, Processing, Zones, Receiver) are dimmed and show a banner with **Turn on**, or **Open Devices** when it is offline. On Home, everything below the header is dimmed. Devices and Settings always work.
+
+### Click feedback
+
+- Buttons and clickable cards shrink slightly and ripple when pressed.
+- Actions that take a moment show a line moving along the bottom, then a short green glow when done. Home's Source and Surround cards glow once the receiver reports the new value.
+- **Delete** (saved stations, channel profiles) and **Clear** (HEOS queue) need a second click within 3 seconds; the first click turns the button red.
+- With Windows *Show animations* turned off, the press and ripple effects are skipped.
 
 ---
 
@@ -53,7 +73,7 @@ This guide covers every page of the app. For download and installation, see the 
 
 | Area | What it does |
 |---|---|
-| **Header** | Brand, model, name and IP of the connected receiver; Mute and Power |
+| **Header** | Brand, model, name, power indicator and IP of the connected receiver; Mute and Power (**Turn on** in standby) |
 | **Volume** | Current master volume, in the unit chosen in Settings |
 | **Source** | Current input. **Click** to pick another one. On the tuner it also shows the frequency and the live RDS name |
 | **Surround** | Current sound mode. **Click** to choose another |
@@ -203,7 +223,7 @@ A card that says *"Not available on the connected receiver"* means your model re
 |---|---|
 | **Connect automatically** | Reconnects to the last receiver at startup |
 | **Close to tray** | The window's ✕ hides the app to the tray instead of quitting. Quit from the tray menu |
-| **Start minimized** | Starts in the tray without opening the window |
+| **Start minimized** | Starts in the tray without opening the window. Off by default |
 | **Auto-update** | Checks GitHub at startup. When a newer version exists, a banner offers the download |
 | **Volume unit** | Absolute (52.5, like the front panel), decibels (−27.5 dB) or percent of the maximum |
 | **Theme** | **Dark** (default) or **Light**. The change applies on restart: click **Restart now** and the app reopens and reconnects by itself |
@@ -238,6 +258,7 @@ The **About** card shows the version, links to Telegram and the GitHub repositor
 | **The receiver isn't found** | Turn on *Network Control / Network Standby* on the receiver. Check that the PC and receiver are on the same subnet (not a guest Wi-Fi). Add it by IP in **Devices**. Allow the app through the Windows firewall if asked |
 | **Connects, but values don't update** | Another app is probably holding the receiver's single telnet connection. Close it, then reconnect from the sidebar |
 | **A feature from this guide is missing** | Your model doesn't report it, so it stays hidden. Some settings also only appear once the receiver is on |
+| **Stuck on "Connecting…"** | The receiver hasn't reported its power yet. If it lasts more than a few seconds, reconnect from the sidebar |
 | **Power on doesn't work from standby** | Network Control must be on, or the receiver ignores the network while asleep |
 | **No RDS name** | The station doesn't broadcast RDS, reception is weak, or you're on AM |
 | **Quick / Smart Select bar is empty** | The model has no Quick Select over the network |

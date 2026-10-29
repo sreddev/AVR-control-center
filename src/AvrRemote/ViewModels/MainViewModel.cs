@@ -124,6 +124,11 @@ public partial class MainViewModel : ObservableObject
                 if (e.PropertyName == nameof(Avr.ZoneState.IsPresent)) OnPropertyChanged(nameof(HasExtraZones));
             };
 
+        State.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName == nameof(ReceiverState.Power)) PowerToggleCommand.NotifyCanExecuteChanged();
+        };
+
         // Apply the user's names and hidden flags to inputs as the receiver reports them.
         State.Sources.CollectionChanged += (_, e) =>
         {
@@ -895,8 +900,12 @@ public partial class MainViewModel : ObservableObject
         finally { IsBusy = false; }
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanTogglePower))]
     private async Task PowerToggleAsync() => await _receiver.TogglePowerAsync();
+
+    /// <summary>Offline, connecting or mid-change: there is nothing sensible to toggle.</summary>
+    private bool CanTogglePower() =>
+        State.Power is PowerState.On or PowerState.Standby or PowerState.ZoneOnly;
 
     [RelayCommand]
     private async Task MuteToggleAsync() => await _receiver.ToggleMuteAsync();

@@ -1,5 +1,29 @@
 # Changelog
 
+## v2.4 (2026-10-29)
+
+### Power status
+- The app now shows whether the receiver is **On**, in **Standby**, **Offline**, or still **Connecting…**. Before, the green dot only meant "reachable", and a receiver in standby looked the same as one that was on
+- One indicator (dot + label) in the status bar, on Home and in the tray tooltip: green On, amber Standby (or *Standby · Zone 2 on*), grey ring Offline, pulsing while connecting or changing
+- At startup it waits for the receiver to report its power instead of guessing "Standby"; if telnet stays silent for 3 seconds it asks over HTTP
+- The Power button is filled while on and outlined in standby (Home: **Turn on**). It shows *Turning on…* / *Standby…* until the receiver confirms, and is disabled while offline or connecting
+- While the receiver isn't on, Sources, Tuner, HEOS, Sound, Processing, Zones and Receiver show a banner (**Turn on** or **Open Devices**) and their controls are dimmed. On Home and in the status bar, volume and mute are dimmed too
+
+### Click feedback
+- Every button, and the Source, Surround and Signal cards on Home, shrink slightly and ripple when pressed
+- Actions that take a moment show a progress line, then a short glow when done. Source and Surround glow once the receiver reports the new value
+- Deleting a saved station or a channel profile, and clearing the HEOS queue, now need a second click within 3 seconds
+- Skipped when Windows *Show animations* is off
+
+### Other changes
+- The **mouse wheel** changes the volume on every volume slider (status bar, Home, Zones, tray widget), 0.5 per notch
+- **Start minimized** is now off by default for new installs
+
+### Code
+- `ReceiverState.Power` (`PowerState`), `PowerKnown`, `IsConnecting` and `PowerTransit` derive the state; the parser and HTTP status mark it known
+- New `Controls/PowerIndicator`, `Controls/PowerGate` (added by `PageBase` unless a page opts out with `RequiresPower`), `Controls/Feedback` with `FeedbackAdorner`, and `Controls/SliderWheel`
+- New palette keys: `PowerOnColor`, `PowerStandbyColor`, `DangerColor` and their brushes
+
 ## v2.3 (2026-10-29)
 
 ### Themes

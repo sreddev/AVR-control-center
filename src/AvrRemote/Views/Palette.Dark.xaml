@@ -1,4 +1,4 @@
-<!--
+﻿<!--
     Dark palette (the default). Every colour the app paints with lives here
     or in Palette.Light.xaml; both define the same keys. App.xaml.cs swaps
     this dictionary for the light one at startup when the user picks Light.
@@ -79,4 +79,14 @@
     <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="#C7CBD1" />
     <SolidColorBrush x:Key="TextFillColorTertiaryBrush" Color="#8B919B" />
     <SolidColorBrush x:Key="TextFillColorDisabledBrush" Color="#5A5F68" />
+
+    <!-- ══════════ Power and feedback ══════════
+         Status dots (On / Standby; Offline uses TextTertiaryBrush) and the
+         armed state of two-click Delete / Clear buttons. -->
+    <Color x:Key="PowerOnColor">#9CC24A</Color>
+    <Color x:Key="PowerStandbyColor">#E0A33A</Color>
+    <Color x:Key="DangerColor">#F0646A</Color>
+    <SolidColorBrush x:Key="PowerOnBrush" Color="{StaticResource PowerOnColor}" />
+    <SolidColorBrush x:Key="PowerStandbyBrush" Color="{StaticResource PowerStandbyColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
 </ResourceDictionary>

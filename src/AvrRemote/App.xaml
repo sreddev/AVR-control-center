@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="/Views/Palette.Dark.xaml" />
                 <ResourceDictionary Source="/Views/Theme.xaml" />
                 <ResourceDictionary Source="/Controls/ChannelChip.xaml" />
+                <ResourceDictionary Source="/Controls/Power.xaml" />
                 <ResourceDictionary Source="/Views/SettingTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

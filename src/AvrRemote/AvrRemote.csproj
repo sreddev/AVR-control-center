@@ -9,7 +9,7 @@
     <RootNamespace>AvrRemote</RootNamespace>
     <AssemblyName>AVRDesktopControl</AssemblyName>
     <Product>AVR Desktop Control</Product>
-    <Version>2.3.0</Version>
+    <Version>2.4.0</Version>
     <Authors>Sergio (@sreddev)</Authors>
     <Company>sreddev</Company>
     <Description>AVR Desktop Control — Remote control for Denon and Marantz AVR receivers on Windows. Real-time telnet monitoring, channel matrix, per-speaker trim, system tray widget, auto-discovery.</Description>

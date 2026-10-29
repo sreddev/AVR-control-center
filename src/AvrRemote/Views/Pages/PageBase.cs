@@ -5,6 +5,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using AvrRemote.Controls;
 
 namespace AvrRemote.Views.Pages;
 
@@ -19,6 +20,23 @@ public abstract class PageBase : UserControl
     protected PageBase()
     {
         Loaded += OnLoaded;
+    }
+
+    /// <summary>
+    /// Pages that send commands to the receiver are wrapped in a
+    /// <see cref="PowerGate"/>: a banner and dimmed content while it isn't on.
+    /// Home, Devices and Settings opt out.
+    /// </summary>
+    protected virtual bool RequiresPower => true;
+
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+        base.OnContentChanged(oldContent, newContent);
+        if (!RequiresPower || newContent is null or PowerGate) return;
+        // Detach the page content first: an element can only have one parent.
+        var gate = new PowerGate();
+        Content = gate;
+        gate.Content = newContent;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)
