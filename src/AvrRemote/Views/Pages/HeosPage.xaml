@@ -253,6 +253,7 @@
                             <ui:SymbolIcon FontSize="19" Symbol="{Binding Heos.IsPlaying, Converter={StaticResource PlayPauseIcon}}" />
                         </ui:Button>
                         <ui:Button Width="40" Height="40" Command="{Binding HeosNextCommand}" Icon="{ui:SymbolIcon Next24}" ToolTip="Next" />
+                        <ui:Button Width="40" Height="40" Margin="8,0,0,0" Command="{Binding HeosAddNowPlayingToFavoritesCommand}" Icon="{ui:SymbolIcon Heart24}" ToolTip="Add what's playing to HEOS Favorites" />
                     </StackPanel>
 
                     <!-- Technical info -->
@@ -346,19 +347,49 @@
                         <Button Command="{Binding HeosBackCommand}" Content="&#x2190;  Back" Style="{StaticResource MiniBtn}" ToolTip="Up one level" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
                         <Button Grid.Column="1" Margin="6,0,0,0" Command="{Binding HeosHomeCommand}" Content="Services" Style="{StaticResource MiniBtn}" ToolTip="Back to the service list" Visibility="{Binding Heos.CanGoBack, Converter={StaticResource BoolToVis}}" />
                         <TextBlock Grid.Column="2" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Heos.CurrentLocation}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Heos.CurrentLocation}" />
-                        <!-- Reveals the queue again when it is collapsed -->
-                        <Button
-                            x:Name="ShowQueueBtn"
-                            Grid.Column="3"
-                            Margin="6,0,0,0"
-                            Click="OnToggleQueue"
-                            Content="Queue &#x2192;"
-                            Style="{StaticResource MiniBtn}"
-                            ToolTip="Show the queue"
-                            Visibility="Collapsed" />
+                        <StackPanel Grid.Column="3" Orientation="Horizontal">
+                            <Button Margin="6,0,0,0" Command="{Binding HeosFavoritesCommand}" Content="&#x2665;  Favorites" Style="{StaticResource MiniBtn}" ToolTip="HEOS and TuneIn favorites" />
+                            <!-- Reveals the queue again when it is collapsed -->
+                            <Button
+                                x:Name="ShowQueueBtn"
+                                Margin="6,0,0,0"
+                                Click="OnToggleQueue"
+                                Content="Queue &#x2192;"
+                                Style="{StaticResource MiniBtn}"
+                                ToolTip="Show the queue"
+                                Visibility="Collapsed" />
+                        </StackPanel>
                     </Grid>
 
-                    <StackPanel Grid.Row="1" Visibility="{Binding Heos.CurrentLocation, Converter={StaticResource EmptyToVisible}}">
+                    <StackPanel Grid.Row="1">
+                    <!-- Favorites: switch between the two lists -->
+                    <StackPanel Margin="0,0,0,9" Orientation="Horizontal" Visibility="{Binding Heos.FavoritesTab, Converter={StaticResource StringNotEmptyToVis}}">
+                        <Button Command="{Binding HeosFavoritesCommand}" Content="HEOS Favorites" ToolTip="Favorites stored on the receiver: play, add and remove">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource MiniBtn}" TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Heos.IsHeosFavoritesOpen}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Margin="6,0,0,0" Command="{Binding HeosTuneInFavoritesCommand}" Content="TuneIn Favorites" ToolTip="Stations saved in your TuneIn account">
+                            <Button.Style>
+                                <Style BasedOn="{StaticResource MiniBtn}" TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Heos.IsTuneInFavoritesOpen}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" FontSize="10" Foreground="{StaticResource TextTertiaryBrush}" Text="Arrows move, Enter plays, Del removes, Backspace goes back" />
+                    </StackPanel>
+                    <TextBlock Margin="0,0,0,8" FontSize="11" Foreground="{StaticResource AccentTextBrush}" Text="{Binding Heos.StatusMessage}" TextWrapping="Wrap" Visibility="{Binding Heos.StatusMessage, Converter={StaticResource StringNotEmptyToVis}}" />
+                    <StackPanel Visibility="{Binding Heos.CurrentLocation, Converter={StaticResource EmptyToVisible}}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -369,6 +400,7 @@
                                 <TextBlock Margin="0,1,0,8" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" Text="Pick a source to browse its catalog" />
                             </StackPanel>
                         </Grid>
+                    </StackPanel>
                     </StackPanel>
 
                     <Grid Grid.Row="2" Margin="0,0,0,8" Visibility="{Binding Heos.SearchOptions.Count, Converter={StaticResource NotZeroToVisible}}">
@@ -417,22 +449,6 @@
                                                                 <RowDefinition Height="Auto" />
                                                             </Grid.RowDefinitions>
 
-        <!-- Blurred album art fills the entire page background -->
-        <Rectangle
-            Grid.RowSpan="2"
-            IsHitTestVisible="False"
-            Opacity="0.4"
-            RadiusX="0"
-            RadiusY="0">
-            <Rectangle.Fill>
-                <ImageBrush
-                    ImageSource="{Binding Heos.NowPlayingImageUrl, TargetNullValue={x:Null}}"
-                    Stretch="UniformToFill" />
-            </Rectangle.Fill>
-            <Rectangle.Effect>
-                <BlurEffect Radius="30" />
-            </Rectangle.Effect>
-        </Rectangle>
 
                                                             <Image
                                                                 Grid.Row="0"
@@ -468,9 +484,23 @@
                             </ItemsControl>
                         </ScrollViewer>
 
+                        <TextBlock
+                            Margin="4,8"
+                            VerticalAlignment="Top"
+                            FontSize="12"
+                            Foreground="{StaticResource TextSecondaryBrush}"
+                            Text="{Binding Heos.EmptyMessage}"
+                            TextWrapping="Wrap"
+                            Visibility="{Binding Heos.EmptyMessage, Converter={StaticResource StringNotEmptyToVis}}" />
+
                         <!-- Browse results: GRID view -->
                         <ScrollViewer VerticalScrollBarVisibility="Auto" Visibility="{Binding Heos.CurrentLocation, Converter={StaticResource StringNotEmptyToVis}}">
-                            <ItemsControl ItemsSource="{Binding Heos.Items}">
+                            <ItemsControl
+                                x:Name="BrowseList"
+                                ItemsSource="{Binding Heos.Items}"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabNavigation="Once"
+                                PreviewKeyDown="OnBrowseKeyDown">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <WrapPanel Orientation="Horizontal" />
@@ -486,6 +516,14 @@
                                             Cursor="Hand"
                                             Tag="{Binding}"
                                             ToolTip="{Binding Name}">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Click="OnItemClick" Header="Play" Tag="{Binding}" Visibility="{Binding IsPlayable, Converter={StaticResource BoolToVis}}" />
+                                                    <MenuItem Click="OnQueueClick" Header="Add to queue" Tag="{Binding}" Visibility="{Binding CanQueue, Converter={StaticResource BoolToVis}}" />
+                                                    <MenuItem Click="OnAddFavoriteClick" Header="Add to HEOS Favorites" Tag="{Binding}" Visibility="{Binding CanAddToFavorites, Converter={StaticResource BoolToVis}}" />
+                                                    <MenuItem Click="OnRemoveFavoriteClick" Header="Remove from HEOS Favorites" Tag="{Binding}" Visibility="{Binding IsHeosFavorite, Converter={StaticResource BoolToVis}}" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
                                             <Button.Template>
                                                 <ControlTemplate TargetType="Button">
                                                     <Border
@@ -500,22 +538,6 @@
                                                                 <RowDefinition Height="Auto" />
                                                             </Grid.RowDefinitions>
 
-        <!-- Blurred album art fills the entire page background -->
-        <Rectangle
-            Grid.RowSpan="2"
-            IsHitTestVisible="False"
-            Opacity="0.4"
-            RadiusX="0"
-            RadiusY="0">
-            <Rectangle.Fill>
-                <ImageBrush
-                    ImageSource="{Binding Heos.NowPlayingImageUrl, TargetNullValue={x:Null}}"
-                    Stretch="UniformToFill" />
-            </Rectangle.Fill>
-            <Rectangle.Effect>
-                <BlurEffect Radius="30" />
-            </Rectangle.Effect>
-        </Rectangle>
 
                                                             <Border Grid.Row="0" Margin="6,6,6,2" CornerRadius="6" Background="{StaticResource Surface1Brush}">
                                                                 <Grid>
@@ -536,12 +558,52 @@
                                                                 Click="OnQueueClick"
                                                                 Content="+"
                                                                 Cursor="Hand"
+                                                                Focusable="False"
                                                                 FontSize="14"
                                                                 FontWeight="Bold"
                                                                 Foreground="White"
                                                                 Tag="{Binding}"
                                                                 ToolTip="Add to queue"
-                                                                Visibility="{Binding IsPlayable, Converter={StaticResource BoolToVis}}" />
+                                                                Visibility="{Binding CanQueue, Converter={StaticResource BoolToVis}}" />
+                                                            <!-- Favorite actions overlay -->
+                                                            <Button
+                                                                Grid.Row="0"
+                                                                Width="26"
+                                                                Height="26"
+                                                                Margin="8,8,0,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                Background="#CC1A1C20"
+                                                                BorderThickness="0"
+                                                                Click="OnAddFavoriteClick"
+                                                                Padding="0"
+                                                                Cursor="Hand"
+                                                                Focusable="False"
+                                                                Foreground="White"
+                                                                Tag="{Binding}"
+                                                                ToolTip="Add to HEOS Favorites"
+                                                                Visibility="{Binding CanAddToFavorites, Converter={StaticResource BoolToVis}}">
+                                                                <ui:SymbolIcon FontSize="13" Symbol="Heart16" />
+                                                            </Button>
+                                                            <Button
+                                                                Grid.Row="0"
+                                                                Width="26"
+                                                                Height="26"
+                                                                Margin="8,8,0,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                Background="#CC1A1C20"
+                                                                BorderThickness="0"
+                                                                Click="OnRemoveFavoriteClick"
+                                                                Padding="0"
+                                                                Cursor="Hand"
+                                                                Focusable="False"
+                                                                Foreground="White"
+                                                                Tag="{Binding}"
+                                                                ToolTip="Remove from HEOS Favorites (Del)"
+                                                                Visibility="{Binding IsHeosFavorite, Converter={StaticResource BoolToVis}}">
+                                                                <ui:SymbolIcon FontSize="13" Symbol="Dismiss16" />
+                                                            </Button>
                                                             <StackPanel Grid.Row="1" Margin="6,2,6,6">
                                                                 <TextBlock FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
                                                                 <TextBlock FontSize="9.5" Foreground="{StaticResource TextTertiaryBrush}" Text="{Binding Subtitle}" />
@@ -551,6 +613,10 @@
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
+                                                        </Trigger>
+                                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource AccentTextBrush}" />
+                                                            <Setter TargetName="Root" Property="BorderThickness" Value="2" />
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>

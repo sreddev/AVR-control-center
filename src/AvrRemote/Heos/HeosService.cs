@@ -27,6 +27,13 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     private UpnpTransport? _upnp;
     private CancellationTokenSource? _pollCts;
 
+    /// <summary>Host to reconnect to after a dropped connection; null once the user disconnects.</summary>
+    private string? _host;
+    private CancellationTokenSource? _reconnectCts;
+
+    /// <summary>Bumped on every navigation so a slow, older listing can't overwrite a newer one.</summary>
+    private int _loadVersion;
+
     [ObservableProperty] private bool _isAvailable;
     [ObservableProperty] private bool _isBusy;
 
@@ -83,6 +90,24 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     [ObservableProperty] private string _currentLocation = "";
     [ObservableProperty] private bool _canGoBack;
 
+    /// <summary>Shown in place of the listing when it is empty or failed to load.</summary>
+    [ObservableProperty] private string _emptyMessage = "";
+
+    /// <summary>Short-lived feedback after an action ("Added to HEOS Favorites").</summary>
+    [ObservableProperty] private string _statusMessage = "";
+
+    /// <summary>"heos" or "tunein" while a favorites list is open, otherwise empty.</summary>
+    [ObservableProperty] private string _favoritesTab = "";
+
+    public bool IsHeosFavoritesOpen => FavoritesTab == "heos";
+    public bool IsTuneInFavoritesOpen => FavoritesTab == "tunein";
+
+    partial void OnFavoritesTabChanged(string value)
+    {
+        OnPropertyChanged(nameof(IsHeosFavoritesOpen));
+        OnPropertyChanged(nameof(IsTuneInFavoritesOpen));
+    }
+
     // â”€â”€ Connection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private static void Log(string message)
@@ -98,39 +123,99 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     public async Task<bool> ConnectAsync(string host, CancellationToken ct = default)
     {
         await DisconnectAsync().ConfigureAwait(false);
+        _host = host;
+        return await OpenAsync(host, ct).ConfigureAwait(false);
+    }
+
+    private async Task<bool> OpenAsync(string host, CancellationToken ct)
+    {
+        await CloseClientAsync().ConfigureAwait(false);
         Log($"ConnectAsync host={host}");
 
-        _client = new HeosClient(host);
-        _client.EventReceived += OnHeosEvent;
+        var client = new HeosClient(host);
+        client.EventReceived += OnHeosEvent;
+        client.Disconnected += OnClientDisconnected;
+        _client = client;
         _upnp = new UpnpTransport(host);
 
         bool ok;
-        try { ok = await _client.ConnectAsync(ct).ConfigureAwait(false); }
+        try { ok = await client.ConnectAsync(ct).ConfigureAwait(false); }
         catch (Exception ex) { Log($"threw: {ex.Message}"); ok = false; }
 
-        Log($"result={ok} pid={_client.PlayerId ?? "(null)"}");
+        Log($"result={ok} pid={client.PlayerId ?? "(null)"}");
         Ui(() => IsAvailable = ok);
-        if (!ok) return false;
+        if (!ok)
+        {
+            await CloseClientAsync().ConfigureAwait(false);
+            return false;
+        }
 
         await RefreshAccountAsync(ct).ConfigureAwait(false);
         await RefreshSourcesAsync(ct).ConfigureAwait(false);
         await RefreshNowPlayingAsync(ct).ConfigureAwait(false);
         await RefreshQueueAsync(ct).ConfigureAwait(false);
         StartPolling();
+
+        // After a reconnect, reload whatever listing was open.
+        if (_trail.Count >= 2)
+            await LoadCurrentAsync(ct).ConfigureAwait(false);
         return true;
     }
 
     public async Task DisconnectAsync()
+    {
+        _host = null;
+        _reconnectCts?.Cancel();
+        _reconnectCts = null;
+        await CloseClientAsync().ConfigureAwait(false);
+    }
+
+    private async Task CloseClientAsync()
     {
         _pollCts?.Cancel();
         _pollCts = null;
         if (_client is not null)
         {
             _client.EventReceived -= OnHeosEvent;
+            _client.Disconnected -= OnClientDisconnected;
             await _client.DisposeAsync().ConfigureAwait(false);
             _client = null;
         }
         Ui(() => IsAvailable = false);
+    }
+
+    /// <summary>
+    /// The socket closed under us (receiver in standby, network drop). Every
+    /// request would now fail silently, so reconnect in the background.
+    /// </summary>
+    private void OnClientDisconnected(object? sender, EventArgs e)
+    {
+        if (!ReferenceEquals(sender, _client)) return;
+        Log("connection lost");
+        Ui(() => IsAvailable = false);
+        _ = ReconnectLoopAsync();
+    }
+
+    private async Task ReconnectLoopAsync()
+    {
+        if (_host is null || _reconnectCts is not null) return;
+        var cts = new CancellationTokenSource();
+        _reconnectCts = cts;
+        var delay = TimeSpan.FromSeconds(2);
+        try
+        {
+            while (!cts.IsCancellationRequested && _host is { } host)
+            {
+                await Task.Delay(delay, cts.Token).ConfigureAwait(false);
+                if (await OpenAsync(host, cts.Token).ConfigureAwait(false)) return;
+                delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 60));
+            }
+        }
+        catch (OperationCanceledException) { }
+        finally
+        {
+            if (ReferenceEquals(_reconnectCts, cts)) _reconnectCts = null;
+        }
     }
 
     /// <summary>
@@ -184,14 +269,26 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     {
         // Events cover most changes, but a slow heartbeat keeps us honest if a
         // notification is ever missed.
+        // A heartbeat that goes unanswered twice means the connection is dead
+        // without the socket noticing; aborting it triggers the reconnect.
         _pollCts = new CancellationTokenSource();
         var token = _pollCts.Token;
+        var client = _client;
         _ = Task.Run(async () =>
         {
+            var missed = 0;
             while (!token.IsCancellationRequested)
             {
                 try { await Task.Delay(TimeSpan.FromSeconds(15), token).ConfigureAwait(false); }
                 catch { return; }
+                if (client is null) return;
+                missed = await client.HeartbeatAsync(token).ConfigureAwait(false) ? 0 : missed + 1;
+                if (missed >= 2)
+                {
+                    Log("heartbeat lost");
+                    client.Abort();
+                    return;
+                }
                 await RefreshNowPlayingAsync(token).ConfigureAwait(false);
             }
         }, token);
@@ -278,12 +375,16 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     public void GoHome()
     {
         _trail.Clear();
+        Interlocked.Increment(ref _loadVersion);
         Ui(() =>
         {
             Items.Clear();
             SearchOptions.Clear();
             CurrentLocation = "";
             CanGoBack = false;
+            EmptyMessage = "";
+            FavoritesTab = "";
+            IsBusy = false;
         });
     }
 
@@ -321,17 +422,23 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     {
         if (_client is null || _trail.Count < 2) return;
         var crumb = _trail[^1];
+        var version = Interlocked.Increment(ref _loadVersion);
+        var tab = crumb.Sid == HeosSid.Favorites ? "heos"
+                : crumb.Sid == HeosSid.TuneIn && IsTuneInFavoritesCid(crumb.Cid) ? "tunein"
+                : "";
 
         Ui(() =>
         {
             IsBusy = true;
+            EmptyMessage = "";
+            FavoritesTab = tab;
             // Skip the sentinel when rendering the breadcrumb.
             CurrentLocation = string.Join("  >  ", _trail.Skip(1).Select(c => c.Label));
             CanGoBack = true;
         });
 
-        var json = await _client.BrowseAsync(crumb.Sid, crumb.Cid, ct: ct).ConfigureAwait(false);
-        var parsed = ParseBrowse(json, crumb.Sid);
+        var (parsed, error) = await BrowseAllAsync(crumb.Sid, crumb.Cid, ct).ConfigureAwait(false);
+        if (version != _loadVersion) return;   // the user has moved on
 
         // Detect the Tidal firmware bug where certain containers (My Music,
         // What's New) return the root-level items instead of their contents.
@@ -356,16 +463,50 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
         // service itself, index 0 being the sentinel root).
         if (_trail.Count == 2)
             await LoadSearchCriteriaAsync(crumb.Sid, ct).ConfigureAwait(false);
+        if (version != _loadVersion) return;
+
+        var empty = error is not null ? $"Couldn't load this list: {error}"
+                  : parsed.Count > 0 ? ""
+                  : tab == "heos" ? "No HEOS Favorites yet. Use the heart on a station, or on Now Playing, to add one."
+                  : tab == "tunein" ? "No TuneIn Favorites. They are managed in your TuneIn account."
+                  : "This list is empty.";
 
         Ui(() =>
         {
             Items.Clear();
             foreach (var i in parsed) Items.Add(i);
+            EmptyMessage = empty;
             IsBusy = false;
         });
     }
 
-    private static List<BrowseItem> ParseBrowse(string? json, string sid)
+    /// <summary>
+    /// Reads a whole listing. HEOS returns at most 100 rows per request, so
+    /// longer lists (TuneIn categories, big favorites lists) are paged.
+    /// </summary>
+    private async Task<(List<BrowseItem> Items, string? Error)> BrowseAllAsync(
+        string sid, string? cid, CancellationToken ct)
+    {
+        const int page = 100;
+        var all = new List<BrowseItem>();
+        while (_client is { } client)
+        {
+            var json = await client.BrowseAsync(sid, cid, all.Count, all.Count + page - 1, ct)
+                .ConfigureAwait(false);
+            var error = HeosClient.ErrorOf(json);
+            if (error is not null) return (all, all.Count == 0 ? error : null);
+
+            var rows = ParseBrowse(json, sid, all.Count);
+            all.AddRange(rows);
+
+            // "count" is the full size; some services report 0, so also stop on a short page.
+            _ = int.TryParse(HeosClient.ValueFromMessage(json!, "count"), out var count);
+            if (rows.Count < page || (count > 0 && all.Count >= count) || all.Count >= 2000) break;
+        }
+        return (all, null);
+    }
+
+    private static List<BrowseItem> ParseBrowse(string? json, string sid, int offset = 0)
     {
         var list = new List<BrowseItem>();
         if (json is null) return list;
@@ -382,18 +523,113 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
                 // Nested services (e.g. inside "Local Music") carry their own sid.
                 var itemSid = Str(item, "sid");
                 list.Add(new BrowseItem(
-                    Name:        Str(item, "name"),
+                    Name:        HeosClient.DecodeName(Str(item, "name")),
                     Sid:         string.IsNullOrEmpty(itemSid) ? sid : itemSid,
                     Cid:         Str(item, "cid"),
                     Mid:         Str(item, "mid"),
                     ImageUrl:    Str(item, "image_url"),
                     Type:        Str(item, "type"),
                     IsContainer: container,
-                    IsPlayable:  playable));
+                    IsPlayable:  playable,
+                    Position:    offset + list.Count + 1));
             }
         }
         catch { }
         return list;
+    }
+
+    // ── Favorites ───────────────────────────────────────────────────────────
+
+    /// <summary>TuneIn's own favorites (its "presets") live in a container at the TuneIn root.</summary>
+    private static bool IsTuneInFavoritesCid(string? cid) =>
+        cid is not null && cid.Contains("c%3Dpresets", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Opens the HEOS Favorites list (the receiver's own presets).</summary>
+    public Task OpenHeosFavoritesAsync(CancellationToken ct = default)
+    {
+        var source = Sources.FirstOrDefault(s => s.Sid == HeosSid.Favorites)
+                     ?? new MusicSource("Favorites", HeosSid.Favorites, "", "heos_service", true, "");
+        return OpenSourceAsync(source, ct);
+    }
+
+    /// <summary>Opens TuneIn > Favorites, the stations saved in the TuneIn account.</summary>
+    public async Task OpenTuneInFavoritesAsync(CancellationToken ct = default)
+    {
+        if (_client is null) return;
+        var tuneIn = Sources.FirstOrDefault(s => s.Sid == HeosSid.TuneIn);
+        if (tuneIn is null)
+        {
+            Flash("TuneIn is not available on this receiver");
+            return;
+        }
+
+        _trail.Clear();
+        _trail.Add(new BrowseCrumb("Servicios", "", null));   // sentinel root
+        _trail.Add(new BrowseCrumb(tuneIn.Name, tuneIn.Sid, null));
+
+        var (root, error) = await BrowseAllAsync(tuneIn.Sid, null, ct).ConfigureAwait(false);
+        var favorites = root.FirstOrDefault(i => i.IsContainer && IsTuneInFavoritesCid(i.Cid))
+                        ?? root.FirstOrDefault(i => i.IsContainer &&
+                               i.Name.Equals("Favorites", StringComparison.OrdinalIgnoreCase));
+        if (favorites is null)
+        {
+            // No favorites container (not signed in to TuneIn): show the TuneIn root instead.
+            await LoadCurrentAsync(ct).ConfigureAwait(false);
+            Flash(error ?? "TuneIn has no Favorites folder. Sign in to TuneIn in the HEOS app.");
+            return;
+        }
+
+        _trail.Add(new BrowseCrumb(favorites.Name, favorites.Sid, favorites.Cid));
+        await LoadSearchCriteriaAsync(tuneIn.Sid, ct).ConfigureAwait(false);
+        await LoadCurrentAsync(ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Adds a browsed station (TuneIn and other radio services) to HEOS Favorites.</summary>
+    public async Task AddToFavoritesAsync(BrowseItem item, CancellationToken ct = default)
+    {
+        if (_client is null || !item.CanAddToFavorites) return;
+        var reply = await _client.AddStationToFavoritesAsync(item.Sid, item.Mid, item.Name, ct)
+            .ConfigureAwait(false);
+        var error = HeosClient.ErrorOf(reply);
+        Flash(error is null ? $"Added to HEOS Favorites: {item.Name}" : $"Couldn't add {item.Name}: {error}");
+    }
+
+    /// <summary>Adds the station playing now to HEOS Favorites.</summary>
+    public async Task AddNowPlayingToFavoritesAsync(CancellationToken ct = default)
+    {
+        if (_client is null) return;
+        var reply = await _client.AddNowPlayingToFavoritesAsync(ct).ConfigureAwait(false);
+        var error = HeosClient.ErrorOf(reply);
+        Flash(error is null ? $"Added to HEOS Favorites: {NowPlayingTitle}"
+                            : $"Couldn't add to HEOS Favorites: {error}");
+        if (error is null && FavoritesTab == "heos")
+            await LoadCurrentAsync(ct).ConfigureAwait(false);
+    }
+
+    public async Task RemoveFromFavoritesAsync(BrowseItem item, CancellationToken ct = default)
+    {
+        if (_client is null || !item.IsHeosFavorite) return;
+        var reply = await _client.RemoveFromFavoritesAsync(item.Mid, ct).ConfigureAwait(false);
+        var error = HeosClient.ErrorOf(reply);
+        Flash(error is null ? $"Removed from HEOS Favorites: {item.Name}" : $"Couldn't remove {item.Name}: {error}");
+        // Positions shift after a removal, so reload rather than patch the list.
+        if (FavoritesTab == "heos")
+            await LoadCurrentAsync(ct).ConfigureAwait(false);
+    }
+
+    private CancellationTokenSource? _flashCts;
+
+    /// <summary>Shows <see cref="StatusMessage"/> for a few seconds.</summary>
+    private void Flash(string message)
+    {
+        _flashCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _flashCts = cts;
+        Ui(() => StatusMessage = message);
+        _ = Task.Delay(TimeSpan.FromSeconds(5), cts.Token).ContinueWith(t =>
+        {
+            if (!t.IsCanceled) Ui(() => StatusMessage = "");
+        }, TaskScheduler.Default);
     }
 
     private async Task LoadSearchCriteriaAsync(string sid, CancellationToken ct)
@@ -428,9 +664,12 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
         if (_client is null || _trail.Count < 2 || string.IsNullOrWhiteSpace(term)) return;
         var service = _trail[1];   // index 0 is the sentinel root
 
+        var version = Interlocked.Increment(ref _loadVersion);
         Ui(() => IsBusy = true);
         var json = await _client.SearchAsync(service.Sid, scid, term, ct).ConfigureAwait(false);
+        if (version != _loadVersion) return;
         var parsed = ParseBrowse(json, service.Sid);
+        var error = HeosClient.ErrorOf(json);
 
         Ui(() =>
         {
@@ -438,6 +677,9 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
             foreach (var i in parsed) Items.Add(i);
             CurrentLocation = $"{service.Label}  >  Search: {term}";
             CanGoBack = true;
+            FavoritesTab = "";
+            EmptyMessage = error is not null ? $"Search failed: {error}"
+                         : parsed.Count == 0 ? $"Nothing found for \"{term}\"." : "";
             IsBusy = false;
         });
     }
@@ -476,7 +718,13 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
             ? _trail[^1].Cid ?? ""
             : item.Cid;
 
-        if (!string.IsNullOrEmpty(item.Mid))
+        if (item.IsHeosFavorite)
+        {
+            // HEOS Favorites are presets: play_stream rejects sid 1028.
+            var error = HeosClient.ErrorOf(await _client.PlayPresetAsync(item.Position, ct).ConfigureAwait(false));
+            if (error is not null) Flash($"Couldn't play {item.Name}: {error}");
+        }
+        else if (!string.IsNullOrEmpty(item.Mid))
         {
             // Radio stations need the friendly name so the receiver can label them.
             if (item.Type.Equals("station", StringComparison.OrdinalIgnoreCase))
@@ -501,7 +749,7 @@ public sealed partial class HeosService : ObservableObject, IAsyncDisposable
     /// <summary>Appends the item to the end of the queue.</summary>
     public async Task QueueItemAsync(BrowseItem item, CancellationToken ct = default)
     {
-        if (_client is null) return;
+        if (_client is null || !(item.CanQueue || item.IsContainer)) return;
         var container = string.IsNullOrEmpty(item.Cid) && _trail.Count > 0
             ? _trail[^1].Cid ?? ""
             : item.Cid;

@@ -1,5 +1,22 @@
 # Changelog
 
+## v2.2 (2026-10-29)
+
+### HEOS Favorites
+- **♥ Favorites** button on the HEOS page opens HEOS Favorites and TuneIn Favorites, with tabs to switch between them
+- Add a station to HEOS Favorites from any listing (♡ on the tile or right-click), or add what's playing now (♡ next to the transport buttons)
+- Remove a HEOS Favorite with ✕, the right-click menu or the Del key, after a confirmation
+- Keyboard navigation in listings: arrows, Enter, Del, Backspace
+
+### Fixes
+- HEOS Favorites didn't play: they were sent as `play_stream`, which the receiver rejects for favorites. They now use `play_preset`
+- Lists longer than 100 entries were cut off. Listings are now read page by page
+- A dropped HEOS connection (receiver standby, network blip) left every list empty until the app was restarted. The app now detects it (heartbeat) and reconnects
+- Two listings loading at once could swap or lose each other's results
+- Empty or failed listings showed a blank panel; they now say why
+- Names with `&` showed as `%26`, and non-Latin characters could be garbled
+- Radio stations no longer show an "Add to queue" button; HEOS can't queue stations
+
 ## v2.1 (2026-10-28)
 
 ### App icon

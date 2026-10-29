@@ -33,6 +33,10 @@ public sealed class HeosClient : IAsyncDisposable
     private readonly string _host;
     private readonly SemaphoreSlim _sendGate = new(1, 1);
     private readonly ConcurrentDictionary<string, TaskCompletionSource<string>> _pending = new();
+
+    // Replies only carry the command name, so two requests with the same name
+    // in flight would steal each other's answer. One at a time per command.
+    private readonly ConcurrentDictionary<string, SemaphoreSlim> _commandGates = new();
     private readonly CancellationTokenSource _cts = new();
 
     private TcpClient? _tcp;
@@ -46,6 +50,9 @@ public sealed class HeosClient : IAsyncDisposable
     /// <summary>Raised for every <c>event/...</c> line the receiver pushes.</summary>
     public event EventHandler<HeosEvent>? EventReceived;
 
+    /// <summary>Raised once when the connection closes or is aborted.</summary>
+    public event EventHandler? Disconnected;
+
     public HeosClient(string host) => _host = host;
 
     // ── Connection ──────────────────────────────────────────────────────────
@@ -55,6 +62,7 @@ public sealed class HeosClient : IAsyncDisposable
         try
         {
             _tcp = new TcpClient { NoDelay = true };
+            _tcp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
             timeout.CancelAfter(TimeSpan.FromSeconds(4));
             await _tcp.ConnectAsync(_host, Port, timeout.Token).ConfigureAwait(false);
@@ -85,6 +93,9 @@ public sealed class HeosClient : IAsyncDisposable
     {
         if (_stream is null) return;
         var buf = new byte[16384];
+        var chars = new char[Encoding.UTF8.GetMaxCharCount(buf.Length)];
+        // A decoder keeps multi-byte characters intact when they straddle two reads.
+        var decoder = Encoding.UTF8.GetDecoder();
         var pending = new StringBuilder();
 
         try
@@ -96,7 +107,7 @@ public sealed class HeosClient : IAsyncDisposable
                 catch { break; }
                 if (n <= 0) break;
 
-                pending.Append(Encoding.UTF8.GetString(buf, 0, n));
+                pending.Append(chars, 0, decoder.GetChars(buf, 0, n, chars, 0));
 
                 while (true)
                 {
@@ -115,8 +126,24 @@ public sealed class HeosClient : IAsyncDisposable
             foreach (var kv in _pending)
                 kv.Value.TrySetResult("");
             _pending.Clear();
+            if (!_cts.IsCancellationRequested)
+                Disconnected?.Invoke(this, EventArgs.Empty);
         }
     }
+
+    /// <summary>
+    /// Drops a connection that stopped answering. The read loop then ends and
+    /// raises <see cref="Disconnected"/>.
+    /// </summary>
+    public void Abort()
+    {
+        try { _tcp?.Client.Shutdown(SocketShutdown.Both); } catch { }
+        try { _tcp?.Close(); } catch { }
+    }
+
+    /// <summary>True when the receiver still answers on this connection.</summary>
+    public async Task<bool> HeartbeatAsync(CancellationToken ct = default) =>
+        await SendAsync("heos://system/heart_beat", ct).ConfigureAwait(false) is not null;
 
     private void Dispatch(string line)
     {
@@ -153,34 +180,41 @@ public sealed class HeosClient : IAsyncDisposable
             ? command[7..].Split('?')[0]
             : command;
 
-        var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        _pending[key] = tcs;
-
-        await _sendGate.WaitAsync(ct).ConfigureAwait(false);
+        var gate = _commandGates.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
+        try { await gate.WaitAsync(ct).ConfigureAwait(false); }
+        catch { return null; }
         try
         {
-            var payload = Encoding.ASCII.GetBytes(command + "\r\n");
-            await _stream.WriteAsync(payload, ct).ConfigureAwait(false);
-        }
-        catch
-        {
-            _pending.TryRemove(key, out _);
-            return null;
-        }
-        finally { _sendGate.Release(); }
+            var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+            _pending[key] = tcs;
 
-        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        timeout.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-        try
-        {
-            var result = await tcs.Task.WaitAsync(timeout.Token).ConfigureAwait(false);
-            return string.IsNullOrEmpty(result) ? null : result;
+            await _sendGate.WaitAsync(ct).ConfigureAwait(false);
+            try
+            {
+                var payload = Encoding.UTF8.GetBytes(command + "\r\n");
+                await _stream.WriteAsync(payload, ct).ConfigureAwait(false);
+            }
+            catch
+            {
+                _pending.TryRemove(key, out _);
+                return null;
+            }
+            finally { _sendGate.Release(); }
+
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            timeout.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
+            try
+            {
+                var result = await tcs.Task.WaitAsync(timeout.Token).ConfigureAwait(false);
+                return string.IsNullOrEmpty(result) ? null : result;
+            }
+            catch
+            {
+                _pending.TryRemove(key, out _);
+                return null;
+            }
         }
-        catch
-        {
-            _pending.TryRemove(key, out _);
-            return null;
-        }
+        finally { gate.Release(); }
     }
 
     // ── Now playing ─────────────────────────────────────────────────────────
@@ -199,11 +233,11 @@ public sealed class HeosClient : IAsyncDisposable
             if (p.ValueKind != JsonValueKind.Object) return null;
 
             return new NowPlaying(
-                Title:     Str(p, "song"),
-                Artist:    Str(p, "artist"),
-                Album:     Str(p, "album"),
+                Title:     DecodeName(Str(p, "song")),
+                Artist:    DecodeName(Str(p, "artist")),
+                Album:     DecodeName(Str(p, "album")),
                 ImageUrl:  Str(p, "image_url"),
-                Station:   Str(p, "station"),
+                Station:   DecodeName(Str(p, "station")),
                 MediaType: Str(p, "type"),
                 QueueId:   Str(p, "qid"));
         }
@@ -338,6 +372,33 @@ public sealed class HeosClient : IAsyncDisposable
         return SendAsync(cmd, ct, timeoutSeconds: 12);
     }
 
+    // ── Favorites ───────────────────────────────────────────────────────────
+
+    /// <summary>Plays a HEOS Favorite by its 1-based position in the list.</summary>
+    public Task<string?> PlayPresetAsync(int preset, CancellationToken ct = default) =>
+        PlayerId is null
+            ? Task.FromResult<string?>(null)
+            : SendAsync($"heos://browse/play_preset?pid={PlayerId}&preset={preset}", ct);
+
+    /// <summary>Adds a browsed station to HEOS Favorites (service option 19).</summary>
+    public Task<string?> AddStationToFavoritesAsync(string sid, string mid, string name,
+                                                    CancellationToken ct = default) =>
+        SendAsync($"heos://browse/set_service_option?sid={sid}&option=19" +
+                  $"&mid={Uri.EscapeDataString(mid)}&name={Uri.EscapeDataString(name)}",
+                  ct, timeoutSeconds: 12);
+
+    /// <summary>Adds whatever is playing now to HEOS Favorites (service option 19).</summary>
+    public Task<string?> AddNowPlayingToFavoritesAsync(CancellationToken ct = default) =>
+        PlayerId is null
+            ? Task.FromResult<string?>(null)
+            : SendAsync($"heos://browse/set_service_option?option=19&pid={PlayerId}",
+                        ct, timeoutSeconds: 12);
+
+    /// <summary>Removes an entry from HEOS Favorites (service option 20).</summary>
+    public Task<string?> RemoveFromFavoritesAsync(string mid, CancellationToken ct = default) =>
+        SendAsync($"heos://browse/set_service_option?option=20&mid={Uri.EscapeDataString(mid)}",
+                  ct, timeoutSeconds: 12);
+
     // ── Queue ───────────────────────────────────────────────────────────────
 
     public Task<string?> GetQueueAsync(int start = 0, int end = 99, CancellationToken ct = default) =>
@@ -394,7 +455,7 @@ public sealed class HeosClient : IAsyncDisposable
             var ok = (heos.GetProperty("result").GetString() ?? "")
                 .Equals("success", StringComparison.OrdinalIgnoreCase);
             var message = heos.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "";
-            return (ok, ok ? "Signed in" : DescribeError(message));
+            return (ok, ok ? "Signed in" : DescribeError(message, "Could not sign in"));
         }
         catch { return (false, "Invalid response"); }
     }
@@ -459,12 +520,39 @@ public sealed class HeosClient : IAsyncDisposable
         catch { return null; }
     }
 
-    private static string DescribeError(string message)
+    private static string DescribeError(string message, string fallback)
     {
         foreach (var part in message.Split('&'))
             if (part.StartsWith("text=", StringComparison.OrdinalIgnoreCase))
                 return Uri.UnescapeDataString(part[5..]).Replace('+', ' ');
-        return "Could not sign in";
+        return fallback;
+    }
+
+    /// <summary>
+    /// Null when a reply reports success; otherwise the receiver's error text,
+    /// or a generic message when there was no reply at all.
+    /// </summary>
+    public static string? ErrorOf(string? json)
+    {
+        if (json is null) return "The receiver did not answer";
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            var heos = doc.RootElement.GetProperty("heos");
+            if ((heos.GetProperty("result").GetString() ?? "")
+                .Equals("success", StringComparison.OrdinalIgnoreCase)) return null;
+            var message = heos.TryGetProperty("message", out var m) ? m.GetString() ?? "" : "";
+            return DescribeError(message, "The receiver rejected the request");
+        }
+        catch { return "Invalid response"; }
+    }
+
+    /// <summary>HEOS percent-encodes '&amp;', '=' and '%' inside names ("Rock %26 Pop").</summary>
+    public static string DecodeName(string name)
+    {
+        if (name.IndexOf('%') < 0) return name;
+        try { return Uri.UnescapeDataString(name); }
+        catch { return name; }
     }
 
     private static string Str(JsonElement e, string name) =>
@@ -477,6 +565,7 @@ public sealed class HeosClient : IAsyncDisposable
         _stream?.Dispose();
         _tcp?.Dispose();
         _sendGate.Dispose();
+        foreach (var gate in _commandGates.Values) gate.Dispose();
         _cts.Dispose();
     }
 }

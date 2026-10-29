@@ -106,8 +106,17 @@ Any tuning action switches the main input to **TUNER** first, if needed.
 
 <img src="screenshot-heos.png" width="700" alt="HEOS">
 
-- **Now playing**: cover art (also used as a blurred page background), title, artist, a seek bar you can drag, and previous / play-pause / next.
+- **Now playing**: cover art (also used as a blurred page background), title, artist, a seek bar you can drag, and previous / play-pause / next. **♡** adds what's playing to HEOS Favorites.
 - **Services**: TuneIn, Tidal, SoundCloud, local music servers, playlists, history, favorites, AUX. Click a tile to browse; use the search box where a service supports it (artist, album, track, playlist).
+- **Favorites**: the **♥ Favorites** button opens your favorites from anywhere on the page. Switch between two lists:
+
+  <img src="screenshot-heos-favorites.png" width="700" alt="HEOS Favorites">
+
+  - **HEOS Favorites**: the receiver's own favorites. Click one to play it; **✕** (or **Del**) removes it after a confirmation
+  - **TuneIn Favorites**: the stations saved in your TuneIn account. **♡** on a station adds it to HEOS Favorites
+  - Any radio station, in any service, has **♡** to add it to HEOS Favorites. Right-click a tile for Play, Add to queue, Add to / Remove from HEOS Favorites
+  - Keyboard: **Tab** into the list, **arrows** move, **Enter** plays or opens, **Del** removes, **Backspace** goes up a level
+  - HEOS can't rename or reorder favorites over its network protocol, and TuneIn Favorites can only be changed in your TuneIn account. Use the HEOS or TuneIn app for those
 - **Queue**: click a track to jump to it; **Clear** empties the queue.
 - **HEOS account**: sign in to use streaming services and favorites. The app sends your credentials only to the receiver.
 

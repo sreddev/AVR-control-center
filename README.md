@@ -32,7 +32,7 @@ Volume, inputs, sound modes, Audyssey, surround parameters, zones, the AM/FM tun
 | 🏠 **Home** | Volume, input, sound mode and live signal (format, 2.0 / 5.1 / 7.1.4 layout, sample rate, video). Quick / Smart Select slots, sleep timer, channel map with one-click speaker trim |
 | 🎛️ **Sources** | Switch inputs and sound modes; rename or hide inputs in the app |
 | 📻 **Tuner** | AM/FM with live **RDS** station name, manual tuning, seek / step, saved stations (import from the receiver, skip, previous / next) |
-| 🎵 **HEOS** | Browse TuneIn, Tidal, local music, playlists and favorites; search, queue, working seek |
+| 🎵 **HEOS** | Browse TuneIn, Tidal, local music and playlists; search, queue, working seek. **HEOS and TuneIn Favorites**: play, add, remove, keyboard navigation |
 | 🔊 **Sound** | Per-speaker trim, bass / treble, subwoofer level and on/off, saved sound profiles |
 | 🎧 **Processing** | Audyssey (MultEQ, Dynamic EQ, Reference Level, Dynamic Volume, LFC), Dirac Live, Dialog Enhancer, Cinema EQ, dynamic compression, per-mode surround parameters, Speaker A/B, Graphic EQ, Restorer, Bluetooth transmitter |
 | 🏘️ **Zones** | Main, Zone 2 and Zone 3: power, volume, mute, input, sleep timer; All Zone Stereo |
@@ -87,7 +87,7 @@ The full walkthrough of every page is in the **[User Guide](docs/USER-GUIDE.md)*
 | <img src="docs/screenshot-zones.png" alt="Zones"> | <img src="docs/screenshot-receiver.png" alt="Receiver"> |
 | **Zones**: one card per zone | **Receiver**: video, display, power, locks |
 | <img src="docs/screenshot-heos.png" alt="HEOS"> | <img src="docs/screenshot-sound.png" alt="Sound"> |
-| **HEOS** streaming | **Sound**: trims, tone, subwoofer, profiles |
+| **HEOS** streaming and favorites | **Sound**: trims, tone, subwoofer, profiles |
 
 ---
 

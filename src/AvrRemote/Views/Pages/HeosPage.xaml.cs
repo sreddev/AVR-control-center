@@ -67,6 +67,51 @@ public partial class HeosPage : PageBase
         e.Handled = true;
     }
 
+    private void OnAddFavoriteClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el && el.Tag is BrowseItem item && DataContext is MainViewModel vm)
+            _ = vm.HeosAddToFavoritesAsync(item);
+        e.Handled = true;
+    }
+
+    private void OnRemoveFavoriteClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement el && el.Tag is BrowseItem item) ConfirmRemove(item);
+        e.Handled = true;
+    }
+
+    /// <summary>Removing changes the HEOS account on every device, so ask first.</summary>
+    private void ConfirmRemove(BrowseItem item)
+    {
+        if (!item.IsHeosFavorite || DataContext is not MainViewModel vm) return;
+        var answer = MessageBox.Show(Window.GetWindow(this)!, $"Remove \"{item.Name}\" from HEOS Favorites?",
+            "HEOS Favorites", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
+        if (answer == MessageBoxResult.Yes) _ = vm.HeosRemoveFromFavoritesAsync(item);
+    }
+
+    /// <summary>
+    /// Keyboard use of the listing: arrows move between cards (directional
+    /// navigation), Enter or Space activates, Delete removes a HEOS Favorite,
+    /// Backspace goes up a level.
+    /// </summary>
+    private void OnBrowseKeyDown(object sender, KeyEventArgs e)
+    {
+        if (DataContext is not MainViewModel vm) return;
+        var item = (Keyboard.FocusedElement as FrameworkElement)?.Tag as BrowseItem;
+
+        switch (e.Key)
+        {
+            case Key.Delete when item is { IsHeosFavorite: true }:
+                ConfirmRemove(item);
+                e.Handled = true;
+                break;
+            case Key.Back when vm.Heos.CanGoBack:
+                vm.HeosBackCommand.Execute(null);
+                e.Handled = true;
+                break;
+        }
+    }
+
     private void OnQueueItemClick(object sender, RoutedEventArgs e)
     {
         if (sender is FrameworkElement el && el.Tag is QueueItem item && DataContext is MainViewModel vm)

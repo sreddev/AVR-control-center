@@ -731,6 +731,18 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task HeosClearQueueAsync() => await _heos.ClearQueueAsync();
 
+    [RelayCommand]
+    private async Task HeosFavoritesAsync() => await _heos.OpenHeosFavoritesAsync();
+
+    [RelayCommand]
+    private async Task HeosTuneInFavoritesAsync() => await _heos.OpenTuneInFavoritesAsync();
+
+    [RelayCommand]
+    private async Task HeosAddNowPlayingToFavoritesAsync() => await _heos.AddNowPlayingToFavoritesAsync();
+
+    public Task HeosAddToFavoritesAsync(Heos.BrowseItem i) => _heos.AddToFavoritesAsync(i);
+    public Task HeosRemoveFromFavoritesAsync(Heos.BrowseItem i) => _heos.RemoveFromFavoritesAsync(i);
+
     // Called from the HEOS page code-behind, where the clicked item is known.
     public Task HeosOpenSourceAsync(Heos.MusicSource s) => _heos.OpenSourceAsync(s);
     public Task HeosOpenItemAsync(Heos.BrowseItem i) => _heos.OpenItemAsync(i);
