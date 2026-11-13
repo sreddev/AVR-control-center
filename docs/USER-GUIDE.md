@@ -225,13 +225,13 @@ A card that says *"Not available on the connected receiver"* means your model re
 | **Connect automatically** | Reconnects to the last receiver at startup |
 | **Close to tray** | The window's ✕ hides the app to the tray instead of quitting. Quit from the tray menu |
 | **Start minimized** | Starts in the tray without opening the window. Off by default |
-| **Auto-update** | Checks GitHub at startup. When a newer version exists, a banner offers the download |
+| **Auto-update** | Checks GitHub at startup. When a newer version exists, a banner offers the installer. Not shown in the MSIX version, which Windows updates |
 | **Volume unit** | Absolute (52.5, like the front panel), decibels (−27.5 dB) or percent of the maximum |
 | **Theme** | **Dark** (default) or **Light**. The change applies on restart: click **Restart now** and the app reopens and reconnects by itself |
 
 <img src="screenshot-light-home.png" width="700" alt="Light theme">
 
-The **About** card shows the version, a Telegram link and a PayPal button if you'd like to support the project.
+The **About** card shows the version and a Telegram link.
 
 ---
 
@@ -273,7 +273,7 @@ The **About** card shows the version, a Telegram link and a PayPal button if you
 No. On connect it only reads values. Commands are sent only when you use a control.
 
 **Where are my settings stored?**
-In `%LocalAppData%\AvrControlCenter\settings.json`: saved stations, profiles, input names, recent receivers and preferences. Uninstalling the app leaves the file in place.
+In `%LocalAppData%\AvrControlCenter\settings.json`: saved stations, profiles, input names, recent receivers and preferences. Updates keep it. Uninstalling the app deletes it, together with the folders older versions used, so a later install starts with the defaults. The MSIX version keeps its settings in its own package folder, which Windows removes on uninstall.
 
 **Does the app send data anywhere?**
 It talks only to the receiver on your local network. At startup, if Auto-update is on, it also asks GitHub for the latest release.

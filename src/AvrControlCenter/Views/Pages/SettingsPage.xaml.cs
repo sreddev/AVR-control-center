@@ -32,6 +32,8 @@ public partial class SettingsPage : PageBase
         MinDesc.Text = L.SettingsStartMinimizedDesc;
         UpdateLabel.Text = L.SettingsAutoUpdate;
         UpdateDesc.Text = L.SettingsAutoUpdateDesc;
+        if (AutoUpdateService.IsPackaged)
+            UpdateRow.Visibility = UpdateRowLine.Visibility = Visibility.Collapsed;
         UnitLabel.Text = L.SettingsVolumeUnit;
         UnitDesc.Text = L.SettingsVolumeUnitDesc;
         ThemeLabel.Text = L.SettingsTheme;
@@ -39,23 +41,40 @@ public partial class SettingsPage : PageBase
         ThemeRestartBtn.Content = L.SettingsThemeRestart;
         ModifiedByLabel.Text = L.AboutCreatedBy;
         TelegramBtn.Content = L.AboutTelegram;
-        DonateBtn.Content = DonateUrl is null ? L.AboutDonateSoon : L.AboutDonate;
-        DonateBtn.IsEnabled = DonateUrl is not null;
+        SupportLabel.Text = L.AboutSupport;
+        // The content is a layout grid, so screen readers need the name spelled out.
+        System.Windows.Automation.AutomationProperties.SetName(SupportBtn, L.AboutSupport);
+        PayPalLabel.Text = L.AboutDonatePayPal;
+        PayPalDesc.Text = L.AboutDonatePayPalDesc;
+        RevolutLabel.Text = L.AboutDonateRevolut;
+        RevolutDesc.Text = L.AboutDonateRevolutDesc;
         // Read straight from the assembly: the DataContext isn't set yet in the constructor.
         VersionText.Text = "v" + AutoUpdateService.GetCurrentVersion() + " · .NET 8 · WPF";
         UpdateAvailRun.Text = "New version:";
     }
 
-    /// <summary>Sergio's PayPal.Me link. Null keeps the button disabled ("coming soon").</summary>
-    private static readonly string? DonateUrl = "https://www.paypal.com/paypalme/sreddev?locale.x=ro_RO&country.x=RO";
+    /// <summary>PayPal donate page: €5 suggested, "Buy me a coffee ☕" (the ☕ percent-encoded).</summary>
+    internal const string PayPalDonateUrl =
+        "https://www.paypal.com/donate/?business=M3KKGFD9NCZH8&amount=5&no_recurring=0" +
+        "&item_name=Buy+me+a+coffee+%E2%98%95+Keeps+my+free+apps+alive+and+updated.&currency_code=EUR";
+
+    internal const string RevolutUrl = "https://revolut.me/sreddev";
 
     private void OnTelegramClick(object sender, RoutedEventArgs e) =>
         OpenUrl("https://t.me/sreddev");
 
-    private void OnDonateClick(object sender, RoutedEventArgs e)
+    /// <summary>A left click opens the menu under the button (right click opens it too).</summary>
+    private void OnSupportClick(object sender, RoutedEventArgs e)
     {
-        if (DonateUrl is not null) OpenUrl(DonateUrl);
+        SupportMenu.PlacementTarget = SupportBtn;
+        SupportMenu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        SupportMenu.MinWidth = SupportBtn.ActualWidth;
+        SupportMenu.IsOpen = true;
     }
+
+    private void OnPayPalClick(object sender, RoutedEventArgs e) => OpenUrl(PayPalDonateUrl);
+
+    private void OnRevolutClick(object sender, RoutedEventArgs e) => OpenUrl(RevolutUrl);
 
     /// <summary>
     /// The preference switches bind straight to <see cref="AppSettings"/>, which

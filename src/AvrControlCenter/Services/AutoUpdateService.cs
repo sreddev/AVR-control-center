@@ -16,7 +16,8 @@ namespace AvrControlCenter.Services;
 /// Lightweight auto-update. On startup, the app asks the GitHub Releases API
 /// for the latest release of <see cref="RepoSlug"/>. If its tag (e.g. "v1.6.5")
 /// is newer than the running build, the Settings page shows a banner whose
-/// button opens the release's ZIP asset (or the release page if there is none).
+/// button downloads the release's Setup.exe (or opens the release page if there
+/// is none). An MSIX/Store install never checks: Windows updates the package.
 ///
 /// The app's current version is read from the assembly, which gets it from
 /// &lt;Version&gt; in AvrControlCenter.csproj. Tag each GitHub release "v" + that value.
@@ -33,6 +34,27 @@ public sealed class AutoUpdateService
 
     public string CurrentVersion { get; } = GetCurrentVersion();
 
+    /// <summary>
+    /// True when running from an MSIX package (Microsoft Store or sideloaded).
+    /// Packaged apps are updated by Windows, so the app must not offer its own updates.
+    /// </summary>
+    public static bool IsPackaged { get; } = DetectPackaged();
+
+    private static bool DetectPackaged()
+    {
+        try
+        {
+            uint length = 0;
+            // ERROR_INSUFFICIENT_BUFFER (122) means there is a package identity;
+            // APPMODEL_ERROR_NO_PACKAGE (15700) means a plain desktop install.
+            return GetCurrentPackageFullName(ref length, null) == 122;
+        }
+        catch { return false; }   // API missing on very old Windows
+    }
+
+    [System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode)]
+    private static extern int GetCurrentPackageFullName(ref uint packageFullNameLength, char[]? packageFullName);
+
     /// <summary>"1.6.5" style version of the running build.</summary>
     public static string GetCurrentVersion() =>
         Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? "0.0.0";
@@ -43,6 +65,7 @@ public sealed class AutoUpdateService
     /// </summary>
     public async Task<UpdateInfo?> CheckAsync()
     {
+        if (IsPackaged) return null;
         try
         {
             var json = await Http.GetStringAsync(LatestReleaseApi).ConfigureAwait(false);
@@ -60,7 +83,7 @@ public sealed class AutoUpdateService
                 foreach (var asset in assets.EnumerateArray())
                 {
                     var name = asset.GetProperty("name").GetString() ?? "";
-                    if (name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+                    if (name.EndsWith("-Setup.exe", StringComparison.OrdinalIgnoreCase))
                     {
                         url = asset.GetProperty("browser_download_url").GetString() ?? url;
                         break;

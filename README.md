@@ -50,11 +50,11 @@ Get the latest version from [**Releases**](https://github.com/sreddev/AVR-contro
 | File | |
 |---|---|
 | `AVRControlCenter-<version>-Setup.exe` | **Installer** (recommended). Start-menu entry, optional desktop shortcut and start with Windows. No admin rights needed |
-| `AVRControlCenter-<version>.zip` | **Portable**: extract anywhere and run `AVRControlCenter.exe` |
+| `AVRControlCenter-<version>.msix` | **MSIX package**, the format used by the Microsoft Store. Starts with Windows (you can turn that off in Settings → Apps → Startup) and is updated by Windows, not by the app |
 
-Both are self-contained, so no .NET installation is needed. Windows SmartScreen may warn about an unknown publisher the first time, because the app isn't code-signed: choose **More info → Run anyway**.
+Both are self-contained, so no .NET installation is needed. Windows SmartScreen may warn about an unknown publisher the first time, because the installer isn't code-signed: choose **More info → Run anyway**. The MSIX from GitHub is signed with a test certificate, so Windows only installs it after you trust that certificate; most people should use the Setup.exe.
 
-Settings, saved stations and profiles are stored in `%LocalAppData%\AvrControlCenter\settings.json` and survive updates (settings from the older `AvrRemote` and `DenonRemote` folders are copied over on first start).
+Settings, saved stations and profiles are stored in `%LocalAppData%\AvrControlCenter\settings.json` and survive updates; uninstalling removes them (settings from the older `AvrRemote` and `DenonRemote` folders are copied over on first start).
 
 ---
 

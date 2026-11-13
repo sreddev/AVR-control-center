@@ -3,7 +3,7 @@
 ; "AVR Desktop Control" install in place instead of adding a second app.
 AppId=AVR Desktop Control
 AppName=AVR Control Center
-AppVersion=3.0.3
+AppVersion=3.0.5
 AppPublisher=Sergio (@sreddev)
 AppPublisherURL=https://github.com/sreddev/AVR-control-center
 AppSupportURL=https://t.me/sreddev
@@ -12,7 +12,7 @@ DefaultGroupName=AVR Control Center
 UsePreviousGroup=no
 UninstallDisplayIcon={app}\AVRControlCenter.exe
 OutputDir=..\installer\out
-OutputBaseFilename=AVRControlCenter-3.0.3-Setup
+OutputBaseFilename=AVRControlCenter-3.0.5-Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible
@@ -31,6 +31,13 @@ Type: files; Name: "{app}\AVRDesktopControl.exe"
 Type: filesandordirs; Name: "{autoprograms}\AVR Desktop Control"
 Type: files; Name: "{autodesktop}\AVR Desktop Control.lnk"
 Type: files; Name: "{autostartup}\AVR Desktop Control.lnk"
+
+[UninstallDelete]
+; Settings, saved stations, profiles and devices. The pre-rename folders go
+; too, or a later install would copy them back in as its settings.
+Type: filesandordirs; Name: "{localappdata}\AvrControlCenter"
+Type: filesandordirs; Name: "{localappdata}\AvrRemote"
+Type: filesandordirs; Name: "{localappdata}\DenonRemote"
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs

@@ -81,12 +81,14 @@ yield return Toggle(SettingGroup.DialogDynamics, "cinemaeq", "Cinema EQ",
      -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true `
      -p:EnableCompressionInSingleFile=true -p:DebugType=none -o publish
    ```
-4. Build the portable zip and the installer:
+4. Build the installer and the MSIX package (the MSIX script publishes its own build):
    ```powershell
-   Compress-Archive publish\* installer\out\AVRControlCenter-<version>.zip
    & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer\setup.iss
+   pwsh packaging/msix/build-msix.ps1
    ```
-5. Commit, then create a GitHub release with the tag `v<version>` (for example `v2.1.0`) and attach both files. The in-app update check compares this tag with the running version, so they must match.
+5. Commit, then create a GitHub release with the tag `v<version>` (for example `v3.0.5`) and attach the Setup.exe and the .msix. Don't attach a portable zip. The in-app update check compares this tag with the running version and downloads the `-Setup.exe` asset, so the tag must match the version.
+
+The MSIX is signed with a self-signed test certificate (`CN=sreddev`). A Microsoft Store submission uses the package identity and publisher from Partner Center instead (`build-msix.ps1 -Publisher "CN=…"`), and the Store signs it.
 
 `publish/` and `installer/out/` are git-ignored.
 

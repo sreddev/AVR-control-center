@@ -47,6 +47,17 @@ public partial class App : Application
         if (!isFirst)
         {
             // Another copy owns the sockets: bring it forward and bail out.
+            try
+            {
+                if (System.Threading.EventWaitHandle.TryOpenExisting(ShowEventName, out var show))
+                {
+                    // This process was just started by the user, so it may hand
+                    // its right to take the foreground to the running copy.
+                    AllowSetForegroundWindow(AsfwAny);
+                    using (show) show.Set();
+                }
+            }
+            catch { /* best effort */ }
             Shutdown();
             return;
         }
@@ -95,9 +106,39 @@ public partial class App : Application
         var vm = _services.GetRequiredService<MainViewModel>();
         var window = _services.GetRequiredService<MainWindow>();
         window.Show();
+        ListenForShowRequests(window);
 
         // Runs asynchronously â€” the UI is already alive by the time this awaits.
         await vm.InitializeAsync();
+    }
+
+    /// <summary>Set by a second launch to ask the running copy to show its window.</summary>
+    private const string ShowEventName = @"Local\AVRControlCenter.ShowWindow";
+
+    private static System.Threading.EventWaitHandle? _showEvent;
+
+    private const int AsfwAny = -1;
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool AllowSetForegroundWindow(int processId);
+
+    /// <summary>
+    /// Opening the app again (Start menu, desktop shortcut) while it sits in
+    /// the tray should bring the window back rather than do nothing.
+    /// </summary>
+    private void ListenForShowRequests(MainWindow window)
+    {
+        _showEvent = new System.Threading.EventWaitHandle(false, System.Threading.EventResetMode.AutoReset, ShowEventName);
+        var thread = new System.Threading.Thread(() =>
+        {
+            while (true)
+            {
+                try { _showEvent.WaitOne(); }
+                catch (ObjectDisposedException) { return; }
+                Dispatcher.BeginInvoke(window.ShowFromTray);
+            }
+        }) { IsBackground = true, Name = "ShowWindowListener" };
+        thread.Start();
     }
 
     /// <summary>

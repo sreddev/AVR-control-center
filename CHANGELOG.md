@@ -1,5 +1,25 @@
 # Changelog
 
+## v3.0.5 (2026-11-13)
+
+### Fixes
+- **Turning the receiver on or off from the Home page no longer crashes the app.** When the receiver confirmed the change, the Power / Turn on button's pulse animation couldn't be stopped and the app closed with "'PulseOff' name cannot be found"
+- **Opening the app again while it runs in the tray brings its window to the front**, instead of doing nothing. This matters now that Start minimized starts in the tray
+
+### Downloads
+- Releases now ship the **Setup.exe installer** and an **MSIX package** (the Microsoft Store format). The portable zip is no longer published
+- The update banner downloads the new Setup.exe (it used to download the zip)
+- The MSIX version starts with Windows (switch it off in Settings → Apps → Startup) and is updated by Windows, so it doesn't check GitHub for updates and hides the Auto-update switch
+
+### Installer
+- Uninstalling now deletes the settings folder (`%LocalAppData%\AvrControlCenter`, plus the older `AvrRemote` and `DenonRemote` folders), so a later install starts with the defaults. Updates still keep your settings
+
+### Docs
+- New screenshots of every page for 3.0.5
+
+### Code
+- Tests for the preference defaults: Start minimized is off on a fresh install, the other switches are on (55 tests)
+
 ## v3.0.3 (2026-11-13)
 
 ### Fixes

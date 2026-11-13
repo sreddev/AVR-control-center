@@ -81,7 +81,20 @@
 
     <!-- ══════════ Power button ══════════
          Filled while On, outlined in Standby, disabled (by the command) while
-         offline, connecting or changing. Pulses while changing. -->
+         offline, connecting or changing. Pulses while changing.
+
+         The pulse is ended by a second, unnamed storyboard that replaces it,
+         not by StopStoryboard: a BeginStoryboard name only resolves in the
+         style that declares it, so in a BasedOn style (PowerButtonLabeled on
+         Home) StopStoryboard threw "'PulseOff' name cannot be found" and
+         crashed the app when the receiver confirmed the change. -->
+    <Storyboard x:Key="PowerPulse">
+        <DoubleAnimation AutoReverse="True" RepeatBehavior="Forever" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.6" />
+    </Storyboard>
+    <Storyboard x:Key="PowerPulseEnd">
+        <DoubleAnimation FillBehavior="Stop" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.15" />
+    </Storyboard>
+
     <Style x:Key="PowerButton" TargetType="{x:Type ui:Button}" BasedOn="{StaticResource {x:Type ui:Button}}">
         <Setter Property="Appearance" Value="Secondary" />
         <Setter Property="ToolTip" Value="{Binding State.PowerLabel}" />
@@ -99,27 +112,19 @@
             </DataTrigger>
             <DataTrigger Binding="{Binding State.Power}" Value="TurningOn">
                 <DataTrigger.EnterActions>
-                    <BeginStoryboard x:Name="PulseOn">
-                        <Storyboard>
-                            <DoubleAnimation AutoReverse="True" RepeatBehavior="Forever" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.6" />
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource PowerPulse}" />
                 </DataTrigger.EnterActions>
                 <DataTrigger.ExitActions>
-                    <StopStoryboard BeginStoryboardName="PulseOn" />
+                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace" Storyboard="{StaticResource PowerPulseEnd}" />
                 </DataTrigger.ExitActions>
             </DataTrigger>
             <DataTrigger Binding="{Binding State.Power}" Value="GoingToStandby">
                 <Setter Property="Appearance" Value="Primary" />
                 <DataTrigger.EnterActions>
-                    <BeginStoryboard x:Name="PulseOff">
-                        <Storyboard>
-                            <DoubleAnimation AutoReverse="True" RepeatBehavior="Forever" Storyboard.TargetProperty="Opacity" To="0.5" Duration="0:0:0.6" />
-                        </Storyboard>
-                    </BeginStoryboard>
+                    <BeginStoryboard Storyboard="{StaticResource PowerPulse}" />
                 </DataTrigger.EnterActions>
                 <DataTrigger.ExitActions>
-                    <StopStoryboard BeginStoryboardName="PulseOff" />
+                    <BeginStoryboard HandoffBehavior="SnapshotAndReplace" Storyboard="{StaticResource PowerPulseEnd}" />
                 </DataTrigger.ExitActions>
             </DataTrigger>
         </Style.Triggers>

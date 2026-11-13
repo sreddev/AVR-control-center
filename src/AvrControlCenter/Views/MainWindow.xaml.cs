@@ -51,7 +51,13 @@ public partial class MainWindow : FluentWindow
         {
             WindowState = WindowState.Minimized;
             ShowActivated = false;
-            Loaded += (_, _) => Hide();
+            Loaded += (_, _) =>
+            {
+                Hide();
+                // Only the first, silent show should skip activation; opening it
+                // from the tray later must bring it to the front.
+                ShowActivated = true;
+            };
         }
     }
 
@@ -95,6 +101,9 @@ public partial class MainWindow : FluentWindow
     private void OnTrayLeftClick(object sender, RoutedEventArgs e) => GetOrCreateWidget().Toggle();
 
     private void OnShowWindow(object sender, RoutedEventArgs e) => ToggleWindow(force: true);
+
+    /// <summary>Restores the window from the tray or taskbar and brings it to the front.</summary>
+    public void ShowFromTray() => ToggleWindow(force: true);
 
     private void OnQuit(object sender, RoutedEventArgs e)
     {

@@ -14,8 +14,11 @@ public static class L
     // -- About --
     public static string AboutTitle => "About";
     public static string AboutCreatedBy => "CREATED BY";
-    public static string AboutDonate => "Donate with PayPal";
-    public static string AboutDonateSoon => "PayPal donations - coming soon";
+    public static string AboutSupport => "Support development";
+    public static string AboutDonatePayPal => "Donate with PayPal";
+    public static string AboutDonatePayPalDesc => "PayPal balance or card";
+    public static string AboutDonateRevolut => "Donate with Revolut";
+    public static string AboutDonateRevolutDesc => "Card, Apple Pay, Google Pay or Revolut";
     public static string AboutTelegram => "Telegram @sreddev";
 
     // -- Settings --

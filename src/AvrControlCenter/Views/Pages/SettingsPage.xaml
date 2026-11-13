@@ -83,10 +83,10 @@
                         <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.StartMinimized, Mode=TwoWay}" Click="OnPreferenceToggled" />
                     </Grid>
 
-                    <Border Style="{StaticResource RowLine}" />
+                    <Border x:Name="UpdateRowLine" Style="{StaticResource RowLine}" />
 
-                    <!-- Auto-update -->
-                    <Grid>
+                    <!-- Auto-update (hidden in the MSIX/Store build, which Windows updates) -->
+                    <Grid x:Name="UpdateRow">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -212,19 +212,58 @@
                         <Run Foreground="{StaticResource AccentTextBrush}" Text="♥" />
                     </TextBlock>
 
+                    <!-- Both buttons left-aligned so their icons and labels line up. -->
                     <ui:Button
                         x:Name="TelegramBtn"
                         Margin="0,12,0,6"
                         HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Left"
                         Click="OnTelegramClick"
                         Icon="{ui:SymbolIcon Send24}" />
-                    <!-- Disabled until the PayPal donate button exists; set DonateUrl to enable it -->
+
+                    <!-- Support: one primary button that opens a menu of ways to donate. -->
                     <ui:Button
-                        x:Name="DonateBtn"
+                        x:Name="SupportBtn"
                         HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
                         Appearance="Primary"
-                        Click="OnDonateClick"
-                        Icon="{ui:SymbolIcon Heart24}" />
+                        Click="OnSupportClick"
+                        Icon="{ui:SymbolIcon Heart24}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="SupportLabel" VerticalAlignment="Center" />
+                            <ui:SymbolIcon Grid.Column="1" Margin="8,0,0,0" FontSize="14" Symbol="ChevronDown24" />
+                        </Grid>
+                        <ui:Button.ContextMenu>
+                            <ContextMenu x:Name="SupportMenu" Placement="Bottom">
+                                <MenuItem x:Name="PayPalItem" Click="OnPayPalClick">
+                                    <MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Payment24" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <StackPanel>
+                                            <TextBlock x:Name="PayPalLabel" />
+                                            <TextBlock x:Name="PayPalDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                                <MenuItem x:Name="RevolutItem" Click="OnRevolutClick">
+                                    <MenuItem.Icon>
+                                        <ui:SymbolIcon Symbol="Wallet24" />
+                                    </MenuItem.Icon>
+                                    <MenuItem.Header>
+                                        <StackPanel>
+                                            <TextBlock x:Name="RevolutLabel" />
+                                            <TextBlock x:Name="RevolutDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
+                                        </StackPanel>
+                                    </MenuItem.Header>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ui:Button.ContextMenu>
+                    </ui:Button>
                 </StackPanel>
             </Border>
         </Grid>
