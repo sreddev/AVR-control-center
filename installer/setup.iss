@@ -3,7 +3,7 @@
 ; "AVR Desktop Control" install in place instead of adding a second app.
 AppId=AVR Desktop Control
 AppName=AVR Control Center
-AppVersion=3.0.2
+AppVersion=3.0.3
 AppPublisher=Sergio (@sreddev)
 AppPublisherURL=https://github.com/sreddev/AVR-control-center
 AppSupportURL=https://t.me/sreddev
@@ -12,7 +12,7 @@ DefaultGroupName=AVR Control Center
 UsePreviousGroup=no
 UninstallDisplayIcon={app}\AVRControlCenter.exe
 OutputDir=..\installer\out
-OutputBaseFilename=AVRControlCenter-3.0.2-Setup
+OutputBaseFilename=AVRControlCenter-3.0.3-Setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 ArchitecturesAllowed=x64compatible

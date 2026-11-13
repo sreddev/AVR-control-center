@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.0.3 (2026-11-13)
+
+### Fixes
+- **Start minimized** is remembered again. The switches on the Settings page (Connect automatically, Close to tray, Start minimized, Auto-update) were only saved to disk when something else happened to save the settings, such as connecting to the receiver, so a change was often lost at the next start. They now save as soon as you flip them
+- **Start minimized** now starts in the tray, as its description says, instead of as a minimized window on the taskbar. Combined with *Start with Windows*, the app no longer shows up after you sign in
+- **Quit** from the tray menu no longer risks switching *Close to tray* off for the next start
+
+### Code
+- `packaging/msix/build-msix.ps1` builds a self-signed MSIX package (with a sign-in startup task) for local testing
+
 ## v3.0.2 (2026-10-29)
 
 ### New icon

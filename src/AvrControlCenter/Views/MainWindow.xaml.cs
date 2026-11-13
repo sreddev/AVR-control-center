@@ -16,6 +16,7 @@ public partial class MainWindow : FluentWindow
     private readonly MainViewModel _vm;
     private readonly AppSettings _settings;
     private WidgetWindow? _widget;
+    private bool _quitting;
 
     public MainWindow(MainViewModel vm, AppSettings settings)
     {
@@ -44,7 +45,14 @@ public partial class MainWindow : FluentWindow
         Height = Math.Max(MinHeight, Math.Min(Height, area.Height));
 
         // A restart the user asked for (theme change) should come back visible.
-        if (settings.StartMinimized && !App.IsRestart) WindowState = WindowState.Minimized;
+        // Start in the tray: the window still has to load once so the tray icon
+        // (part of its visual tree) gets created, then it hides like close-to-tray.
+        if (settings.StartMinimized && !App.IsRestart)
+        {
+            WindowState = WindowState.Minimized;
+            ShowActivated = false;
+            Loaded += (_, _) => Hide();
+        }
     }
 
     private WidgetWindow GetOrCreateWidget()
@@ -73,7 +81,7 @@ public partial class MainWindow : FluentWindow
 
     protected override void OnClosing(CancelEventArgs e)
     {
-        if (_settings.CloseToTray)
+        if (_settings.CloseToTray && !_quitting)
         {
             e.Cancel = true;
             Hide();
@@ -90,7 +98,8 @@ public partial class MainWindow : FluentWindow
 
     private void OnQuit(object sender, RoutedEventArgs e)
     {
-        _settings.CloseToTray = false;
+        // A flag, not CloseToTray = false: that would be persisted by the next Save().
+        _quitting = true;
         Application.Current.Shutdown();
     }
 

@@ -50,7 +50,7 @@
                             <TextBlock x:Name="AutoConnLabel" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
                             <TextBlock x:Name="AutoConnDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
-                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.AutoConnect, Mode=TwoWay}" />
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.AutoConnect, Mode=TwoWay}" Click="OnPreferenceToggled" />
                     </Grid>
 
                     <Border Style="{StaticResource RowLine}" />
@@ -65,7 +65,7 @@
                             <TextBlock x:Name="TrayLabel" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
                             <TextBlock x:Name="TrayDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
-                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.CloseToTray, Mode=TwoWay}" />
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.CloseToTray, Mode=TwoWay}" Click="OnPreferenceToggled" />
                     </Grid>
 
                     <Border Style="{StaticResource RowLine}" />
@@ -80,7 +80,7 @@
                             <TextBlock x:Name="MinLabel" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
                             <TextBlock x:Name="MinDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
-                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.StartMinimized, Mode=TwoWay}" />
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.StartMinimized, Mode=TwoWay}" Click="OnPreferenceToggled" />
                     </Grid>
 
                     <Border Style="{StaticResource RowLine}" />
@@ -95,7 +95,7 @@
                             <TextBlock x:Name="UpdateLabel" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
                             <TextBlock x:Name="UpdateDesc" FontSize="11" Foreground="{StaticResource TextTertiaryBrush}" />
                         </StackPanel>
-                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.AutoUpdate, Mode=TwoWay}" />
+                        <ui:ToggleSwitch Grid.Column="1" IsChecked="{Binding Settings.AutoUpdate, Mode=TwoWay}" Click="OnPreferenceToggled" />
                     </Grid>
 
                     <Border Style="{StaticResource RowLine}" />

@@ -57,6 +57,15 @@ public partial class SettingsPage : PageBase
         if (DonateUrl is not null) OpenUrl(DonateUrl);
     }
 
+    /// <summary>
+    /// The preference switches bind straight to <see cref="AppSettings"/>, which
+    /// doesn't save itself. Click fires after the binding has pushed the new value.
+    /// </summary>
+    private void OnPreferenceToggled(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainViewModel vm) vm.Settings.Save();
+    }
+
     private void OnUpdateClick(object sender, RoutedEventArgs e)
     {
         if (DataContext is MainViewModel vm && vm.AvailableUpdate is not null)
